@@ -9,26 +9,6 @@ from .models import (
 	Companies,
 	Assigns
 )
-from wagtail.admin.menu import MenuItem
-from wagtail.core import hooks
-from django.urls import reverse
-from django.http import HttpResponse
-from django.urls import path
-from django.shortcuts import render
-
-
-@hooks.register('register_admin_menu_item')
-def register_frank_menu_item():
-  return MenuItem('Frank', reverse('frank'), classnames='icon icon-folder-inverse', order=10000)
-
-def admin_view(request):
-	return render(request, 'admin/evaluate.html')
-
-@hooks.register('register_admin_urls')
-def urlconf_time():
-  return [
-    path('evaluate/', admin_view, name='frank'),
-  ]
 class EmployeesInfo(ModelAdmin):
 	model = Employee
 	menu_label = 'Employees'
@@ -58,6 +38,11 @@ class AssignsInfo(ModelAdmin):
 	model = Assigns
 	menu_label = 'Assigns'
 	menu_icon = 'list-ul'
+
+	list_display = ('client', 'employee',)
+	list_filter = ('client',)
+	search_fields = ('client', 'employee',)
+
 modeladmin_register(AssignsInfo)
 
 
