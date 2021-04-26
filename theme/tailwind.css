@@ -1,0 +1,18 @@
+@tailwind base;
+
+@tailwind components;
+
+/* FONTS CONFIGURATION */
+@font-face {
+    font-family: "Ebrima";
+    src:url(../fonts/Ebrima.ttf);
+    font-weight: bold;
+} 
+
+@font-face {
+    font-family: "EbrimaBold";
+    src:url(../fonts/EbrimaBold.ttf);
+    font-weight: bold;
+} 
+
+@tailwind utilities;
