@@ -1,4 +1,4 @@
-from .base import *
+
 from __future__ import absolute_import, unicode_literals
 
 import os
@@ -8,6 +8,7 @@ SECRET_KEY = env['SECRET_KEY']
 
 DEBUG = False
 
+from .base import *
 # Parse database configuration from $DATABASE_URL
 import dj_database_url
 DATABASES['default'] =  dj_database_url.config()
