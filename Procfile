@@ -1,1 +1,1 @@
-web: gunicorn project_title.wsgi --log-file -
+web: gunicorn performance_management_system.wsgi --log-file -
