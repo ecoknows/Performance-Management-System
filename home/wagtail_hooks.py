@@ -99,5 +99,4 @@ class AssignsInfo(ModelAdmin):
     list_filter = ('client',)
     search_fields = ('client', 'employee',)
 
-
 modeladmin_register(AssignsInfo)

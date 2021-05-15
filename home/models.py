@@ -58,6 +58,10 @@ class Evaluations(Page):
     ]
 
 
+class LoginPage(Page):
+    max_count = 1
+
+
 class Client(models.Model):
     company = models.CharField(max_length=255)
     address = models.CharField(max_length=255)

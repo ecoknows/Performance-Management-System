@@ -585,6 +585,27 @@ video {
   }
 }
 
+<<<<<<< HEAD
+=======
+/* FONTS CONFIGURATION */
+
+@font-face {
+  font-family: "Ebrima";
+
+  src:url(../fonts/Ebrima.ttf);
+
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "EbrimaBold";
+
+  src:url(../fonts/EbrimaBold.ttf);
+
+  font-weight: bold;
+}
+
+>>>>>>> 73fc519a3534e1154cacdb11617894db2ace0b9d
 .space-y-0 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0px * calc(1 - var(--tw-space-y-reverse)));
