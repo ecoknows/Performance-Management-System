@@ -14,11 +14,13 @@ from wagtail.core.models import Page, Orderable
 
 from wagtail.core import blocks
 from modelcluster.models import ClusterableModel
+from django.http import HttpResponseRedirect
+from performance_management_system import StringResource, IntegerResource
+from django.utils import timezone
 
 
-class HomePage(Page):
-    pass
-
+        
+        
 
 class EvaluationSubCategories(Orderable):
     model = ParentalKey("home.EvaluationCategories",
@@ -57,41 +59,57 @@ class Evaluations(Page):
 
 
 class Client(models.Model):
-    client_no = models.CharField(max_length=255)
     company = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     contact_number = models.CharField(max_length=255)
-    client_name = models.CharField(max_length=255)
 
     panels = [
-        FieldPanel('client_no'),
         FieldPanel('company'),
         FieldPanel('address'),
         FieldPanel('contact_number'),
-        FieldPanel('client_name'),
     ]
 
+    def client_id(self):
+        id = str(IntegerResource.USERNAME_INDEX + self.pk)
+        year_now = str(timezone.now().year - 2000) 
+        return StringResource.COMPANY_PREFIX_TAG + '-' +  year_now + '-' + id;
+    
     def __str__(self):
-        return self.client_name
+        return self.company
 
 
 class Employee(models.Model):
-    employee_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=25, null=True)
+    middle_initial = models.CharField(max_length=1,null=True)
+    last_name = models.CharField(max_length=25,null=True)
     address = models.CharField(max_length=255)
     contact_number = models.CharField(max_length=255)
     birth_day = models.DateField()
     position = models.CharField(max_length=255)
+    
 
     panels = [
-        FieldPanel('employee_name'),
+        MultiFieldPanel([
+            FieldPanel('first_name'),
+            FieldPanel('middle_initial'),
+            FieldPanel('last_name'),    
+        ], heading='Employee Complete Name'),
         FieldPanel('address'),
         FieldPanel('contact_number'),
         FieldPanel('birth_day'),
         FieldPanel('position'),
     ]
+    
+    def employee_id(self):
+        id = str(IntegerResource.USERNAME_INDEX + self.pk)
+        year_now = str(timezone.now().year - 2000) 
+        return StringResource.COMPANY_PREFIX_TAG + '-' +  year_now + '-' + id;
+    
+    def employee(self):
+        return self.last_name + ', ' + self.first_name + ' ' +  self.middle_initial + '.' 
 
     def __str__(self):
-        return self.employee_name
+        return self.first_name
 
 
 class Question(models.Model):
@@ -115,3 +133,24 @@ class Assigns(models.Model):
         FieldPanel('client'),
         FieldPanel('employee'),
     ]
+    
+    
+    def __str__(self):
+        return self.client.company
+    
+
+
+class HomePage(Page):
+    
+    def serve(self, request):
+        if request.user.is_authenticated == False:
+            return HttpResponseRedirect('/login/')
+        return super().serve(request)
+    
+    def get_context(self, request):
+        context = super().get_context(request)
+        
+        context['group'] = str(request.user.groups.all()[0])
+        context['assigns'] = Assigns.objects.filter(client__company=request.user.first_name)
+        
+        return context;

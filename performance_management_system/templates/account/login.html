@@ -1,0 +1,42 @@
+{% extends 'base.html'%}
+{% load i18n %}
+{% load account socialaccount static %}
+
+
+{% block content %}
+<form class="flex h-screen"  method="POST" action="{% url 'account_login' %}">
+	{% csrf_token %}
+	<div class="flex flex-col items-center justify-center flex-1 font-sans ">
+		<h1 class="mb-8 text-5xl font-bold">Login</h1>
+
+		<div>
+			<h2 class="text-lg">Username</h2>
+			<input 
+				class="px-4 text-2xl border border-black rounded-full w-72"
+				name='login' 
+				required id='id_login' 
+				autocomplete="email" 
+				type='text'
+			>
+		</div>
+		
+		<div class="mt-2">
+			<h2 class="text-lg">Password</h2>
+			<input 
+				class="px-4 text-2xl border border-black rounded-full w-72"
+				name='password' 
+				required id='id_password' 
+				autocomplete="password" 
+				type='password'
+			>
+		</div>
+
+		<button type="submit"  class="flex items-center justify-center mt-4 font-sans text-2xl font-bold text-white rounded-full w-14 h-14" style="background-color: black;">></button>
+		
+	</div>
+
+	<div class="flex-1" style="background-color: black;">
+		
+	</div>
+</form>
+{% endblock %}
