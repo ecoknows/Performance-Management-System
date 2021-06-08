@@ -8,12 +8,17 @@ from wagtail.contrib.modeladmin.options import (
 
 
 from performance_management_system.client.models import Client
+from performance_management_system.client.views import ClientCreateView
+
 from performance_management_system.employee.models import Employee
+from performance_management_system.employee.views import EmployeeCreateView
+
 from performance_management_system.base.models import UserEvaluation
      
 
 class EmployeesInfo(ModelAdmin):
     model = Employee
+    create_view_class = EmployeeCreateView
     menu_label = 'Employees'
     menu_icon = 'group'
     list_display = ('employee',)
@@ -24,6 +29,7 @@ modeladmin_register(EmployeesInfo)
 
 class ClientsInfo(ModelAdmin):
     model = Client
+    create_view_class = ClientCreateView
     menu_label = 'Clients'
     menu_icon = 'group'
     list_display = ('company',)

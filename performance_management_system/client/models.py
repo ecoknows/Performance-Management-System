@@ -31,29 +31,6 @@ class Client(models.Model):
     
     def __str__(self):
         return self.company
-    
-    def save(self):
-        super().save()
-        if self.pk is None:
-            from performance_management_system.users.models import User
-            
-            id = str(IntegerResource.CLIENT_INDEX + self.pk)
-            year_now = str(timezone.now().year - 2000) 
-            username = StringResource.COMPANY_PREFIX_TAG + '-' +  year_now + '-' + id
-            
-            user = User.objects.create_user(
-                username=username,
-                first_name=self.company,
-                password=self.company.upper() + id,
-                client=self,
-                email=self.company + StringResource.COMPANTY_EMAIL_SUFFIX,
-            )
-                
-            
-            group = Group.objects.get(name=StringResource.CLIENT)
-            
-            group.user_set.add(user)
-        
 
 
 class ClientIndexPage(Page):
