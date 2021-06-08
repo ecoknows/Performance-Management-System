@@ -37,10 +37,6 @@ class Employee(models.Model):
     ]
     
     @property
-    def assigned_client(self):
-        return self.client.all().first()
-    
-    @property
     def employee_id(self):
         id = str(IntegerResource.EMPLOYEE_INDEX + self.pk)
         year_now = str(timezone.now().year - 2000) 

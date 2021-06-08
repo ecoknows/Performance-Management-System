@@ -192,7 +192,8 @@ class EvaluationPage(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
-        
+        if request.user.client == None: 
+            return context
         for user_evaluation in  request.user.client.user_evaluation.all():
             context['user_evaluation'] = user_evaluation
             
