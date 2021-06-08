@@ -1,0 +1,48 @@
+{% extends 'base.html'%}
+
+	{% load wagtailcore_tags %}
+
+{% block body_class %}
+	flex
+	flex-col
+	h-screen
+{% endblock %}
+
+{% block header %}
+	{% include 'includes/header.html' %}
+{% endblock %}
+
+{% block content %}
+
+
+<section class="container flex flex-col flex-1 mx-auto space-y-4">
+		
+	<div class="flex items-center justify-center space-x-4">
+		<div class="w-32 h-32 bg-black rounded-full"></div>
+
+		<div class="leading-4">
+			<h1 class="font-sans text-3xl font-bold">{{request.user.first_name}}</h1>
+			<h2>Human Resource</h2>
+		</div>
+	</div>
+
+	<div class="flex flex-col flex-1 space-y-2">
+
+
+
+	</div>
+
+</section>
+
+{% for assign in assigns %}
+	<section>
+		<h1>Employee Name : {{assign.employee.employee	}} </h1>
+		<h1>Project Assign : </h1>
+		<h1>Date : </h1>
+		<h1>Reports : </h1>
+		<h1>Position : </h1>
+		<h1>Hiring Date : </h1>
+	</section>
+{% endfor %}
+	
+{% endblock %}

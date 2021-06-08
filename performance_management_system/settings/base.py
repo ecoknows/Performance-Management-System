@@ -24,8 +24,14 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
-    'home',
-    'search',
+    'performance_management_system.users',
+    'performance_management_system.base',
+    
+    'performance_management_system.hr',
+    'performance_management_system.client',
+    'performance_management_system.employee',
+    
+    'performance_management_system.search',
 
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -55,6 +61,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
 ]
+
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -108,7 +116,7 @@ WSGI_APPLICATION = 'performance_management_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'performance_management',
+        'NAME': 'employee_management_system',
     }
 }
 
@@ -171,6 +179,8 @@ MEDIA_URL = '/media/'
 
 
 # Wagtail settings
+
+WAGTAIL_FRONTEND_LOGIN_URL = '/login/'
 
 WAGTAIL_SITE_NAME = "performance_management_system"
 

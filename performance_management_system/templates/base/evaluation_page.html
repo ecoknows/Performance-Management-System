@@ -1,0 +1,144 @@
+{% extends 'base.html'%}
+{% load wagtailcore_tags %}
+
+{% block body_class %}
+	flex
+	flex-col
+	h-screen
+{% endblock %}
+
+{% block header %}
+	{% include 'includes/header.html' %}
+{% endblock %}
+
+{% block style %}
+<style>
+
+@keyframes click-wave {
+  0% {
+    height: 30px;
+    width: 30px;
+    opacity: 0.35;
+    position: relative;
+  }
+  100% {
+    height: 200px;
+    width: 200px;
+    margin-left: -80px;
+    margin-top: -80px;
+    opacity: 0;
+  }
+}
+
+.option-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  position: relative;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 30px;
+  width: 30px;
+  transition: all 0.15s ease-out 0s;
+  background: #cbd1d8;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 1rem;
+  outline: none;
+  position: relative;
+  z-index: 1000;
+}
+.option-input:hover {
+  background: #9faab7;
+}
+.option-input:checked {
+  background: #40e0d0;
+}
+.option-input:checked::before {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  content: '✔';
+  display: inline-block;
+  font-size: 26.66667px;
+  text-align: center;
+  line-height: 30px;
+}
+.option-input:checked::after {
+  -webkit-animation: click-wave 0.65s;
+  -moz-animation: click-wave 0.65s;
+  animation: click-wave 0.65s;
+  background: #40e0d0;
+  content: '';
+  display: block;
+  position: relative;
+  z-index: 100;
+}
+.option-input.radio {
+  border-radius: 50%;
+}
+.option-input.radio::after {
+  border-radius: 50%;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="container mx-auto">
+	<form action="{% pageurl page %}" method="POST">
+		{% csrf_token %}
+		<div>
+			{% load forloop_tags %}
+			<div class="flex">
+				<div class="flex-1">
+          
+				</div>
+			</div>
+			{% for category in user_evaluation.evaluation_categories_assign.all %}
+			<div>
+				<div class="flex px-4 py-2 text-white bg-black">
+					<div class="flex-1">
+						<label class="font-sans text-2xl font-bold ">
+							{{category.evaluation_category}}
+						</label>
+					</div>
+					<div class="flex justify-center flex-1">
+						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg">1</h1>
+						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg">2</h1>
+						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg">3</h1>
+						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg">4</h1>
+						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg">5</h1>
+					</div>
+				</div>
+				{% for rate in category.evaluation_rates_assign.all %}
+						<div class="flex px-4 py-2 border-b border-gray-600 " style="min-height: 50px;">
+							<div class="flex-1">
+								<label class="text-xl">
+									{{rate.evaluation_rates}}
+								</label>
+							</div>
+							<div class="flex items-center justify-center flex-1">
+								{% for i in self.evaluation_max_rate|times %}
+									<input type="radio" name="question-{{rate.pk}}" value="{{i}}" {% if rate.rate == i %}checked{% endif %} required class=" option-input radio"
+										style='
+										color: white;
+										font-family: "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+										'
+									>
+								{% endfor %}
+							</div>
+						</div>
+					{% endfor %}
+				{% endfor %}
+			</div>
+		</div>
+		<input type="submit">
+	</form>
+</section>
+{% endblock %}

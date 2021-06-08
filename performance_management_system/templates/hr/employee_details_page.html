@@ -1,0 +1,21 @@
+{% extends 'base.html'%}
+{% load wagtailcore_tags %}
+
+{% block body_class %}
+	flex
+	flex-col
+	h-screen
+{% endblock %}
+
+{% block header %}
+	{% include 'includes/header.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="container mx-auto">
+	<h1>Name: {{employee.first_name}}</h1>
+</section>
+
+
+{% endblock %}
