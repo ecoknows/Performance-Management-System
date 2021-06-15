@@ -8,10 +8,15 @@ from wagtail.admin.edit_handlers import (
 )
 
 from performance_management_system import IntegerResource, StringResource
-
+from performance_management_system.users.models import User
 
 
 class Employee(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        primary_key=True
+    )
 
     first_name = models.CharField(max_length=25, null=True)
     middle_initial = models.CharField(max_length=1,null=True)

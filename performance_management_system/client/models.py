@@ -6,13 +6,18 @@ from wagtail.core.models import Page
 
 from wagtail.admin.edit_handlers import (
     FieldPanel,
-    MultiFieldPanel,
 )
 
 from performance_management_system import IntegerResource, StringResource
-from performance_management_system.employee.models import Employee
+from performance_management_system.users.models import User
 
 class Client(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        primary_key=True
+    )
+    
     company = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     contact_number = models.CharField(max_length=255)
