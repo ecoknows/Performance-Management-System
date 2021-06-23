@@ -9,73 +9,14 @@
 {% endblock %}
 
 {% block header %}
-	{% include 'includes/header.html' %}
+	{% include 'includes/header.html' with user_model=request.user.hradmin dashboard=True %}
 {% endblock %}
 
 {% block content %}
 
 <section class="container flex flex-col flex-1 mx-auto space-y-4">
-		
-	<div class="flex items-center justify-center space-x-4">
-		<div class="w-32 h-32 bg-black rounded-full"></div>
-
-		<div class="leading-4">
-			<h1 class="font-sans text-3xl font-bold">John Smith</h1>
-			<h2>Human Resource</h2>
-		</div>
-	</div>
-
-	<div class="flex flex-col flex-1 space-y-2">
-		<h1 class="font-sans text-4xl font-bold">Employee</h1>
-		<div class="relative flex items-center " style="border-bottom: 2px solid black;">
-			<div>
-				<button id='employees-btn' class="focus:outline-none"><h3 class="mx-4 text-xl text-gray-600">Employees</h3></button>
-				<hr id='employees-border' style='border-top: 6px solid black'>
-			</div>
-			<div >
-				<button id='clients-btn' class="focus:outline-none"><h3 class="mx-4 text-xl text-gray-600 ">Clients</h3></button>
-				<hr id='clients-border' style='display: hidden'>
-			</div>
-			<input class="absolute px-2" style="right: 0; top: 35%;padding-top: 3px; padding-bottom: 3px; border: 1px solid black; border-radius: 40px" placeholder="Search">
-		</div>
-
-		<div id='content' class="flex flex-wrap items-start justify-center flex-1 pt-4">
-			{% include 'hr/person_card.html' %}
-		</div>
-	</div>
-
+		<a href="employee-list-page">EMPLOYEE</a>
+		<a href="client-list-page">CLIENT</a>
 </section>
 
-<script>
-	$('#clients-btn').click(()=>{
-		$('#clients-border').css({
-			'border-top': '6px solid black'
-		})
-		$('#clients-border').show()
-		$('#employees-border').hide()
-		$.ajax({
-			type: 'GET',
-            data: {"group": 'Client'},
-			success: function(result){
-				$('#content').html(result);
-			}
-		})
-	})
-
-	$('#employees-btn').click(()=>{
-		$('#employees-border').css({
-			'border-top': '6px solid black'
-		})
-		$('#employees-border').show()
-		$('#clients-border').hide()
-		$.ajax({
-			type: 'GET',
-            data: {"group": 'Employee'},
-			success: function(result){
-				$('#content').html(result);
-			}
-		})
-	})
-</script>
-	
 {% endblock %}

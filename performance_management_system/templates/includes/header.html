@@ -1,13 +1,27 @@
-{% load static %}
+{% load static wagtailimages_tags  %}
 
-<header class="flex justify-between p-2">
+<header class="flex justify-between p-2 pt-6 pb-20">
 	<div class="space-x-2">
+	{% if dashboard %}
+			<h1 class="font-sans text-4xl font-bold tracking-widest" style="color: #EF8767">DASHBOARD</h1>
+	{% else %}
+		{% if employee %}
 		<span>
-			<a class="font-sans text-2xl font-bold tracking-widest" style="color: #EF8767">EMPLOYEE</a>
+			<a class="font-sans text-4xl font-bold tracking-widest" style="color: #EF8767">EMPLOYEE</a>
 		</span>
 		<span>
-			<a class='font-sans text-xl font-bold tracking-widest' style="color: #CDCDCD;">CLIENT</a>
+			<a href='../client-list-page' class='font-sans text-2xl font-bold tracking-widest' style="color: #CDCDCD;">CLIENT</a>
 		</span>
+		{% elif client %}
+		<span>
+			<a href='../employee-list-page' class="font-sans text-2xl font-bold tracking-widest" style="color: #CDCDCD">EMPLOYEE</a>
+		</span>
+		<span>
+			<a class='font-sans text-4xl font-bold tracking-widest' style="color: #EF8767;">CLIENT</a>
+		</span>
+		{% endif %}
+	
+	{% endif %}
 	</div>
 
 	<div class="flex items-center space-x-4">
@@ -21,8 +35,14 @@
 			<input class='focus:outline-none' style="background-color: transparent;" placeholder="Search">
 		</div>
 
-		<div>
-			<img>
+		<div class="flex items-start space-x-2">
+			{% image user_model.profile_pic fill-80x80 as profile_pic %}
+			<img src='{{profile_pic.url}}' width="45" class="rounded-full "> 
+			<div class="leading-3 ">
+				<h2 class="font-sans text-2xl font-bold">{{request.user.last_name}}</h2>
+				<a href="/logout" class="font-bold text-md" style="color: #BD732E">Logout</a>
+			</div>
+
 		</div>
 
 	</div>

@@ -35,15 +35,15 @@ class BaseIndexPage(Page):
             return HttpResponseRedirect('/admin/')
         elif request.user.is_authenticated == False:
             return HttpResponseRedirect('/login/')
-        elif str(request.user.groups.all()[0]) == 'HR Admin':
+        elif request.user.is_hr:
             from performance_management_system.hr.models import HRIndexPage
             hr_index_page = HRIndexPage.objects.child_of(self).live()
             return HttpResponseRedirect(hr_index_page[0].slug)
-        elif str(request.user.groups.all()[0]) == 'Employee':
+        elif request.user.is_employee:
             from performance_management_system.employee.models import EmployeeIndexPage
             employee_index_page = EmployeeIndexPage.objects.child_of(self).live()
             return HttpResponseRedirect(employee_index_page[0].slug)
-        elif str(request.user.groups.all()[0]) == 'Client':
+        elif request.user.is_client:
             from performance_management_system.client.models import ClientIndexPage
             client_index_page = ClientIndexPage.objects.child_of(self).live()
             return HttpResponseRedirect(client_index_page[0].slug)
