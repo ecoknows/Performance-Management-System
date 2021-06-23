@@ -14,23 +14,23 @@ from performance_management_system.users.models import User
 class Employee(models.Model):
     user = models.OneToOneField(
         User,
+        null=True,
         on_delete=models.CASCADE,
-        primary_key=True
     )
 
     first_name = models.CharField(max_length=25, null=True)
-    middle_initial = models.CharField(max_length=1,null=True)
+    middle_name = models.CharField(max_length=255,null=True)
     last_name = models.CharField(max_length=25,null=True)
-    address = models.CharField(max_length=255)
-    contact_number = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, null=True)
+    contact_number = models.CharField(max_length=255, null=True)
     birth_day = models.DateField()
-    position = models.CharField(max_length=255)
+    position = models.CharField(max_length=255, null=True)
     
 
     panels = [
         MultiFieldPanel([
             FieldPanel('first_name'),
-            FieldPanel('middle_initial'),
+            FieldPanel('middle_name'),
             FieldPanel('last_name'),    
         ], heading='Employee Complete Name'),
         FieldPanel('address'),
@@ -47,7 +47,7 @@ class Employee(models.Model):
     
     @property
     def employee(self):
-        return self.last_name + ', ' + self.first_name + ' ' +  self.middle_initial + '.' 
+        return self.last_name + ', ' + self.first_name + ' ' +  self.middle_name[0] + '.' 
 
     def __str__(self):
         return self.employee

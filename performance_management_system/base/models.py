@@ -30,7 +30,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
 
 class BaseIndexPage(Page):
     max_count = 1
-    
     def serve(self, request):
         if request.user.is_superuser == True:
             return HttpResponseRedirect('/admin/')

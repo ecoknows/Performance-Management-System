@@ -15,12 +15,12 @@ class Client(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        primary_key=True
+        primary_key=True,
     )
     
-    company = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
-    contact_number = models.CharField(max_length=255)
+    company = models.CharField(max_length=255, null=True)
+    address = models.CharField(max_length=255, null=True)
+    contact_number = models.CharField(max_length=255, null=True)
 
     panels = [
         FieldPanel('company'),
@@ -36,6 +36,28 @@ class Client(models.Model):
     
     def __str__(self):
         return self.company
+    
+    def save(self):        
+        
+        user = User.objects.create_user(username='temp')
+        self.user = user
+        
+        super().save()
+        
+        
+        
+        id = str(IntegerResource.CLIENT_INDEX + self.pk)
+        year_now = str(timezone.now().year - 2000) 
+        username = StringResource.COMPANY_PREFIX_TAG + '-' +  year_now + '-' + id
+        
+        user.set_password(self.company.upper())
+        user.username = username
+        user.email = self.company + StringResource.COMPANTY_EMAIL_SUFFIX,
+        user.save()
+        
+        group = Group.objects.get(name=StringResource.CLIENT)
+        
+        group.user_set.add(user)
 
 
 class ClientIndexPage(Page):

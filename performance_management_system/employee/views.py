@@ -18,12 +18,14 @@ class EmployeeCreateView(CreateView):
         
         user = User.objects.create_user(
             username=username,
-            first_name= instance.first_name or instance.company,
+            first_name= instance.first_name,
+            middle_name=instance.middle_name,
             last_name= instance.last_name,
             password=instance.last_name.upper() + id,
-            employee=instance,
             email=instance.first_name + '.' + instance.last_name + StringResource.COMPANTY_EMAIL_SUFFIX,
         )
+        instance.user = user
+        
         
         group = Group.objects.get(name=StringResource.EMPLOYEE)
         
