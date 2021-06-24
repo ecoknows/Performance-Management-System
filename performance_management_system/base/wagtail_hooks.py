@@ -34,7 +34,7 @@ class HRAdminInfo(ModelAdmin):
     create_view_class = HRAdminCreateView
     menu_label = 'HR Admin'
     menu_icon = 'group'
-    list_display = ('hr_admin','display_image')
+    list_display = ('hr_admin','hr_id','display_image')
     search_fields = ('hr_admin',)
     
 modeladmin_register(HRAdminInfo)

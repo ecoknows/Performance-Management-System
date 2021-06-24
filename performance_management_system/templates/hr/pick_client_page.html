@@ -1,0 +1,38 @@
+{% extends 'base.html'%}
+{% load wagtailimages_tags %}
+
+{% block body_class %}
+	flex
+	flex-col
+	h-screen
+{% endblock %}
+
+{% block header %}
+	{% include 'includes/header.html' with user_model=request.user.hradmin employee_model=employee %}
+{% endblock %}
+
+{% block content %}
+
+<section class="container flex-1 mx-auto space-y-10">
+	<h1 class="font-sans text-4xl font-bold text-center" style="color: #EF8767; letter-spacing: 0.2em;">PICK A CLIENT</h1>
+	<div class="flex flex-wrap ">
+		{% for client in clients %}
+			<a href="add/{{client.pk}}" class="flex flex-col p-6 mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+				
+				<div class="flex justify-center flex-1 space-x-4">
+					{% image client.profile_pic width-150 as profile_pic %}
+					<img src='{{profile_pic.url}}' style="height: 100%;">
+				</div>
+				
+				<div>
+					<h1 class="font-sans text-4xl text-center" style="color: #616161;">
+						{{client.company}}
+					</h1>
+
+				</div>
+			</a>
+		{% endfor %}
+	</div>
+</section>
+
+{% endblock %}

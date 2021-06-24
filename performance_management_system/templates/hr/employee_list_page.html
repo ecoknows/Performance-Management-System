@@ -17,7 +17,7 @@
 <section class="container flex flex-wrap flex-1 mx-auto">
 
 	{% for employee in employees %}
-		<a href='#' class="p-6 mb-10 mr-16 space-y-4 bg-white rounded-3xl" style="width: 28rem; height: 22rem; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+		<a href='employee-details-page/{{employee.pk}}' class="p-6 mb-10 mr-16 space-y-4 bg-white rounded-3xl" style="width: 28rem; height: 22rem; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
 			
 			<div class="flex justify-center space-x-4">
 				{% image employee.profile_pic fill-150x150 as profile_pic %}

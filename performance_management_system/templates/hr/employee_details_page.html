@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
 
 {% block body_class %}
 	flex
@@ -8,14 +8,13 @@
 {% endblock %}
 
 {% block header %}
-	{% include 'includes/header.html' %}
+	{% include 'includes/header.html' with user_model=request.user.hradmin employee_model=employee  %}
 {% endblock %}
 
 {% block content %}
 
-<section class="container mx-auto">
-	<h1>Name: {{employee.first_name}}</h1>
+<section class="container flex flex-wrap flex-1 mx-auto">
+	<a href="pick-a-client/">pick a client</a>
 </section>
-
 
 {% endblock %}

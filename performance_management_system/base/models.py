@@ -143,7 +143,7 @@ class UserEvaluation(ClusterableModel, models.Model):
     employee = models.ForeignKey(
         Employee,
         null=True,
-        related_name='+',
+        related_name='user_evaluation',
         on_delete=models.CASCADE
     )
     client = models.ForeignKey(
@@ -161,21 +161,21 @@ class UserEvaluation(ClusterableModel, models.Model):
         FieldPanel('client'),
     ]
     
-    def save(self):
-        super().save()
+    # def save(self):
+    #     super().save()
         
-        evaluation_categories = EvaluationCategories.objects.all()
-        evaluation_rates = EvaluationRates.objects.all()
-        for category in evaluation_categories:
-            category_assign = EvaluationCategoriesAssign.objects.create(
-                user_evaluation=self,
-                evaluation_category=category
-            )
-            for rate in evaluation_rates.filter(evaluation_categories = category):
-                EvaluationRateAssign.objects.create(
-                    evaluation_categories_assign=category_assign,
-                    evaluation_rates=rate
-                )
+    #     evaluation_categories = EvaluationCategories.objects.all()
+    #     evaluation_rates = EvaluationRates.objects.all()
+    #     for category in evaluation_categories:
+    #         category_assign = EvaluationCategoriesAssign.objects.create(
+    #             user_evaluation=self,
+    #             evaluation_category=category
+    #         )
+    #         for rate in evaluation_rates.filter(evaluation_categories = category):
+    #             EvaluationRateAssign.objects.create(
+    #                 evaluation_categories_assign=category_assign,
+    #                 evaluation_rates=rate
+    #             )
                 
             
     
@@ -212,8 +212,3 @@ class EvaluationPage(Page):
             # Display event page as usual
             return super().serve(request)
             
-        
-    
-    
-
-    

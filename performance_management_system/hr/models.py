@@ -1,17 +1,19 @@
 from django.db import models
 from django.template.response import TemplateResponse
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
 from wagtail.contrib.routable_page.models import route
 from wagtail.core.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     MultiFieldPanel,
 )
 
-from performance_management_system.base.models import BaseAbstractPage
+from performance_management_system.base.models import BaseAbstractPage, UserEvaluation
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client
 from performance_management_system.users.models import User
@@ -19,7 +21,6 @@ from performance_management_system import IntegerResource, StringResource
 
 class HRIndexPage(BaseAbstractPage):
     max_count = 1
-
     parent_page_types = ['base.BaseIndexPage']
     
 class ClientListPage(Page):
@@ -48,9 +49,10 @@ class EmployeeListPage(Page):
         context['employees'] = self.get_employees()
         return context
 
-class ClientDetailsPage(Page):
+
+
+class ClientDetailsPage( Page):
     max_count = 1
-    
     def serve(self, request):
         
         if "query" in request.GET:
@@ -68,27 +70,53 @@ class ClientDetailsPage(Page):
     parent_page_types = ['ClientListPage']
 
 
-class EmployeeDetailsPage(Page):
+
+
+class EmployeeDetailsPage(RoutablePageMixin, Page):
     max_count = 1
     
-    def serve(self, request):
+    def get_clients(self, employee):
+        return Client.objects.exclude(user_evaluation__employee=employee)
+    
+    @route(r'^$') 
+    def default_route(self, request):
+        return HttpResponseRedirect('../')
+    
+    
+
+    @route(r'^(\d+)/$', name='id')
+    def details_user_route(self, request, id):
+        employee = Employee.objects.get(pk=id)
+        return self.render(
+            request,
+            context_overrides={
+            'employee': employee,
+            }
+        )
+    
+
+    @route(r'^(\d+)/pick-a-client/$', name='id')
+    def pick_a_client(self, request, id):
+        employee = Employee.objects.get(pk=id)
+        clients = self.get_clients(employee=employee)
+        return self.render(
+            request,
+            context_overrides={
+            'clients': clients,
+            'employee': employee,
+            },
+            template="hr/pick_client_page.html",
+        )
         
-        if "query" in request.GET:
-            try:
-                return render(request, self.template,{
-                    'employee': Employee.objects.get(pk=request.GET['query'])
-                })
-            except Employee.DoesNotExist:
-                return redirect('/')
-            
-        
-        return super().serve(request)
+    @route(r'^(\d+)/pick-a-client/add/(\d+)/$')
+    def add_a_client(self, request, employee_id, client_id):
+        UserEvaluation.objects.get_or_create(
+            employee_id=employee_id,
+            client_id=client_id
+        )
+        return HttpResponseRedirect('../../')
 
     parent_page_types = ['EmployeeListPage']
-
-    
-    
-        
 
 
 class HrAdmin(models.Model):
