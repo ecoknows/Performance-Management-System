@@ -10,6 +10,7 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 
 from performance_management_system import IntegerResource, StringResource
 from performance_management_system.users.models import User
+from performance_management_system import IS_EVALUATED
 
 
 class Employee(models.Model):
@@ -34,6 +35,12 @@ class Employee(models.Model):
     contact_number = models.CharField(max_length=255, null=True)
     birth_day = models.DateField()
     position = models.CharField(max_length=255, null=True)
+
+    status = models.CharField(
+        max_length=255,
+        choices=IS_EVALUATED,
+        default='none'
+    )
     
 
     panels = [

@@ -9,7 +9,7 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.images.edit_handlers import ImageChooserPanel
 
-from performance_management_system import IntegerResource, StringResource
+from performance_management_system import IntegerResource, StringResource, IS_EVALUATED
 from performance_management_system.users.models import User
 
 class Client(models.Model):
@@ -30,6 +30,13 @@ class Client(models.Model):
     company = models.CharField(max_length=255, null=True)
     address = models.CharField(max_length=255, null=True)
     contact_number = models.CharField(max_length=255, null=True)
+    
+    status = models.CharField(
+        max_length=255,
+        choices=IS_EVALUATED,
+        default='none'
+    )
+    
 
     panels = [
         ImageChooserPanel('profile_pic'),

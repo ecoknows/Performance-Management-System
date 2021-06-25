@@ -8,13 +8,12 @@
 {% endblock %}
 
 {% block header %}
-	{% include 'includes/header.html' with user_model=request.user.hradmin employee_model=employee  %}
+	{% include 'includes/header.html' with user_model=request.user.hradmin employee_model=employee menu_text='Details' %}
 {% endblock %}
 
 {% block content %}
 
 <section class="container flex flex-wrap flex-1 mx-auto">
-	<a href="pick-a-client/">pick a client</a>
 </section>
 
 {% endblock %}

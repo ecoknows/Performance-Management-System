@@ -1,13 +1,14 @@
-{% load static wagtailimages_tags  %}
+{% load static wagtailcore_tags  wagtailimages_tags %}
 
-<header class="flex justify-between p-2 pt-6 pb-20">
+<header class="flex items-start justify-between p-2 pt-6 pb-20">
+	
 	<div class="space-x-2">
 	{% if dashboard %}
 		<h1 class="font-sans text-4xl font-bold tracking-widest" style="color: #EF8767">DASHBOARD</h1>
 	{% elif employee_model %}
 		<div class="flex space-x-4">
 			{% image employee_model.profile_pic fill-80x80 as employee_pic %}
-			<img src="{{employee_pic.url}}" class="rounded-full" width="100">
+			<img src="{{employee_pic.url}}" class="rounded-full" width="100" >
 			<div class="flex flex-col justify-center">
 				<h1 class="font-sans text-5xl font-bold" style="color: #616161;">
 					{{employee}}
@@ -36,13 +37,41 @@
 	{% endif %}
 	</div>
 
-	<div class="flex items-center space-x-4">
+	<div class="flex items-center">
 
-		<div class="p-2 bg-white rounded-full" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-			<img src='{% static "img/icons/notif.png" %}' width="18">
+		<div class="relative w-40" >
+			<h1 class="mr-2 font-sans text-lg font-semibold text-right" style="color: #747474;">
+				{% if filter %}
+				{{filter}}
+				{% else %}
+				{{menu_text}}
+				{% endif %}
+			</h1>
+			<ul id='menu-container' class="absolute hidden w-full p-4 font-sans text-lg font-semibold bg-white rounded-lg" style="color: #747474; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+				<li>
+					<a href="/hr-index-page/">Dashboard</a>
+				</li>
+					{% for menu_list in menu_lists %}
+						
+						<li>
+							<a href="{% pageurl page %}{{employee_id}}{{menu_list.0}}">{{menu_list.1}}</a>
+						</li>
+					{% endfor %}
+				<li>
+					<a href="/logout">Logout</a>
+				</li>
+			</ul>
 		</div>
 		
-		<div class="flex items-center px-2 space-x-2 bg-white rounded-full" style="padding-top: 4px; padding-bottom: 4px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+		<div id="menu-btn" class="p-2 mr-2 rounded-full focus:outline-none">
+			<div id="menu-btn__burger"></div>
+		</div>
+
+		<a href='' class="p-2 mr-2 bg-white rounded-full" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+			<img src='{% static "img/icons/notif.png" %}' width="18">
+		</a>
+
+		<div class="flex items-center px-2 mr-4 space-x-2 bg-white rounded-full" style="padding-top: 4px; padding-bottom: 4px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
 			<img src='{% static "img/icons/search.png" %}' width="18">
 			<input class='focus:outline-none' style="background-color: transparent;" placeholder="Search">
 		</div>
@@ -52,7 +81,13 @@
 			<img src='{{profile_pic.url}}' width="45" class="rounded-full "> 
 			<div class="leading-3 ">
 				<h2 class="font-sans text-2xl font-bold">{{request.user.last_name}}</h2>
-				<a href="/logout" class="font-bold text-md" style="color: #BD732E">Logout</a>
+				{% if request.user.is_hr %}
+				<h3 class="font-semibold text-md" style="color: #979797;">HR Admin</h3>
+				{% elif request.user.is_employee %}	
+				<h3 class="font-semibold text-md" style="color: #979797;">Employee</h3>
+				{% else %}
+				<h3 class="font-semibold text-md" style="color: #979797;">Client</h3>
+				{% endif %}
 			</div>
 
 		</div>

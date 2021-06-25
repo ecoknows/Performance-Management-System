@@ -17,7 +17,7 @@ from performance_management_system.base.models import BaseAbstractPage, UserEval
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client
 from performance_management_system.users.models import User
-from performance_management_system import IntegerResource, StringResource
+from performance_management_system import IntegerResource, StringResource, LIST_MENU, DETAILS_MENU
 
 class HRIndexPage(BaseAbstractPage):
     max_count = 1
@@ -27,26 +27,53 @@ class ClientListPage(Page):
     max_count = 1
     parent_page_types = ['HRIndexPage']
 
-    def get_clients(self):
+    def get_clients(self, request):
+        # filter_query = request.GET.get('filter', None)
+        
+        # if filter_query:
+        #     if filter_query == 'evaluated':
+        #         context['filter'] = 'Evaluated'
+        #     elif filter_query == 'on evaluation':
+        #         context['filter'] = 'On Evaluation'
+        #     return Employee.objects.filter(status=filter_query)
+
         return Client.objects.all()
+    
+    def get_menu_list(self):
+        return LIST_MENU
 
     def get_context(self, request):
         context = super(ClientListPage, self).get_context(request)
 
-        context['clients'] = self.get_clients()
+        context['clients'] = self.get_clients(request)
+        context['menu_lists'] = self.get_menu_list()
         return context
 
 class EmployeeListPage(Page):
     max_count = 1
     parent_page_types = ['HRIndexPage']
     
-    def get_employees(self):
+    def get_employees(self, request, context):
+        filter_query = request.GET.get('filter', None)
+        
+        if filter_query:
+            if filter_query == 'evaluated':
+                context['filter'] = 'Evaluated'
+            elif filter_query == 'on evaluation':
+                context['filter'] = 'On Evaluation'
+            return Employee.objects.filter(status=filter_query)
+
         return Employee.objects.all()
+
+    def get_menu_list(self):
+        return LIST_MENU
 
     def get_context(self, request):
         context = super(EmployeeListPage, self).get_context(request)
 
-        context['employees'] = self.get_employees()
+        context['employees'] = self.get_employees(request, context)
+        context['menu_lists'] = self.get_menu_list()
+
         return context
 
 
@@ -75,8 +102,15 @@ class ClientDetailsPage( Page):
 class EmployeeDetailsPage(RoutablePageMixin, Page):
     max_count = 1
     
-    def get_clients(self, employee):
+    def get_clients_not_picked(self, employee):
         return Client.objects.exclude(user_evaluation__employee=employee)
+
+    def get_user_evaluation_picked(self, employee):
+        return UserEvaluation.objects.filter(employee=employee)
+        
+    def get_menu_list(self):
+        return DETAILS_MENU
+
     
     @route(r'^$') 
     def default_route(self, request):
@@ -87,23 +121,46 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
     @route(r'^(\d+)/$', name='id')
     def details_user_route(self, request, id):
         employee = Employee.objects.get(pk=id)
+        
+        menu_lists = self.get_menu_list()
         return self.render(
             request,
             context_overrides={
+            'employee_id': id+'/',
             'employee': employee,
+            'menu_lists': menu_lists
             }
         )
     
+    @route(r'^(\d+)/clients/$', name='id')
+    def client_list(self, request, id):
+        employee = Employee.objects.get(pk=id)
+        user_evaluations = self.get_user_evaluation_picked(employee=employee)
+        edited_menu_list = self.get_menu_list()
+        menu_lists = edited_menu_list
+        return self.render(
+            request,
+            context_overrides={
+            'employee_id': id+'/',
+            'user_evaluations': user_evaluations,
+            'employee': employee,
+            'menu_lists': menu_lists,
+            },
+            template="hr/clients_picked.html",
+        )
 
     @route(r'^(\d+)/pick-a-client/$', name='id')
     def pick_a_client(self, request, id):
         employee = Employee.objects.get(pk=id)
-        clients = self.get_clients(employee=employee)
+        clients = self.get_clients_not_picked(employee=employee)
+        menu_lists = self.get_menu_list()
         return self.render(
             request,
             context_overrides={
+            'employee_id': id+'/',
             'clients': clients,
             'employee': employee,
+            'menu_lists': menu_lists,
             },
             template="hr/pick_client_page.html",
         )
@@ -114,6 +171,16 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             employee_id=employee_id,
             client_id=client_id
         )
+        
+        employee = Employee.objects.get(pk=employee_id)
+        employee.status = 'on evaluation'
+
+        client = Client.objects.get(pk=client_id)
+        client.status = 'on evaluation'
+
+        employee.save()
+        client.save()
+        
         return HttpResponseRedirect('../../')
 
     parent_page_types = ['EmployeeListPage']
