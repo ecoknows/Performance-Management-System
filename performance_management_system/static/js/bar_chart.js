@@ -1,7 +1,8 @@
 
-var ctx = document.getElementById('myChart').getContext('2d');
 
-var bublegum_gradient = ctx.createLinearGradient(0, 0, 0, 600);
+var ctx = document.getElementById('bar-chart').getContext('2d');
+
+var bublegum_gradient = ctx.createLinearGradient(0, 0, 0, 300);
 bublegum_gradient.addColorStop(0, '#93EDC7');
 bublegum_gradient.addColorStop(1, '#1CD8D2');
 
@@ -28,7 +29,7 @@ blue_gradient.addColorStop(1, '#0500EF');
 
 
 
-var myChart = new Chart(ctx, {
+var barChart = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
@@ -41,11 +42,11 @@ var myChart = new Chart(ctx, {
                 purple_gradient,
                 green_gradient,
                 orange_gradient,
-                blue_gradient
             ]   
         }]
     },
     options: {
+        responsive: true,
         plugins: {
             legend: {
               display: false
