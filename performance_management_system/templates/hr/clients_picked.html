@@ -1,11 +1,6 @@
 {% extends 'base.html'%}
 {% load static wagtailimages_tags %}
 
-{% block body_class %}
-	flex
-	flex-col
-	h-screen
-{% endblock %}
 
 {% block header %}
 	{% include 'includes/header.html' with user_model=request.user.hradmin employee_model=employee menu_text='Clients' %}
@@ -13,7 +8,7 @@
 
 {% block content %}
 
-<section class="container flex-1 mx-auto space-y-10">
+<section class="container flex-1 mx-auto space-y-10" style="padding-top: 120px;">
 	<div class="flex flex-wrap ">
 		{% for user_evaluation in user_evaluations %}
 			{% if user_evaluation.evaluated %}

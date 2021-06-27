@@ -1,11 +1,6 @@
 {% extends 'base.html'%}
 {% load wagtailimages_tags %}
 
-{% block body_class %}
-	flex
-	flex-col
-	h-screen
-{% endblock %}
 
 {% block header %}
 	{% include 'includes/header.html' with user_model=request.user.hradmin employee_model=employee menu_text='Details' %}
@@ -13,7 +8,51 @@
 
 {% block content %}
 
-<section class="container flex flex-wrap flex-1 mx-auto">
+<section class="container flex-col items-center flex-1 h-screen mx-auto lg:flex lg:items-start lg:space-x-4 lg:flex-row" style="padding-top: 100px;">
+	<div class='flex flex-col px-4 space-y-4 lg:px-0 lg:py-4 lg:w-3/5' style="height: 690px;">
+		<div class="w-full bg-white" style="height: 70%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
+
+		</div>
+
+		<div class="w-full bg-white" style="height: 30%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
+
+		</div>
+
+	</div>
+
+	
+	<div class="flex-col px-4 py-4 lg:flex lg:space-x-6 lg:flex-row lg:w-2/5 lg:px-0" style="height: 690px;">
+		<div class="flex flex-col w-full h-full space-y-4 " > 
+			<div class='bg-white' style="height: 60%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+				
+			</div>
+
+			<div class='bg-white' style="height: 40%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+				
+			</div>
+
+		</div>
+
+		<div class="flex flex-col w-full h-full space-y-4" > 
+
+			<div class='flex-1 bg-white' style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+				
+			</div>
+
+			<div class='flex-1 bg-white' style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+				
+			</div>
+
+			
+			<div class='flex-1 bg-white' style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+				
+			</div>
+
+
+		</div>
+
+	</div>
+
 </section>
 
 {% endblock %}
