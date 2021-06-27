@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-{% load wagtailimages_tags %}
+{% load wagtailimages_tags static %}
 
 
 {% block header %}
@@ -10,7 +10,13 @@
 
 <section class="container flex-col items-center flex-1 h-screen mx-auto lg:flex lg:items-start lg:space-x-4 lg:flex-row" style="padding-top: 100px;">
 	<div class='flex flex-col px-4 space-y-4 lg:px-0 lg:py-4 lg:w-3/5' style="height: 690px;">
-		<div class="w-full bg-white" style="height: 70%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
+		<div class="w-full bg-white lg:flex" style="height: 70%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
+			<div class="flex items-center px-4 py-4 lg:w-3/5" >
+				<canvas id="myChart"></canvas>
+			</div>
+			<div style="width: 40%;" >
+				Passion for Excellence
+			</div>
 
 		</div>
 
@@ -53,6 +59,11 @@
 
 	</div>
 
+
 </section>
 
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/chart_employee.js' %}"></script>
 {% endblock %}
