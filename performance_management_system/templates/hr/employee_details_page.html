@@ -10,12 +10,24 @@
 
 <style>
 	.passion-for-excelence{
-		height: 800px;
+		height: 890px;
+	}
+	.passion-for-excelence__body{
+		height: 60%;
+	}
+	.bottom_container{
+		height: 40%;
 	}
 	@media (min-width: 1024px) { 
 		
 	.passion-for-excelence{
 		height: 690px;
+	}
+	.passion-for-excelence__body{
+		height: 70%;
+	}
+	.bottom_container{
+		height: 30%;
 	}
 
 	}
@@ -26,9 +38,9 @@
 
 {% block content %}
 
-<section class="container flex-col items-center flex-1 h-screen mx-auto lg:flex lg:items-start lg:space-x-4 lg:flex-row" style="padding-top: 100px;">
+<section class="container flex-col items-center flex-1 mx-auto lg:h-screen lg:flex lg:items-start lg:space-x-4 lg:flex-row" style="padding-top: 100px;">
 	<div class='flex flex-col px-4 space-y-4 lg:px-0 lg:py-4 lg:w-3/5 passion-for-excelence'>
-		<div class="w-full bg-white lg:flex" style="height: 70%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
+		<div class="w-full bg-white lg:flex passion-for-excelence__body" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
 			<div class="flex items-center px-4 py-4 lg:w-3/5" >
 				<canvas id="bar-chart" height="220"></canvas>
 			</div>
@@ -102,7 +114,7 @@
 							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#B3B1F4, #0100EF)"></div>
 							<h3 class="font-normal">Astorm...</h3>
 						</td>
-						<td class='font-sans font-bold text-center' style='color: #DB0000;'>
+						<td class='font-sans font-bold text-center' style='color: #079E1F;'>
 							5
 						</td>
 					</tr>
@@ -125,37 +137,255 @@
 			</div>
 		</div>
 
-		<div class="w-full bg-white" style="height: 30%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
+		<div class="flex flex-col py-2 space-y-4 lg:py-0 lg:space-y-0 lg:space-x-4 lg:flex-row bottom_container" >
+			<div class="flex flex-col w-full h-full px-4 bg-white " style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
+				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">Quality of Work</h1>
+				<div class='flex items-center justify-center h-full '>
+					<div style="position: relative; height: 100px; width: 90%" >
+						<canvas id="line-chart-quality-of-work" ></canvas>
+					</div>
+				</div>
+
+			</div>
+			<div class="w-full h-full py-2 bg-white" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
+				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">Initiative</h1>
+				<div class='flex items-center justify-center h-full '>
+					<div style="position: relative; height: 100px; width: 90%" >
+						<canvas id="line-chart-initiative" ></canvas>
+					</div>
+				</div>
+
+			</div>
 
 		</div>
 
 	</div>	
 
 	
-	<div class="flex-col px-4 py-4 lg:flex lg:space-x-6 lg:flex-row lg:w-2/5 lg:px-0" style="height: 690px;">
-		<div class="flex flex-col w-full h-full space-y-4 " > 
-			<div class='py-2 space-y-2 bg-white' style="height: 60%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+	<div class="flex-col px-4 py-4 space-y-4 lg:flex lg:space-x-6 lg:flex-row lg:w-2/5 lg:px-0 lg:space-y-0" style="height: 690px;">
+		<div class="flex flex-col flex-1 w-full h-full space-y-4 " > 
+
+			
+			<div class='px-4 py-2 space-y-2 bg-white' style="height: 60%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
 				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">Technical Skill</h1>
-				<div style="height: 200px; position: relative;">
-					<canvas id="polar-area-chart"></canvas>
-				  </div>
+					<div style="height: 170px; position: relative;">
+						<canvas id="polar-area-chart" style="width: 100%;"></canvas>
+					</div>
+				
+				<table class="w-full ">
+					
+					<tr class="font-sans text-lg " style="color: #626262;">
+						<td class="flex items-center space-x-2">
+							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#93EDC7, #1CD8D2)"></div>
+							<h3 class="font-normal">Globe Tel..</h3>
+						</td>
+						<td class='font-sans font-bold text-center' style='color: #079E1F;'>
+							5
+						</td>
+					</tr>
+					
+					<tr class="font-sans text-lg font-light" style="color: #626262;">
+						<td class="flex items-center space-x-2">
+							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#F08787, #FF3F3F)"></div>
+							<h3 class="font-normal">Smart Te..</h3>
+						</td>
+						<td class='font-sans font-bold text-center' style='color: #DB9000;'>
+							4
+						</td>
+					</tr>
+
+					
+					<tr class="font-sans text-lg font-light" style="color: #626262;">
+						<td class="flex items-center space-x-2">
+							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#AD86FF, #7C3FFF)"></div>
+							<h3 class="font-normal">PLDT Hom.</h3>
+						</td>
+						<td class='font-sans font-bold text-center' style='color: #DB0000;'>
+							2
+						</td>
+					</tr>
+
+					
+					<tr class="font-sans text-lg font-light" style="color: #626262;">
+						<td class="flex items-center space-x-2">
+							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#7DDB97, #00A62E)"></div>
+							<h3 class="font-normal">Converge</h3>
+						</td>
+						<td class='font-sans font-bold text-center' style='color: #DB9000;'>
+							3
+						</td>
+					</tr>
+
+				</table>
+				
+				<div class="flex items-center justify-center space-x-8 font-bold text-md" style="color: #5785DE;">
+					<a href='#'>
+						Back
+					</a>
+
+					<span>3</span>
+
+					<a href='#'>
+						Next
+					</a>
+
+				</div>
 			</div>
 
-			<div class='bg-white' style="height: 40%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+			<div class='px-2 py-2 space-y-2 bg-white' style="height: 40%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">Job Knowledge</h1>
+				<div style="height: 100px; position: relative;">
+					<canvas id="pie-chart" style="width: 100%;"></canvas>
+				</div>
+
+				<div class="flex justify-center space-x-2">
+					<table>
+						<tr class="font-sans text-lg" style="color: #626262;">
+							<td class="flex items-center pr-4 space-x-2">
+								<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#93EDC7, #1CD8D2)"></div>
+								<h3 class="font-normal">Globe..</h3>
+							</td>
+							<td class='font-sans font-bold text-center' style='color: #079E1F;'>
+								5
+							</td>
+						</tr>
+						
+						<tr class="font-sans text-lg font-light" style="color: #626262;">
+							<td class="flex items-center space-x-2">
+								<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#F08787, #FF3F3F)"></div>
+								<h3 class="font-normal">Smart..</h3>
+							</td>
+							<td class='font-sans font-bold text-center' style='color: #DB9000;'>
+								4
+							</td>
+						</tr>
+	
+					</table>
+	
+					
+					<table>
+						<tr class="font-sans text-lg font-light" style="color: #626262;">
+							<td class="flex items-center pr-4 space-x-2">
+								<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#AD86FF, #7C3FFF)"></div>
+								<h3 class="font-normal">PLDT..</h3>
+							</td>
+							<td class='font-sans font-bold text-center' style='color: #DB0000;'>
+								2
+							</td>
+						</tr>
+	
+						
+						<tr class="font-sans text-lg font-light" style="color: #626262;">
+							<td class="flex items-center pr-4 space-x-2">
+								<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#7DDB97, #00A62E)"></div>
+								<h3 class="font-normal">Conver..</h3>
+							</td>
+							<td class='font-sans font-bold text-center' style='color: #DB9000;'>
+								3
+							</td>
+						</tr>
+					</table>
+					
+					
+
+				</div>
 				
+				
+
+
+				<div class="flex items-center justify-center space-x-8 font-bold text-md" style="color: #5785DE;">
+					<a href='#'>
+						Back
+					</a>
+
+					<span>3</span>
+
+					<a href='#'>
+						Next
+					</a>
+
+				</div>
 			</div>
 
 		</div>
 
-		<div class="flex flex-col w-full h-full space-y-4" > 
+		<div class="flex flex-col flex-1 h-full space-y-4" > 
 			
-			<div class='flex-1 bg-white' style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+			<div class='flex flex-col justify-center flex-1 px-4 py-2 space-y-2 bg-white' style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">Productivity</h1>
 				
+				<div style="height: 100px; position: relative; width: 100%;">
+					<canvas id="doughnut-chart" style="width: 100%;"></canvas>
+				</div>
+				<table>
+					
+					<tr class="font-sans text-lg" style="color: #626262;">
+						<td class="flex items-center pr-4 space-x-2">
+							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#93EDC7, #1CD8D2)"></div>
+							<h3 class="font-normal">Globe Tel..</h3>
+						</td>
+						<td class='font-sans font-bold text-center' style='color: #079E1F;'>
+							5
+						</td>
+					</tr>
+					
+					<tr class="font-sans text-lg font-light" style="color: #626262;">
+						<td class="flex items-center space-x-2">
+							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#F08787, #FF3F3F)"></div>
+							<h3 class="font-normal">Smart Te..</h3>
+						</td>
+						<td class='font-sans font-bold text-center' style='color: #DB9000;'>
+							4
+						</td>
+					</tr>
+
+					
+					<tr class="font-sans text-lg font-light" style="color: #626262;">
+						<td class="flex items-center space-x-2">
+							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#AD86FF, #7C3FFF)"></div>
+							<h3 class="font-normal">PLDT Hom.</h3>
+						</td>
+						<td class='font-sans font-bold text-center' style='color: #DB0000;'>
+							2
+						</td>
+					</tr>
+
+					
+					<tr class="font-sans text-lg font-light" style="color: #626262;">
+						<td class="flex items-center space-x-2">
+							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#7DDB97, #00A62E)"></div>
+							<h3 class="font-normal">Converge</h3>
+						</td>
+						<td class='font-sans font-bold text-center' style='color: #DB9000;'>
+							3
+						</td>
+					</tr>
+
+				</table>
+				
+
+
+
+				<div class="flex items-center justify-center space-x-8 font-bold text-md" style="color: #5785DE;">
+					<a href='#'>
+						Back
+					</a>
+
+					<span>3</span>
+
+					<a href='#'>
+						Next
+					</a>
+
+				</div>
 			</div>
 
 			<div class='flex-1 p-4 bg-white' style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
 				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">Dependability</h1>
-				<canvas id="radar-chart" height="100"></canvas>
+				
+				<div style="position: relative; height: 230px;">
+					<canvas id="radar-chart" style="width: 100%;"></canvas>
+				</div>
 				
 				<div class="flex items-center justify-center space-x-8 font-bold text-md" style="color: #5785DE;">
 					<a href='#'>
@@ -186,4 +416,7 @@
 <script src="{% static 'js/bar_chart.js' %}"></script>
 <script src="{% static 'js/radar_chart.js' %}"></script>
 <script src="{% static 'js/polar_area_chart.js' %}"></script>
+<script src="{% static 'js/pie_chart.js' %}"></script>
+<script src="{% static 'js/doughnut_chart.js' %}"></script>
+<script src="{% static 'js/line_chart.js' %}"></script>
 {% endblock %}

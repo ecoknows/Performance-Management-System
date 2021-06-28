@@ -26,6 +26,8 @@ var radarChart = new Chart( radar_ctx, {
     },
     options: {
         responsive: true,
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
               display: false

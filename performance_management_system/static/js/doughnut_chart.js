@@ -1,9 +1,9 @@
+    
 
+var doughnut_ctx = document.getElementById('doughnut-chart');
 
-var polarArea_ctx = document.getElementById('polar-area-chart');
-
-var polarAreaChart = new Chart( polarArea_ctx, {
-    type: 'polarArea',
+var doughnutChart = new Chart( doughnut_ctx, {
+    type: 'doughnut',
     data: {
         labels: [
             'Globe Tel...',
@@ -17,6 +17,7 @@ var polarAreaChart = new Chart( polarArea_ctx, {
                 5,
                 3,
                 2,
+                1
             ],
             backgroundColor: [
                 bublegum_gradient,
@@ -24,6 +25,7 @@ var polarAreaChart = new Chart( polarArea_ctx, {
                 purple_gradient,
                 green_gradient,
                 orange_gradient,
+                blue_gradient
             ],
             label: 'My dataset', // for legend
         }]

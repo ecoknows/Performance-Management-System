@@ -1,9 +1,9 @@
 
 
-var polarArea_ctx = document.getElementById('polar-area-chart');
+var pie_ctx = document.getElementById('pie-chart');
 
-var polarAreaChart = new Chart( polarArea_ctx, {
-    type: 'polarArea',
+var pieChart = new Chart( pie_ctx, {
+    type: 'pie',
     data: {
         labels: [
             'Globe Tel...',
@@ -17,6 +17,7 @@ var polarAreaChart = new Chart( polarArea_ctx, {
                 5,
                 3,
                 2,
+                1
             ],
             backgroundColor: [
                 bublegum_gradient,
@@ -24,6 +25,7 @@ var polarAreaChart = new Chart( polarArea_ctx, {
                 purple_gradient,
                 green_gradient,
                 orange_gradient,
+                blue_gradient
             ],
             label: 'My dataset', // for legend
         }]
