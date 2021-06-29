@@ -95,42 +95,21 @@ class EvaluationCategories(ClusterableModel):
         FieldPanel('category_name'),
         InlinePanel('evaluation_rates', label="Evaluation Rates"),
     ]
-class EvaluationCategoriesAssign(ClusterableModel,Orderable):
-    
-    user_evaluation = ParentalKey(
-        'UserEvaluation', 
-        null=True,
-        on_delete=models.CASCADE, 
-        related_name='evaluation_categories_assign'
-    )
-    
-    evaluation_category = models.ForeignKey(
-        'EvaluationCategories',
-        null=True,
-        related_name='+',
-        on_delete=models.CASCADE
-    )
-    
-    panels = [
-        FieldPanel('evaluation_category'),
-        InlinePanel('evaluation_rates_assign'),
-    ]
 
 class EvaluationRateAssign(Orderable):
     
-    evaluation_categories_assign = ParentalKey(
-        'EvaluationCategoriesAssign', 
-        null=True,
+    user_evaluation = ParentalKey(
+        'UserEvaluation', 
         on_delete=models.CASCADE, 
-        related_name='evaluation_rates_assign'
-    )
-    
-    evaluation_rates = models.ForeignKey(
-        'EvaluationRates',
         null=True,
-        related_name='+',
-        on_delete=models.CASCADE
-    )
+        related_name='evaluation_rates_assign')
+    
+    evaluation_rate = ParentalKey(
+        'EvaluationRates', 
+        on_delete=models.CASCADE, 
+        null=True,
+        related_name='evaluation_rates_assign')
+
     
     rate = models.IntegerField(default=0)
     
@@ -160,23 +139,6 @@ class UserEvaluation(ClusterableModel, models.Model):
         FieldPanel('employee'),
         FieldPanel('client'),
     ]
-    
-    # def save(self):
-    #     super().save()
-        
-    #     evaluation_categories = EvaluationCategories.objects.all()
-    #     evaluation_rates = EvaluationRates.objects.all()
-    #     for category in evaluation_categories:
-    #         category_assign = EvaluationCategoriesAssign.objects.create(
-    #             user_evaluation=self,
-    #             evaluation_category=category
-    #         )
-    #         for rate in evaluation_rates.filter(evaluation_categories = category):
-    #             EvaluationRateAssign.objects.create(
-    #                 evaluation_categories_assign=category_assign,
-    #                 evaluation_rates=rate
-    #             )
-                
             
     
 
@@ -195,6 +157,7 @@ class EvaluationPage(Page):
             return context
         for user_evaluation in  request.user.client.user_evaluation.all():
             context['user_evaluation'] = user_evaluation
+        context['evaluation_categories'] = EvaluationCategories.objects.all()
             
         return context
 
@@ -202,11 +165,17 @@ class EvaluationPage(Page):
     def serve(self, request):
         if request.method == 'POST':
             
-            for user_evaluation in  request.user.client.user_evaluation.all():
-                for category in user_evaluation.evaluation_categories_assign.all():
-                    for rate in category.evaluation_rates_assign.all():
-                        rate.rate = request.POST['question-'+str(rate.pk)]
-                        rate.save()
+            for category in EvaluationCategories.objects.all():
+                for rate in category.evaluation_rates.all():
+                    evaluation_rate_assign = EvaluationRateAssign.objects.get_or_create(
+                        user_evaluation=request.user.client.user_evaluation.all()[0],
+                        evaluation_rate=rate,
+                    )
+                    evaluation_rate_assign.rate= request.POST['question-'+str(rate.pk)]
+                    evaluation_rate_assign.save()
+
+
+
             return super().serve(request)
         else:
             # Display event page as usual

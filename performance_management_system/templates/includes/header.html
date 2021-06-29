@@ -9,6 +9,7 @@
 			{% elif employee_model %}
 				<div class="flex space-x-4">
 					{% image employee_model.profile_pic fill-60x60 as employee_pic %}
+					
 					<img src="{{employee_pic.url}}" class="rounded-full" style="width: 60px; height: 60px;">
 					<div class="flex flex-col justify-center">
 						<h1 class="font-sans text-3xl font-bold" style="color: #616161;">
@@ -77,7 +78,21 @@
 					<input class='focus:outline-none' style="background-color: transparent;" placeholder="Search">
 				</div>
 		
-				<div class="flex items-start space-x-2">
+				<div class="flex items-start space-x-4">
+					{% if request.user.is_client %}
+					{% image user_model.profile_pic fill-80x80 as profile_pic %}
+					<img src='{{profile_pic.url}}' width="45" class="rounded-full" > 
+					<div class="leading-3 ">
+						<h2 class="font-sans text-2xl font-bold">{{user_model.company}}</h2>
+						{% if request.user.is_hr %}
+						<h3 class="font-semibold text-md" style="color: #979797;">HR Admin</h3>
+						{% elif request.user.is_employee %}	
+						<h3 class="font-semibold text-md" style="color: #979797;">Employee</h3>
+						{% else %}
+						<h3 class="font-semibold text-md" style="color: #979797;">Client</h3>
+						{% endif %}
+					</div>
+					{% else %}
 					{% image user_model.profile_pic fill-80x80 as profile_pic %}
 					<img src='{{profile_pic.url}}' width="45" class="rounded-full "> 
 					<div class="leading-3 ">
@@ -90,6 +105,7 @@
 						<h3 class="font-semibold text-md" style="color: #979797;">Client</h3>
 						{% endif %}
 					</div>
+					{% endif %}
 		
 				</div>
 		

@@ -9,28 +9,14 @@
 {% endblock %}
 
 {% block header %}
-	{% include 'includes/header.html' %}
+	{% include 'includes/header.html'  with user_model=request.user.client %}
 {% endblock %}
 
 {% block content %}
 
 
-<section class="container flex flex-col flex-1 mx-auto space-y-4">
+<section class="container flex flex-col flex-1 mx-auto space-y-4" style="padding-top: 120px;">
 		
-	<div class="flex items-center justify-center space-x-4">
-		<div class="w-32 h-32 bg-black rounded-full"></div>
-
-		<div class="leading-4">
-			<h1 class="font-sans text-3xl font-bold">{{request.user.first_name}}</h1>
-			<h2>Human Resource</h2>
-		</div>
-	</div>
-
-	<div class="flex flex-col flex-1 space-y-2">
-
-
-
-	</div>
 
 </section>
 

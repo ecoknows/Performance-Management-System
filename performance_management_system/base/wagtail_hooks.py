@@ -24,7 +24,7 @@ class EmployeesInfo(ModelAdmin):
     create_view_class = EmployeeCreateView
     menu_label = 'Employees'
     menu_icon = 'group'
-    list_display = ('employee','display_image','status')
+    list_display = ('employee','employee_id','display_image','status')
     search_fields = ('employee',)
     
 modeladmin_register(EmployeesInfo)
@@ -45,7 +45,7 @@ class ClientsInfo(ModelAdmin):
     create_view_class = ClientCreateView
     menu_label = 'Clients'
     menu_icon = 'group'
-    list_display = ('company','display_image')
+    list_display = ('company','client_id','display_image')
     
 modeladmin_register(ClientsInfo)
 

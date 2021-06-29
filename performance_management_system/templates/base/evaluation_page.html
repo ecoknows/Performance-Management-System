@@ -90,7 +90,7 @@
 {% endblock %}
 
 {% block content %}
-<section class="container mx-auto">
+<section class="container mx-auto" style="padding-top: 120px;">
 	<form action="{% pageurl page %}" method="POST">
 		{% csrf_token %}
 		<div>
@@ -100,12 +100,12 @@
           
 				</div>
 			</div>
-			{% for category in user_evaluation.evaluation_categories_assign.all %}
+			{% for category in evaluation_categories %}
 			<div>
 				<div class="flex px-4 py-2 text-white bg-black">
 					<div class="flex-1">
 						<label class="font-sans text-2xl font-bold ">
-							{{category.evaluation_category}}
+							{{category}}
 						</label>
 					</div>
 					<div class="flex justify-center flex-1">
@@ -116,13 +116,14 @@
 						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg">5</h1>
 					</div>
 				</div>
-				{% for rate in category.evaluation_rates_assign.all %}
+				{% for rate in category.evaluation_rates.all %}
 						<div class="flex px-4 py-2 border-b border-gray-600 " style="min-height: 50px;">
 							<div class="flex-1">
 								<label class="text-xl">
-									{{rate.evaluation_rates}}
+									{{rate}}
 								</label>
 							</div>
+              {% get_rate_assign rate request.user.client.user_evaluation %}
 							<div class="flex items-center justify-center flex-1">
 								{% for i in self.evaluation_max_rate|times %}
 									<input type="radio" name="question-{{rate.pk}}" value="{{i}}" {% if rate.rate == i %}checked{% endif %} required class=" option-input radio"
