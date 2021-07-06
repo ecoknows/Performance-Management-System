@@ -4,8 +4,8 @@
 	
 	<div class="container flex items-center justify-between h-full mx-auto">
 		<div class="space-x-2">
-			{% if dashboard %}
-				<h1 class="font-sans text-4xl font-bold tracking-widest" style="color: #EF8767">DASHBOARD</h1>
+			{% if title %}
+				<h1 class="font-sans text-4xl font-bold tracking-widest" style="color: #EF8767">{{title}}</h1>
 			{% elif employee_model %}
 				<div class="flex space-x-4">
 					{% image employee_model.profile_pic fill-60x60 as employee_pic %}

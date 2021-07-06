@@ -9,8 +9,10 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.images.edit_handlers import ImageChooserPanel
 
-from performance_management_system import IntegerResource, StringResource, IS_EVALUATED
+from performance_management_system import IntegerResource, StringResource, IS_EVALUATED, LIST_MENU
 from performance_management_system.users.models import User
+from performance_management_system.employee.models import Employee
+
 
 class Client(models.Model):
     user = models.OneToOneField(
@@ -71,3 +73,34 @@ class Client(models.Model):
 
 class ClientIndexPage(Page):
     max_count = 1
+
+    def get_menu_list(self):
+        return LIST_MENU
+
+    def get_assign_employee(self, request, context):
+        from performance_management_system.base.models import UserEvaluation
+        filter_query = request.GET.get('filter', None)
+        
+        if filter_query:
+            if filter_query == 'evaluated':
+                context['filter'] = 'Evaluated'
+                return UserEvaluation.objects.filter(
+                    evaluated=True,
+                    client=request.user.client
+                )
+            elif filter_query == 'on evaluation':
+                context['filter'] = 'On Evaluation'
+                return UserEvaluation.objects.filter(
+                    evaluated=False,
+                    client=request.user.client
+                )
+
+        return UserEvaluation.objects.filter(client=request.user.client)
+        
+    def get_context(self, request):
+        context = super(ClientIndexPage, self).get_context(request)
+
+        context['user_evaluations'] = self.get_assign_employee(request, context)
+        context['menu_lists'] = self.get_menu_list()
+
+        return context

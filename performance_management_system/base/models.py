@@ -150,6 +150,7 @@ class EvaluationPage(Page):
         InlinePanel('evaluation_categories', label="Evaluation Categories"),
     ]
     
+    parent_page_types = ['client.ClientIndexPage']
 
     def get_context(self, request):
         context = super().get_context(request)
