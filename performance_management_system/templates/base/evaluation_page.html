@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block header %}
-	{% include 'includes/header.html' with user_model=request.user.client %}
+	{% include 'includes/header.html' with user_model=request.user.client employee_model=user_evaluation.employee menu_text='Evaluation'%}
 {% endblock %}
 
 {% block style %}
@@ -89,7 +89,7 @@
 
 {% block content %}
 <section class="container mx-auto" style="padding-top: 120px;">
-	<form action="{% pageurl page %}" method="POST">
+	<form method="POST">
 		{% csrf_token %}
 		<div>
 			{% load forloop_tags %}
@@ -100,28 +100,28 @@
 			</div>
 			{% for category in evaluation_categories %}
 			<div>
-				<div class="flex px-4 py-2 text-white bg-black">
+				<div class="flex px-4 py-2 text-white " style="background-color: #2b4949;">
 					<div class="flex-1">
 						<label class="font-sans text-2xl font-bold ">
 							{{category}}
 						</label>
 					</div>
 					<div class="flex justify-center flex-1">
-						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg">1</h1>
-						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg">2</h1>
-						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg">3</h1>
-						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg">4</h1>
-						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg">5</h1>
+						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg font-sans font-semibold">1</h1>
+						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg font-sans font-semibold">2</h1>
+						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg font-sans font-semibold">3</h1>
+						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg font-sans font-semibold">4</h1>
+						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg font-sans font-semibold">5</h1>
 					</div>
 				</div>
 				{% for rate in category.evaluation_rates.all %}
 						<div class="flex px-4 py-2 border-b border-gray-600 " style="min-height: 50px;">
 							<div class="flex-1">
-								<label class="text-xl">
+								<label class="text-xl font-sans">
 									{{rate}}
 								</label>
 							</div>
-              {% get_rate_assign rate request.user.client.user_evaluation %}
+              {% get_rate_assign rate user_evaluation %}
 							<div class="flex items-center justify-center flex-1">
 								{% for i in self.evaluation_max_rate|times %}
 									<input type="radio" name="question-{{rate.pk}}" value="{{i}}" {% if rate.rate == i %}checked{% endif %} required class=" option-input radio"
@@ -137,7 +137,9 @@
 				{% endfor %}
 			</div>
 		</div>
-		<input type="submit">
+    <div class="flex items-center justify-center py-10">
+      <input type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="py-2 px-4 text-white font-sans text-lg font-semibold">
+    </div>
 	</form>
 </section>
 {% endblock %}

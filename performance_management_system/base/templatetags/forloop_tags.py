@@ -12,7 +12,7 @@ def to_str(number):
 
 @register.simple_tag
 def get_rate_assign(rate, user_evaluation):
-    rate_assigns = user_evaluation.all()[0].evaluation_rates_assign.all()
+    rate_assigns = user_evaluation.evaluation_rates_assign.all()
     for rate_assign in rate_assigns:
         if rate_assign.evaluation_rate == rate:
             rate.rate = rate_assign.rate

@@ -12,6 +12,7 @@ from wagtail.admin.edit_handlers import (
 
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
+from performance_management_system import LIST_MENU
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client
 
@@ -142,7 +143,7 @@ class UserEvaluation(ClusterableModel, models.Model):
             
     
 
-class EvaluationPage(Page):
+class EvaluationPage(RoutablePageMixin, Page):
     evaluation_max_rate = models.IntegerField(default=0)
     
     content_panels = Page.content_panels + [
@@ -162,23 +163,44 @@ class EvaluationPage(Page):
             
         return context
 
+    @route(r'^$') 
+    def default_route(self, request):
+        return HttpResponseRedirect('../')
     
-    def serve(self, request):
-        if request.method == 'POST':
+    def get_menu_list(self):
+        return LIST_MENU
+    
+    @route(r'^(\d+)/$', name='id')
+    def evaluate_user_with_id(self, request, id):
+        user_evaluation = UserEvaluation.objects.get(pk=id)
+
+        if request.method == 'POST' and request.POST.get('submit-btn', None):
             
             for category in EvaluationCategories.objects.all():
                 for rate in category.evaluation_rates.all():
-                    evaluation_rate_assign = EvaluationRateAssign.objects.get_or_create(
-                        user_evaluation=request.user.client.user_evaluation.all()[0],
+                    evaluation_rate_assign, created = EvaluationRateAssign.objects.get_or_create(
+                        user_evaluation=user_evaluation,
                         evaluation_rate=rate,
                     )
-                    evaluation_rate_assign.rate= request.POST['question-'+str(rate.pk)]
-                    evaluation_rate_assign.save()
 
+                    if evaluation_rate_assign:
+                        evaluation_rate_assign.rate= request.POST['question-'+str(rate.pk)]
+                        evaluation_rate_assign.save()
+                        
+            update_user_evaluation = UserEvaluation.objects.get(pk=id)
+            update_user_evaluation.evaluated = True
+            update_user_evaluation.save()
 
-
-            return super().serve(request)
-        else:
-            # Display event page as usual
-            return super().serve(request)
+        
+            
+                    
+        
+        menu_lists = self.get_menu_list()
+        return self.render(
+            request,
+            context_overrides={
+            'user_evaluation': user_evaluation,
+            'menu_lists': menu_lists
+            }
+        )
             
