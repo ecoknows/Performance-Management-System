@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-{% load wagtailimages_tags static %}
+{% load wagtailimages_tags static forloop_tags %}
 
 
 {% block header %}
@@ -413,6 +413,11 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+	let test = '{{employee.user_evaluation.all | user_evaluation_data_filter | safe }}'
+	console.log(JSON.parse(test));
+</script>
+
 <script src="{% static 'js/bar_chart.js' %}"></script>
 <script src="{% static 'js/radar_chart.js' %}"></script>
 <script src="{% static 'js/polar_area_chart.js' %}"></script>

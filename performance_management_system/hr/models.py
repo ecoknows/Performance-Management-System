@@ -33,8 +33,8 @@ class ClientListPage(Page):
         # if filter_query:
         #     if filter_query == 'evaluated':
         #         context['filter'] = 'Evaluated'
-        #     elif filter_query == 'on evaluation':
-        #         context['filter'] = 'On Evaluation'
+        #     elif filter_query == 'on-evaluation':
+        #         context['filter'] = 'on-evaluation'
         #     return Employee.objects.filter(status=filter_query)
 
         return Client.objects.all()
@@ -59,8 +59,8 @@ class EmployeeListPage(Page):
         if filter_query:
             if filter_query == 'evaluated':
                 context['filter'] = 'Evaluated'
-            elif filter_query == 'on evaluation':
-                context['filter'] = 'On Evaluation'
+            elif filter_query == 'on-evaluation':
+                context['filter'] = 'on-evaluation'
             return Employee.objects.filter(status=filter_query)
 
         return Employee.objects.all()
@@ -173,10 +173,10 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
         )
         
         employee = Employee.objects.get(pk=employee_id)
-        employee.status = 'on evaluation'
+        employee.status = 'on-evaluation'
 
         client = Client.objects.get(pk=client_id)
-        client.status = 'on evaluation'
+        client.status = 'on-evaluation'
 
         employee.save()
         client.save()

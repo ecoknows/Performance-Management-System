@@ -28,7 +28,6 @@ blue_gradient.addColorStop(1, '#0500EF');
 
 
 
-
 var barChart = new Chart(ctx, {
     type: 'bar',
     data: {

@@ -191,6 +191,17 @@ class EvaluationPage(RoutablePageMixin, Page):
             update_user_evaluation.evaluated = True
             update_user_evaluation.save()
 
+            employee = user_evaluation.employee
+            employee_not_evaluated = employee.user_evaluation.filter(evaluated=False)
+
+            if len(employee_not_evaluated) == 0:
+                employee.status = 'evaluated'
+                employee.save()
+                
+            
+            
+
+
         
             
                     
