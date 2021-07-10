@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-{% load wagtailimages_tags static forloop_tags %}
+{% load wagtailimages_tags static forloop_tags wagtailcore_tags  %}
 
 
 {% block header %}
@@ -42,10 +42,10 @@
 	<div class='flex flex-col px-4 space-y-4 lg:px-0 lg:py-4 lg:w-3/5 passion-for-excelence'>
 		<div class="w-full bg-white lg:flex passion-for-excelence__body" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
 			<div class="flex items-center px-4 py-4 lg:w-3/5" >
-				<canvas id="bar-chart" height="220"></canvas>
+				<canvas id="bar-chart" height="220" data-url='/data_chart/{{categories.0.pk}}/{{employee_id}}' ></canvas>
 			</div>
 			<div class='flex flex-col justify-center px-4 space-y-4 lg:w-2/5'>
-				<h1 class="font-sans text-xl font-bold text-center lg:text-4xl" style="color: #939393;">Passion for Excelence</h1>
+				<h1 class="font-sans text-xl font-bold text-center lg:text-4xl" style="color: #939393;">{{categories.0}}</h1>
 				
 				<table class="w-full ">
 					<tr class="font-sans text-lg" style="color: #AEAEAE;">
@@ -56,8 +56,12 @@
 							Performance
 						</th>
 					</tr>
+
+					<tbody id="bar-chart-tbody">
+						
+					</tbody>
 					
-					<tr class="font-sans text-lg " style="color: #626262;">
+					<!-- <tr class="font-sans text-lg " style="color: #626262;">
 						<td class="flex items-center space-x-2">
 							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#93EDC7, #1CD8D2)"></div>
 							<h3 class="font-normal">Globe Tel..</h3>
@@ -66,59 +70,7 @@
 							5
 						</td>
 					</tr>
-					
-					<tr class="font-sans text-lg font-light" style="color: #626262;">
-						<td class="flex items-center space-x-2">
-							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#F08787, #FF3F3F)"></div>
-							<h3 class="font-normal">Smart Te..</h3>
-						</td>
-						<td class='font-sans font-bold text-center' style='color: #DB9000;'>
-							4
-						</td>
-					</tr>
-
-					
-					<tr class="font-sans text-lg font-light" style="color: #626262;">
-						<td class="flex items-center space-x-2">
-							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#AD86FF, #7C3FFF)"></div>
-							<h3 class="font-normal">PLDT Hom.</h3>
-						</td>
-						<td class='font-sans font-bold text-center' style='color: #DB0000;'>
-							2
-						</td>
-					</tr>
-
-					
-					<tr class="font-sans text-lg font-light" style="color: #626262;">
-						<td class="flex items-center space-x-2">
-							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#7DDB97, #00A62E)"></div>
-							<h3 class="font-normal">Converge</h3>
-						</td>
-						<td class='font-sans font-bold text-center' style='color: #DB9000;'>
-							3
-						</td>
-					</tr>
-
-					<tr class="font-sans text-lg font-light" style="color: #626262;">
-						<td class="flex items-center space-x-2">
-							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#FFB9A3, #EE3900)"></div>
-							<h3 class="font-normal">Red Rail...</h3>
-						</td>
-						<td class='font-sans font-bold text-center' style='color: #DB0000;'>
-							1
-						</td>
-					</tr>
-
-					<tr class="font-sans text-lg font-light" style="color: #626262;">
-						<td class="flex items-center space-x-2">
-							<div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#B3B1F4, #0100EF)"></div>
-							<h3 class="font-normal">Astorm...</h3>
-						</td>
-						<td class='font-sans font-bold text-center' style='color: #079E1F;'>
-							5
-						</td>
-					</tr>
-
+					 -->
 
 				</table>
 
@@ -413,11 +365,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-	let test = '{{employee.user_evaluation.all | user_evaluation_data_filter | safe }}'
-	console.log(JSON.parse(test));
-</script>
-
 <script src="{% static 'js/bar_chart.js' %}"></script>
 <script src="{% static 'js/radar_chart.js' %}"></script>
 <script src="{% static 'js/polar_area_chart.js' %}"></script>

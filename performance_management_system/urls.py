@@ -7,6 +7,7 @@ from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from performance_management_system.search import views as search_views
+from performance_management_system.hr import views as hr_views
 
 urlpatterns = [
     path('django-admin/', admin.site.urls),
@@ -15,6 +16,7 @@ urlpatterns = [
     path('documents/', include(wagtaildocs_urls)),
 
     path('search/', search_views.search, name='search'),
+    path('data_chart/<int:category_id>/<int:employee_id>/', hr_views.data_chart, name='data_charts'),
 
 ]
 

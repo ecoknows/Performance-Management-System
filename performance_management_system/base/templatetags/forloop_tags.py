@@ -22,6 +22,3 @@ def get_rate_assign(rate, user_evaluation):
 
     return ''
  
-@register.filter(name='user_evaluation_data_filter') 
-def user_evaluation_data_filter(user_evaluation):   
-    return serializers.serialize("json", user_evaluation,cls=DjangoJSONEncoder)

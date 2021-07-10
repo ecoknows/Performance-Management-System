@@ -184,7 +184,7 @@ class EvaluationPage(RoutablePageMixin, Page):
                     )
 
                     if evaluation_rate_assign:
-                        evaluation_rate_assign.rate= request.POST['question-'+str(rate.pk)]
+                        evaluation_rate_assign.rate= int(request.POST['question-'+str(rate.pk)] )+ 1
                         evaluation_rate_assign.save()
                         
             update_user_evaluation = UserEvaluation.objects.get(pk=id)

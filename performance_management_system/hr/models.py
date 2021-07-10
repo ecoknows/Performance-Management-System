@@ -13,7 +13,7 @@ from wagtail.admin.edit_handlers import (
     MultiFieldPanel,
 )
 
-from performance_management_system.base.models import BaseAbstractPage, UserEvaluation
+from performance_management_system.base.models import BaseAbstractPage, UserEvaluation, EvaluationCategories
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client
 from performance_management_system.users.models import User
@@ -121,11 +121,13 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
     @route(r'^(\d+)/$', name='id')
     def details_user_route(self, request, id):
         employee = Employee.objects.get(pk=id)
+        categories = EvaluationCategories.objects.all()
         
         menu_lists = self.get_menu_list()
         return self.render(
             request,
             context_overrides={
+            'categories': categories,
             'employee_id': id+'/',
             'employee': employee,
             'menu_lists': menu_lists

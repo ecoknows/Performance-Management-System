@@ -4,8 +4,14 @@ from django.utils import timezone
 
 from wagtail.contrib.modeladmin.views import CreateView
 
+from performance_management_system.base.models import UserEvaluation, EvaluationCategories, EvaluationPage
 from performance_management_system.users.models import User
 from performance_management_system import IntegerResource, StringResource
+
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+
+import math
 
 class HRAdminCreateView(CreateView):
     
@@ -33,3 +39,39 @@ class HRAdminCreateView(CreateView):
         group.user_set.add(user)
 
         return super().form_valid(form)
+
+def data_chart(request, category_id, employee_id):
+
+    employee_evaluations = UserEvaluation.objects.filter(employee_id = employee_id, evaluated = True)
+    max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+
+    label = []
+    data = []
+    table = []
+    html_table = ''
+
+    for employee_evaluation in employee_evaluations:
+        client_name = employee_evaluation.client.company
+
+
+        evaluations = employee_evaluation.evaluation_rates_assign.filter(
+            evaluation_rate__evaluation_categories_id=category_id
+        )
+
+        n = len(evaluations)
+        summation = 0
+
+        for evaluation in evaluations:
+            summation = summation + evaluation.rate
+
+        percentage = math.ceil(((summation/n) / max_rate) * 100)
+        label.append(client_name)
+        data.append(percentage)
+        table.append([client_name, percentage])
+
+        
+    return JsonResponse(data={
+        'labels': label,
+        'data': data,
+        'html_chart' : render_to_string('includes/chart_table.html', {'tables': table})
+    })
