@@ -35,6 +35,10 @@ $(function () {
 
     $.ajax({
       url: $barChart.data("url"),
+      type: 'GET',
+      data: {
+        'page': 3
+      },
       success: function (data) {
 
         var ctx = $barChart[0].getContext('2d');

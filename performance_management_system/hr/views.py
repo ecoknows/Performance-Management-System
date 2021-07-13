@@ -10,6 +10,7 @@ from performance_management_system import IntegerResource, StringResource
 
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 import math
 
@@ -44,11 +45,21 @@ def data_chart(request, category_id, employee_id):
 
     employee_evaluations = UserEvaluation.objects.filter(employee_id = employee_id, evaluated = True)
     max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+    
+    paginator = Paginator(employee_evaluations, 6)
+    
+    page = request.GET.get('page', 1)
 
     label = []
     data = []
     table = []
-    html_table = ''
+
+    try:
+        employee_evaluations = paginator.page(page)
+    except PageNotAnInteger:
+        employee_evaluations = paginator.page(1)
+    except EmptyPage:
+        employee_evaluations = paginator.page(paginator.num_pages)
 
     for employee_evaluation in employee_evaluations:
         client_name = employee_evaluation.client.company
@@ -68,6 +79,7 @@ def data_chart(request, category_id, employee_id):
         label.append(client_name)
         data.append(percentage)
         table.append([client_name, percentage])
+    
 
         
     return JsonResponse(data={

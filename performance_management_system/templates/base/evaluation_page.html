@@ -122,7 +122,7 @@
               {% get_rate_assign rate user_evaluation %}
 							<div class="flex items-center justify-center flex-1">
 								{% for i in self.evaluation_max_rate|times %}
-									<input type="radio" name="question-{{rate.pk}}" value="{{i}}" {% if rate.rate == i %}checked{% endif %} required class=" option-input radio"
+									<input type="radio" name="question-{{rate.pk}}" value="{{forloop.counter}}" {% if rate.rate == forloop.counter %}checked{% endif %} required class=" option-input radio"
 										style='
 										color: white;
 										font-family: "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
