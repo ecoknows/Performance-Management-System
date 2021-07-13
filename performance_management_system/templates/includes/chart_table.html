@@ -1,13 +1,27 @@
-{% load wagtailcore_tags%}
+{% load wagtailcore_tags forloop_tags %}
 
 {% for table in tables %}
 <tr class="font-sans text-lg " style="color: #626262;">
     <td class="flex items-center space-x-2">
-        <div class="w-4 h-4 bg-gray-700" style="background-image: linear-gradient(#93EDC7, #1CD8D2)"></div>
+        <div class="w-4 h-4 bg-gray-700" style="{{forloop.counter | gradient_bg}}"></div>
         <h3 class="font-normal">{{table.0}}</h3>
     </td>
-    <td class='font-sans font-bold text-center' style='color: #079E1F;'>
-        {{table.1}}
+    {% if table.1 < 50 %}
+    <td class='font-sans font-bold text-center' style='color: #9e0707;'>
+        {{table.1}}%
     </td>
+    {% elif table.1 < 75 %}
+    
+    <td class='font-sans font-bold text-center' style='color: #9e4307;'>
+        {{table.1}}%
+    </td>
+
+    {% else %}
+    
+    <td class='font-sans font-bold text-center' style='color: #079E1F;'>
+        {{table.1}}%
+    </td>
+
+    {% endif %}
 </tr>
 {% endfor %}

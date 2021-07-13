@@ -30,3 +30,12 @@ IS_EVALUATED = [
     ('evaluated', 'Evaluated'),
     ('on evaluation','On Evaluation')
 ]
+
+GRADIENT_BG = [
+    ['#93EDC7', '#1CD8D2'],
+    ['#F08787', '#FF3F3F'],
+    ['#AD86FF', '#7C3FFF'],
+    ['#7DDB97', '#00A62E'],
+    ['#FFB9A3', '#EE3900'],
+    ['#B3B1F4', '#0500EF'],
+]
