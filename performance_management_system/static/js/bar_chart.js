@@ -30,14 +30,20 @@ blue_gradient.addColorStop(1, '#0500EF');
 
 $(function () {
 
-    var $barChart = $("#bar-chart");
 
+
+    var $barChart = $("#bar-chart");
+    let chart = null
+    let page_number_Bar = $('#page-number-bar')
+    let page_status = 1
+    let next_btn = $('#next-btn-bar')
+    let back_btn = $('#back-btn-bar')
 
     $.ajax({
       url: $barChart.data("url"),
       type: 'GET',
       data: {
-        'page': 3
+        'page': 1
       },
       success: function (data) {
 
@@ -45,7 +51,7 @@ $(function () {
 
         $('#bar-chart-tbody').html(data.html_chart)
 
-        new Chart(ctx, {
+        chart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: data.labels,
@@ -87,4 +93,79 @@ $(function () {
       }
     });
 
-  });
+
+    next_btn.on('click', function () {
+        page_status++
+        $.ajax({
+            url: $barChart.data("url"),
+            type: 'GET',
+            data: {
+              'page': page_status
+            },
+            success: function (data) {
+                
+              if(data.has_previous){
+                back_btn.show()
+              }else{
+                back_btn.hide()
+              }
+
+              if(data.has_next){
+                next_btn.show()
+              }else{
+                next_btn.hide()
+              }
+    
+
+              $('#bar-chart-tbody').html(data.html_chart)
+              chart.data.datasets[0].data = data.data 
+              chart.data.labels = data.labels
+              page_number_Bar.html(page_status)
+      
+              chart.update();
+      
+      
+      
+            }
+          });
+    });
+
+    
+    back_btn.on('click', function () {
+        page_status--
+        $.ajax({
+            url: $barChart.data("url"),
+            type: 'GET',
+            data: {
+              'page': page_status
+            },
+            success: function (data) {
+
+              $('#bar-chart-tbody').html(data.html_chart)
+              chart.data.datasets[0].data = data.data 
+              chart.data.labels = data.labels
+              page_number_Bar.html(page_status)
+
+              
+              if(data.has_previous){
+                back_btn.show()
+              }else{
+                back_btn.hide()
+              }
+
+              if(data.has_next){
+                next_btn.show()
+              }else{
+                next_btn.hide()
+              }
+              
+              chart.update();
+      
+      
+      
+            }
+          });
+    });
+
+
+});

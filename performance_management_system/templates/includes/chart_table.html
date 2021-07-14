@@ -4,7 +4,7 @@
 <tr class="font-sans text-lg " style="color: #626262;">
     <td class="flex items-center space-x-2">
         <div class="w-4 h-4 bg-gray-700" style="{{forloop.counter | gradient_bg}}"></div>
-        <h3 class="font-normal">{{table.0}}</h3>
+        <h3 class="font-normal">{{table.0 |truncatechars:9 }}</h3>
     </td>
     {% if table.1 < 50 %}
     <td class='font-sans font-bold text-center' style='color: #9e0707;'>

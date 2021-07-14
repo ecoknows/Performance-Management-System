@@ -85,5 +85,7 @@ def data_chart(request, category_id, employee_id):
     return JsonResponse(data={
         'labels': label,
         'data': data,
-        'html_chart' : render_to_string('includes/chart_table.html', {'tables': table})
+        'html_chart' : render_to_string('includes/chart_table.html', {'tables': table}),
+        'has_previous' : employee_evaluations.has_previous(),
+        'has_next' : employee_evaluations.has_next()
     })
