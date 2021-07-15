@@ -13,7 +13,7 @@ from wagtail.admin.edit_handlers import (
     MultiFieldPanel,
 )
 
-from performance_management_system.base.models import BaseAbstractPage, UserEvaluation, EvaluationCategories
+from performance_management_system.base.models import BaseAbstractPage, UserEvaluation, EvaluationCategories, EvaluationPage
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client
 from performance_management_system.users.models import User
@@ -148,10 +148,28 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             'employee': employee,
             'menu_lists': menu_lists,
             },
-            template="hr/clients_picked.html",
+            template="hr/employee_client_list.html",
         )
 
-    @route(r'^(\d+)/pick-a-client/$', name='id')
+    @route(r'^(\d+)/clients/(\d+)/$')
+    def client_evaluation_details(self, request, id, user_evaluation_id):
+        user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+        evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        
+        return self.render(
+            request,
+            context_overrides={
+                'user_evaluation': user_evaluation,
+                'evaluation_categories': EvaluationCategories.objects.all(),
+                'disabled' : True,
+                'user_model' : request.user.hradmin,
+                'employee_model': user_evaluation.client,
+                'self': {'evaluation_max_rate': evaluation_max_rate}
+            },
+            template="base/evaluation_page.html",
+        )
+
+    @route(r'^(\d+)/pick-a-client/$')
     def pick_a_client(self, request, id):
         employee = Employee.objects.get(pk=id)
         clients = self.get_clients_not_picked(employee=employee)

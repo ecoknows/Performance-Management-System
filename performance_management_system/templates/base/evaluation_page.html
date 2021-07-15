@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-{% load wagtailcore_tags forloop_tags %}
+{% load wagtailcore_tags forloop_tags wagtailimages_tags %}
 
 {% block body_class %}
 	flex
@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block header %}
-	{% include 'includes/header.html' with user_model=request.user.client employee_model=user_evaluation.employee menu_text='Evaluation'%}
+	{% include 'includes/header.html' with user_model=user_model employee_model=employee_model menu_text='Evaluation'%}
 {% endblock %}
 
 {% block style %}
@@ -89,6 +89,24 @@
 
 {% block content %}
 <section class="container mx-auto" style="padding-top: 120px;">
+  {% if disabled %}
+  <div class="flex flex-col items-center py-10">
+    <div class="flex space-x-4">
+      {% image user_evaluation.employee.profile_pic fill-120x120 as employee_pic %}
+      <img src="{{employee_pic.url}}" class="rounded-full" style="width: 120px; height: 120px;">
+      
+      <div class="flex flex-col justify-center">
+        <h1 class="font-sans text-3xl font-bold" style="color: #616161;">
+          {{user_evaluation.employee}}
+        </h1>
+        <h2 class="font-sans text-lg font-semibold" style="color: #979797;">
+          {{user_evaluation.employee.position}}
+        </h2>
+      </div>
+    </div>
+
+  </div>
+  {% endif %}
 	<form method="POST">
 		{% csrf_token %}
 		<div>
@@ -122,7 +140,7 @@
               {% get_rate_assign rate user_evaluation %}
 							<div class="flex items-center justify-center flex-1">
 								{% for i in self.evaluation_max_rate|times %}
-									<input type="radio" name="question-{{rate.pk}}" value="{{forloop.counter}}" {% if rate.rate == forloop.counter %}checked{% endif %} required class=" option-input radio"
+									<input type="radio" {% if  disabled %} disabled {% endif %}  name="question-{{rate.pk}}" value="{{forloop.counter}}" {% if rate.rate == forloop.counter %}checked{% endif %} required class=" option-input radio"
 										style='
 										color: white;
 										font-family: "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
@@ -135,9 +153,11 @@
 				{% endfor %}
 			</div>
 		</div>
+    {% if disabled == False %}
     <div class="flex items-center justify-center py-10">
       <input type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="py-2 px-4 text-white font-sans text-lg font-semibold">
     </div>
+    {% endif %}
 	</form>
 </section>
 {% endblock %}

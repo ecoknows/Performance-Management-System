@@ -197,21 +197,15 @@ class EvaluationPage(RoutablePageMixin, Page):
             if len(employee_not_evaluated) == 0:
                 employee.status = 'evaluated'
                 employee.save()
-                
-            
-            
 
-
-        
-            
-                    
-        
         menu_lists = self.get_menu_list()
         return self.render(
             request,
             context_overrides={
             'user_evaluation': user_evaluation,
-            'menu_lists': menu_lists
+            'menu_lists': menu_lists,
+            'user_model': request.user.client,
+            'employee_model': user_evaluation.employee
             }
         )
             
