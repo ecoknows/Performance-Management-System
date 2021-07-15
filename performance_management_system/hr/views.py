@@ -46,9 +46,12 @@ def data_chart(request, category_id, employee_id):
     employee_evaluations = UserEvaluation.objects.filter(employee_id = employee_id, evaluated = True)
     max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
     
-    paginator = Paginator(employee_evaluations, 6)
-    
     page = request.GET.get('page', 1)
+    max_page = request.GET.get('max_page', 1)
+    is_2x2 = request.GET.get('2x2', False)
+
+    paginator = Paginator(employee_evaluations, max_page)
+    
 
     label = []
     data = []
@@ -85,7 +88,7 @@ def data_chart(request, category_id, employee_id):
     return JsonResponse(data={
         'labels': label,
         'data': data,
-        'html_chart' : render_to_string('includes/chart_table.html', {'tables': table}),
+        'html_chart' : render_to_string('includes/chart_table.html', {'tables': table, 'is_2x2': is_2x2}),
         'has_previous' : employee_evaluations.has_previous(),
         'has_next' : employee_evaluations.has_next()
     })

@@ -32,22 +32,23 @@ $(function () {
 
 
 
-    var $barChart = $("#bar-chart");
+    var $chart = $("#bar-chart");
     let chart = null
-    let page_number_Bar = $('#page-number-bar')
+    let page_number = $('#page-number-bar')
     let page_status = 1
     let next_btn = $('#next-btn-bar')
     let back_btn = $('#back-btn-bar')
 
     $.ajax({
-      url: $barChart.data("url"),
+      url: $chart.data("url"),
       type: 'GET',
       data: {
-        'page': 1
+        'page': 1,
+        'max_page': 6,
       },
       success: function (data) {
 
-        var ctx = $barChart[0].getContext('2d');
+        var ctx = $chart[0].getContext('2d');
 
         $('#bar-chart-tbody').html(data.html_chart)
 
@@ -56,7 +57,7 @@ $(function () {
             data: {
                 labels: data.labels,
                 datasets: [{
-                    label: '# of Votes',
+                    label: 'Performance',
                     data: data.data,
                     backgroundColor: [
                         bublegum_gradient,
@@ -97,10 +98,11 @@ $(function () {
     next_btn.on('click', function () {
         page_status++
         $.ajax({
-            url: $barChart.data("url"),
+            url: $chart.data("url"),
             type: 'GET',
             data: {
-              'page': page_status
+              'page': page_status,
+              'max_page': 6,
             },
             success: function (data) {
                 
@@ -120,7 +122,7 @@ $(function () {
               $('#bar-chart-tbody').html(data.html_chart)
               chart.data.datasets[0].data = data.data 
               chart.data.labels = data.labels
-              page_number_Bar.html(page_status)
+              page_number.html(page_status)
       
               chart.update();
       
@@ -134,17 +136,18 @@ $(function () {
     back_btn.on('click', function () {
         page_status--
         $.ajax({
-            url: $barChart.data("url"),
+            url: $chart.data("url"),
             type: 'GET',
             data: {
-              'page': page_status
+              'page': page_status,
+              'max_page': 6,
             },
             success: function (data) {
 
               $('#bar-chart-tbody').html(data.html_chart)
               chart.data.datasets[0].data = data.data 
               chart.data.labels = data.labels
-              page_number_Bar.html(page_status)
+              page_number.html(page_status)
 
               
               if(data.has_previous){
