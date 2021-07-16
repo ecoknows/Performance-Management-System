@@ -9,14 +9,26 @@
 {% endblock %}
 
 {% block header %}
-	{% include 'includes/header.html' with user_model=request.user.hradmin title='DASHBOARD' %}
+	{% include 'includes/header.html' with user_model=request.user.hradmin title='DASHBOARD' menu_text='Dashboard' %}
 {% endblock %}
 
 {% block content %}
 
 <section class="container flex flex-col flex-1 mx-auto space-y-4" style="padding-top: 120px;">
-		<a href="employee-list-page">EMPLOYEE</a>
-		<a href="client-list-page">CLIENT</a>
+	<div class=" h-44 flex space-x-4" >
+		<div class="bg-white flex-1" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+
+		</div>
+
+		<div class="bg-white flex-1" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+
+		</div>
+
+	</div>
+
+	<div class="bg-white" style="height: 500px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+
+	</div>
 </section>
 
 {% endblock %}

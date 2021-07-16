@@ -28,7 +28,7 @@ DETAILS_MENU = [
 IS_EVALUATED = [
     ('none', 'None'),
     ('evaluated', 'Evaluated'),
-    ('on evaluation','On Evaluation')
+    ('on-evaluation','On Evaluation')
 ]
 
 GRADIENT_BG = [

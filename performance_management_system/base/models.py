@@ -198,6 +198,14 @@ class EvaluationPage(RoutablePageMixin, Page):
                 employee.status = 'evaluated'
                 employee.save()
 
+            client = user_evaluation.client
+            client_not_evaluated = client.user_evaluation.filter(evaluated=False)
+            
+            if len(client_not_evaluated) == 0:
+                client.status = 'evaluated'
+                client.save()
+
+
         menu_lists = self.get_menu_list()
         return self.render(
             request,
