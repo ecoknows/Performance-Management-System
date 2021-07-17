@@ -3,6 +3,9 @@ from django.template.response import TemplateResponse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
+from django.template.loader import render_to_string
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+
 
 from wagtail.contrib.routable_page.models import route
 from wagtail.core.models import Page
@@ -19,10 +22,6 @@ from performance_management_system.client.models import Client
 from performance_management_system.users.models import User
 from performance_management_system import IntegerResource, StringResource, LIST_MENU, DETAILS_MENU
 
-class HRIndexPage(BaseAbstractPage):
-    max_count = 1
-    parent_page_types = ['base.BaseIndexPage']
-    
 class ClientListPage(Page):
     max_count = 1
     parent_page_types = ['HRIndexPage']
@@ -261,3 +260,16 @@ class HrAdmin(models.Model):
         if self.user:
             self.user.delete()
         super().delete()
+
+
+class HRIndexPage(BaseAbstractPage):
+    max_count = 1
+    parent_page_types = ['base.BaseIndexPage']
+
+    def get_context(self, request):
+        context = super(HRIndexPage, self).get_context(request)
+        context['employee_list_index'] = EmployeeListPage.objects.live().first()
+        context['client_list_index'] = ClientListPage.objects.live().first()
+
+        return context
+    

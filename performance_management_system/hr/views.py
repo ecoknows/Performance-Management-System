@@ -11,6 +11,7 @@ from performance_management_system import IntegerResource, StringResource
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.template.response import TemplateResponse
 
 import math
 
@@ -91,4 +92,23 @@ def data_chart(request, category_id, employee_id):
         'html_chart' : render_to_string('includes/chart_table.html', {'tables': table, 'is_2x2': is_2x2}),
         'has_previous' : employee_evaluations.has_previous(),
         'has_next' : employee_evaluations.has_next()
+    })
+
+def get_recent(request):
+    recent_evaluations = UserEvaluation.objects.filter(evaluated = True)
+            
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(recent_evaluations, 6)
+
+    
+    try:
+        recent_evaluations = paginator.page(page)
+    except PageNotAnInteger:
+        recent_evaluations = paginator.page(1)
+    except EmptyPage:
+        recent_evaluations = paginator.page(paginator.num_pages)
+    
+    return TemplateResponse(request, 'hr/recent_evaluated_page.html' ,{
+        'recent_evaluations': recent_evaluations
     })

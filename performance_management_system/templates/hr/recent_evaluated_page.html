@@ -1,0 +1,28 @@
+{% load wagtailimages_tags static %}
+
+{% for recent_evaluation in recent_evaluations %}
+<div class="flex mb-4" style="width: 700px;">
+    {% image recent_evaluation.employee.profile_pic fill-80x80 as employee_pic %}
+    <img src="{{employee_pic.url}}" class="rounded-full mr-4" style="width: 80px; height: 80px;">
+    <div class="flex-1">
+        <div class="flex">
+            <div class="flex-1 ">
+                <h2 class="text-lg font-sans font-semibold" style="color: #979797;">Employee</h2>
+                <h1 class="text-2xl font-sans font-bold" style="color: #616161;">{{recent_evaluation.employee}}</h1>
+            </div>
+            <div class="flex-1">
+                <h2 class="text-lg font-sans font-semibold" style="color: #979797;">Client</h2>
+                <h1 class="text-2xl font-sans font-bold" style="color: #616161;">{{recent_evaluation.client | truncatechars:10 }}</h1>
+
+            </div>
+            <div class="flex flex-col items-center flex-1">
+                <h2 class="text-lg font-sans font-semibold" style="color: #979797;">Overview</h2>
+                <div class="rounded-full px-6" style="background-color: #138B00; ">
+                    <h1 class="text-lg text-white font-sans font-semibold">90% Great</h1>
+                </div>
+            </div>
+        </div>
+        <h3 class="text-sm font-sans font-semibold" style="color:#979797">A few seconds ago</h3>
+    </div>
+</div>
+{% endfor %}
