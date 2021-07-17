@@ -96,7 +96,7 @@ def data_chart(request, category_id, employee_id):
     })
 
 def get_recent(request):
-    recent_evaluations = UserEvaluation.objects.exclude(percentage=0).order_by('submit_date')
+    recent_evaluations = UserEvaluation.objects.exclude(percentage=0).order_by('-submit_date')
             
     page = request.GET.get('page', 1)
 
@@ -110,7 +110,11 @@ def get_recent(request):
     except EmptyPage:
         recent_evaluations = paginator.page(paginator.num_pages)
     
-    return TemplateResponse(request, 'hr/recent_evaluated_page.html' ,{
-        'recent_evaluations': recent_evaluations,
-        'employee_details_index' : EmployeeDetailsPage.objects.live().first()
+    return JsonResponse(data={
+        'has_next': recent_evaluations.has_next(),
+        'has_previous': recent_evaluations.has_previous(),
+        'html' : render_to_string('hr/recent_evaluated_page.html', {
+            'recent_evaluations': recent_evaluations,
+            'employee_details_index' : EmployeeDetailsPage.objects.live().first()
+        }),
     })

@@ -67,16 +67,25 @@
 
 	</div>
 
-	<div class="bg-white p-4 space-y-4" style="height: 500px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+	<div class=" relative bg-white p-4 space-y-4" style="min-height: 500px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
 		<h1 class="text-3xl font-sans font-bold" style="color: #ACACAC;">Recently Evaluated</h1>
-		<div class=" flex items-center justify-center">
-			<div id='recent_evaluations' class="flex flex-wrap" style="width: 95%;">
+		<div class=" flex flex-col items-center justify-center">
+			<div id='recent_evaluations' class="flex flex-wrap" style="width: 95%;"></div>
+			
+		</div>
+		
+		<div id='button-container' class="flex absolute justify-end items-end" style="width: 95%; bottom: 10px;">
+			<div class="flex space-x-4 " >
+				<button id="recent-back" class="focus:outline-none focus:ring focus:border-blue-300">
+					<h1 class="text-lg font-sans font-semibold" style="color: rgb(26, 60, 124);">Back</h1>
+				</button>
 
-
+				<h1 id='page-number-recent' class="text-lg font-sans font-bold" style="color: rgb(26, 60, 124);">1</h1>
 				
-
+				<button id="recent-next" class="focus:outline-none focus:ring focus:border-blue-300">
+					<h1 class="text-lg font-sans font-semibold" style="color: rgb(26, 60, 124);">Next</h1>
+				</button>
 			</div>
-
 		</div>
 		
 
