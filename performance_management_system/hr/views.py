@@ -5,6 +5,7 @@ from django.utils import timezone
 from wagtail.contrib.modeladmin.views import CreateView
 
 from performance_management_system.base.models import UserEvaluation, EvaluationCategories, EvaluationPage
+from performance_management_system.hr.models import EmployeeDetailsPage
 from performance_management_system.users.models import User
 from performance_management_system import IntegerResource, StringResource
 
@@ -44,7 +45,7 @@ class HRAdminCreateView(CreateView):
 
 def data_chart(request, category_id, employee_id):
 
-    employee_evaluations = UserEvaluation.objects.filter(employee_id = employee_id, evaluated = True)
+    employee_evaluations = UserEvaluation.objects.exclude(percentage=0).filter(employee_id = employee_id)
     max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
     
     page = request.GET.get('page', 1)
@@ -95,11 +96,11 @@ def data_chart(request, category_id, employee_id):
     })
 
 def get_recent(request):
-    recent_evaluations = UserEvaluation.objects.filter(evaluated = True)
+    recent_evaluations = UserEvaluation.objects.exclude(percentage=0).order_by('submit_date')
             
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(recent_evaluations, 6)
+    paginator = Paginator(recent_evaluations, 8)
 
     
     try:
@@ -110,5 +111,6 @@ def get_recent(request):
         recent_evaluations = paginator.page(paginator.num_pages)
     
     return TemplateResponse(request, 'hr/recent_evaluated_page.html' ,{
-        'recent_evaluations': recent_evaluations
+        'recent_evaluations': recent_evaluations,
+        'employee_details_index' : EmployeeDetailsPage.objects.live().first()
     })

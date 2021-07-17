@@ -84,14 +84,13 @@ class ClientIndexPage(Page):
         if filter_query:
             if filter_query == 'evaluated':
                 context['filter'] = 'Evaluated'
-                return UserEvaluation.objects.filter(
-                    evaluated=True,
+                return UserEvaluation.objects.exclude(percentage=0).filter(
                     client=request.user.client
                 )
             elif filter_query == 'on evaluation':
                 context['filter'] = 'On Evaluation'
                 return UserEvaluation.objects.filter(
-                    evaluated=False,
+                    percentage=0,
                     client=request.user.client
                 )
 

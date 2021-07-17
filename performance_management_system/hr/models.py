@@ -268,6 +268,14 @@ class HRIndexPage(BaseAbstractPage):
 
     def get_context(self, request):
         context = super(HRIndexPage, self).get_context(request)
+
+        context['evaluated_employee'] = len(Employee.objects.filter(status='evaluated'))
+        context['evaluated_client'] = len(Client.objects.filter(status='evaluated'))
+
+        
+        context['on_evaluation_employee'] = len(Employee.objects.filter(status='on-evaluation'))
+        context['on_evaluation_client'] = len(Client.objects.filter(status='on-evaluation'))
+
         context['employee_list_index'] = EmployeeListPage.objects.live().first()
         context['client_list_index'] = ClientListPage.objects.live().first()
 

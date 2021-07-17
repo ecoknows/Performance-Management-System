@@ -1,7 +1,7 @@
-{% load wagtailimages_tags static %}
+{% load wagtailimages_tags static humanize wagtailcore_tags %}
 
 {% for recent_evaluation in recent_evaluations %}
-<div class="flex mb-4" style="width: 700px;">
+<a href='{% pageurl employee_details_index %}{{recent_evaluation.employee.pk}}/clients/{{recent_evaluation.pk}}' class="flex mb-4" style="width: 700px;">
     {% image recent_evaluation.employee.profile_pic fill-80x80 as employee_pic %}
     <img src="{{employee_pic.url}}" class="rounded-full mr-4" style="width: 80px; height: 80px;">
     <div class="flex-1">
@@ -17,12 +17,23 @@
             </div>
             <div class="flex flex-col items-center flex-1">
                 <h2 class="text-lg font-sans font-semibold" style="color: #979797;">Overview</h2>
-                <div class="rounded-full px-6" style="background-color: #138B00; ">
-                    <h1 class="text-lg text-white font-sans font-semibold">90% Great</h1>
+                {% if recent_evaluation.percentage < 50 %}
+                <div class="rounded-full px-6" style="background-color: #8b0000; ">
+                    <h1 class="text-lg text-white font-sans font-semibold">{{recent_evaluation.percentage}}% Bad</h1>
                 </div>
+                {% elif recent_evaluation.percentage < 75%}
+                <div class="rounded-full px-6" style="background-color: #8b5a00; ">
+                    <h1 class="text-lg text-white font-sans font-semibold">{{recent_evaluation.percentage}}% Good</h1>
+                </div>
+
+                {% else %}
+                <div class="rounded-full px-6" style="background-color: #138B00; ">
+                    <h1 class="text-lg text-white font-sans font-semibold">{{recent_evaluation.percentage}}% Great</h1>
+                </div>
+                {% endif %}
             </div>
         </div>
-        <h3 class="text-sm font-sans font-semibold" style="color:#979797">A few seconds ago</h3>
+        <h3 class="text-sm font-sans font-semibold" style="color:#979797">{{recent_evaluation.submit_date|naturaltime  }}</h3>
     </div>
-</div>
+</a>
 {% endfor %}

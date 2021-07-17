@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.db import models
-
+from django.utils import timezone
 
 from wagtail.core.models import Page, Orderable
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
@@ -133,7 +133,8 @@ class UserEvaluation(ClusterableModel, models.Model):
         on_delete=models.CASCADE
     )
     
-    evaluated = models.BooleanField(default=False)
+    percentage = models.DecimalField(default=0, decimal_places=2, max_digits=5)
+    submit_date = models.DateTimeField(null=True)
 
     
     panels = [
@@ -173,6 +174,7 @@ class EvaluationPage(RoutablePageMixin, Page):
     @route(r'^(\d+)/$', name='id')
     def evaluate_user_with_id(self, request, id):
         user_evaluation = UserEvaluation.objects.get(pk=id)
+        evaluation_sum = 0
 
         if request.method == 'POST' and request.POST.get('submit-btn', None):
             
@@ -184,22 +186,27 @@ class EvaluationPage(RoutablePageMixin, Page):
                     )
 
                     if evaluation_rate_assign:
-                        evaluation_rate_assign.rate= int(request.POST['question-'+str(rate.pk)] )
+                        question_rate = int(request.POST['question-'+str(rate.pk)] )
+                        evaluation_rate_assign.rate= question_rate
+                        evaluation_sum = evaluation_sum + question_rate
                         evaluation_rate_assign.save()
                         
             update_user_evaluation = UserEvaluation.objects.get(pk=id)
-            update_user_evaluation.evaluated = True
+
+            perfect_rate = len(EvaluationRates.objects.all()) * self.evaluation_max_rate
+            update_user_evaluation.percentage = (evaluation_sum / perfect_rate) * 100
+            update_user_evaluation.submit_date = timezone.now()
             update_user_evaluation.save()
 
             employee = user_evaluation.employee
-            employee_not_evaluated = employee.user_evaluation.filter(evaluated=False)
+            employee_not_evaluated = employee.user_evaluation.filter(percentage=0)
 
             if len(employee_not_evaluated) == 0:
                 employee.status = 'evaluated'
                 employee.save()
 
             client = user_evaluation.client
-            client_not_evaluated = client.user_evaluation.filter(evaluated=False)
+            client_not_evaluated = client.user_evaluation.filter(percentage=0)
             
             if len(client_not_evaluated) == 0:
                 client.status = 'evaluated'
