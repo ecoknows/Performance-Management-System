@@ -1,0 +1,53 @@
+{% extends 'base.html'%}
+{% load static wagtailimages_tags %}
+
+
+{% block header %}
+	{% include 'includes/header.html' with user_model=request.user.employee title='CLIENTS' menu_text='All' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="container flex flex-wrap flex-1 mx-auto" style="padding-top: 120px;">
+
+	{% for user_evaluation in user_evaluations %}
+
+		{% if user_evaluation.percentage > 0  %}
+		
+		<div class="relative mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(8, 162, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+			
+			<a href="{{user_evaluation.pk}}" class="flex flex-col h-full py-6">
+				<div class="flex justify-center flex-1 py-2 space-x-4 ">
+					{% image user_evaluation.client.profile_pic original as profile_pic %}
+					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 150px;'>
+				</div>
+				
+				<div>
+					<h1 class="font-sans text-4xl text-center" style="color: #616161;">
+						{{user_evaluation.client.company}}
+					</h1>
+				</div>
+			</a>
+		</div>
+		{% else %}
+		<div class="relative mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(255, 0, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+			
+			<a href="#" class="flex flex-col h-full py-6">
+				<div class="flex justify-center flex-1 py-2 space-x-4 ">
+					{% image user_evaluation.client.profile_pic original as profile_pic %}
+					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 150px;'>
+				</div>
+				
+				<div>
+					<h1 class="font-sans text-4xl text-center" style="color: #616161;">
+						{{user_evaluation.client.company}}
+					</h1>
+				</div>
+			</a>
+		</div>
+		{% endif %}
+	{% endfor %}
+		
+</section>
+
+{% endblock %}
