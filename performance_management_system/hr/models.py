@@ -22,9 +22,28 @@ from performance_management_system.client.models import Client
 from performance_management_system.users.models import User
 from performance_management_system import IntegerResource, StringResource, LIST_MENU, DETAILS_MENU
 
-class ClientListPage(Page):
+class ClientListPage(RoutablePageMixin,Page):
     max_count = 1
+    filter = None
     parent_page_types = ['HRIndexPage']
+    
+    def get_assign_employee(self, request, client_id):
+        filter_query = request.GET.get('filter', None)
+        
+        if filter_query:
+            if filter_query == 'evaluated':
+                self.filter = 'Evaluated'
+                return UserEvaluation.objects.exclude(percentage=0).filter(
+                    client_id=client_id
+                )
+            elif filter_query == 'on evaluation':
+                self.filter  = 'On Evaluation'
+                return UserEvaluation.objects.filter(
+                    percentage=0,
+                    client_id=client_id
+                )
+
+        return UserEvaluation.objects.filter(client_id=client_id)
 
     def get_clients(self, request):
         # filter_query = request.GET.get('filter', None)
@@ -41,12 +60,49 @@ class ClientListPage(Page):
     def get_menu_list(self):
         return LIST_MENU
 
+    
+    @route(r'^(\d+)/$')
+    def client_details(self, request, id):
+        
+        return self.render(
+            request,
+            context_overrides={
+                'user_evaluations': self.get_assign_employee(request, id),
+                'menu_lists': self.get_menu_list(),
+                'user_model': request.user.hradmin,
+                'employee_model': Client.objects.get(pk=id),
+                'evaluation_index': 'evaluated/'
+            },
+            template='client/client_index_page.html'
+        )
+    
+    @route(r'^(\d+)/evaluated/(\d+)/$')
+    def client_details_evaluated(self, request, id, user_evaluation_id):
+        user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+        evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        
+        return self.render(
+            request,
+            context_overrides={
+                'user_evaluation': user_evaluation,
+                'evaluation_categories': EvaluationCategories.objects.all(),
+                'disabled' : True,
+                'user_model' : request.user.hradmin,
+                'employee_model': user_evaluation.client,
+                'self': {'evaluation_max_rate': evaluation_max_rate}
+            },
+            template="base/evaluation_page.html",
+        )
+        
+    
+    
     def get_context(self, request):
         context = super(ClientListPage, self).get_context(request)
 
         context['clients'] = self.get_clients(request)
         context['menu_lists'] = self.get_menu_list()
         return context
+    
 
 class EmployeeListPage(Page):
     max_count = 1

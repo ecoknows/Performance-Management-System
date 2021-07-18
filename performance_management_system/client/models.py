@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import Group
@@ -99,7 +100,12 @@ class ClientIndexPage(Page):
     def get_context(self, request):
         context = super(ClientIndexPage, self).get_context(request)
 
+        from performance_management_system.base.models import EvaluationPage
+
         context['user_evaluations'] = self.get_assign_employee(request, context)
         context['menu_lists'] = self.get_menu_list()
+        context['user_model'] = request.user.client
+        context['title'] = 'EMPLOYEES'
+        context['evaluation_index'] = EvaluationPage.objects.live().first().url
 
         return context
