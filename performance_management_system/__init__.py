@@ -14,7 +14,7 @@ class StringResource:
 LIST_MENU = [
     ['', 'All'],
     ['?filter=evaluated','Evaluated'],
-    ['?filter=on evaluation','On Evaluation'],
+    ['?filter=on-evaluation','On Evaluation'],
 ]
 DETAILS_MENU = [
     ['', 'Details'],
@@ -24,6 +24,24 @@ DETAILS_MENU = [
     ['on-evaluation','On Evaluation'],
 ]
 
+DETAILS_MENU = [
+    ['', 'Details'],
+    ['clients', 'Clients'],
+    ['pick-a-client','Pick a client'],
+    ['evaluated','Evaluated'],
+    ['on-evaluation','On Evaluation'],
+]
+
+DETAILS_MENU_EMPLOYEE = [
+    ['clients', 'Clients'],
+]
+
+DETAILS_MENU_EMPLOYEE_CLIENTS = [
+    ['../', 'Dashboard'],
+    ['clients/', 'All'],
+    ['clients/?filter=evaluated','Evaluated'],
+    ['clients/?filter=on-evaluation','On Evaluation'],
+]
 
 IS_EVALUATED = [
     ('none', 'None'),

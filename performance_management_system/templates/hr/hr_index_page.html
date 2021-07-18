@@ -14,26 +14,54 @@
 	{% include 'includes/header.html' with user_model=request.user.hradmin title='DASHBOARD' menu_text='Dashboard' %}
 {% endblock %}
 
+{% block style %}
+
+<style>
+.employee-profile{
+	width: 40px; 
+	height: 40px;
+}
+.overview-text{
+	font-size: 0.60rem;
+	line-height: 1rem;
+}
+@media (min-width: 1024px) { 
+
+.employee-profile{
+	width: 80px; 
+	height: 80px;
+}
+.overview-text{
+	font-size: 1.125rem;
+	line-height: 1.75rem;
+}
+}
+
+</style>
+
+{% endblock %}
+
 {% block content %}
 
-<section class="container flex flex-col flex-1 mx-auto space-y-4" style="padding-top: 120px;">
-	<div class=" h-44 flex space-x-4" >
-		<div class="bg-white flex-1 p-4" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-			<h1 class="text-3xl font-sans font-bold" style="color: #ACACAC;">Evaluated</h1>
-			<div class="flex">
-				<a class="flex flex-1" href="{% pageurl employee_list_index %}">
+<section class="container flex flex-col flex-1 pb-4 mx-auto space-y-4" style="padding-top: 120px;">
+	<div class="flex flex-col px-4 space-x-0 space-y-4 lg:px-0 lg:space-y-0 lg:space-x-4 lg:flex-row" >
+		
+		<div class="flex-1 p-4 bg-white" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+			<h1 class="font-sans text-xl font-bold lg:text-3xl" style="color: #ACACAC;">Evaluated</h1>
+			<div class="flex flex-col items-center lg:flex-row">
+				<a class="flex flex-col items-center flex-1 lg:flex-row" href="{% pageurl employee_list_index %}">
 					<img src="{% static 'img/icons/employee.png'%}" width="160" >
-					<div class="flex flex-col justify-center" style="color: #BABABA;">
-						<h2 class="text-xl font-sans font-semibold">Employee</h2>
-						<h1 class="text-4xl font-sans font-bold">{{evaluated_employee}}</h1>
+					<div class="flex flex-col items-center justify-center lg:items-start" style="color: #BABABA;">
+						<h2 class="font-sans text-xl font-semibold">Employee</h2>
+						<h1 class="font-sans text-4xl font-bold">{{evaluated_employee}}</h1>
 					</div>
 
 				</a>
-				<a class="flex flex-1" href="{% pageurl client_list_index %}">
+				<a class="flex flex-col items-center flex-1 lg:flex-row" href="{% pageurl client_list_index %}">
 					<img src="{% static 'img/icons/client.png'%}" width="160" >
-					<div class="flex flex-col justify-center" style="color: #BABABA;">
-						<h2 class="text-xl font-sans font-semibold">Client</h2>
-						<h1 class="text-4xl font-sans font-bold">{{evaluated_client}}</h1>
+					<div class="flex flex-col items-center justify-center lg:items-start" style="color: #BABABA;">
+						<h2 class="font-sans text-xl font-semibold">Client</h2>
+						<h1 class="font-sans text-4xl font-bold">{{evaluated_client}}</h1>
 					</div>
 
 				</a>
@@ -42,54 +70,54 @@
 
 		</div>
 
-		<div class="bg-white flex-1 p-4" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-			<h1 class="text-3xl font-sans font-bold" style="color: #ACACAC;">On Evaluation</h1>
-			<div class="flex">
-				<a class="flex flex-1" href="{% pageurl employee_list_index %}">
+		<div class="flex-1 p-4 bg-white" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+			<h1 class="font-sans text-xl font-bold lg:text-3xl" style="color: #ACACAC;">On Evaluation</h1>
+			<div class="flex flex-col items-center lg:flex-row">
+				<a class="flex flex-col items-center flex-1 lg:flex-row" href="{% pageurl employee_list_index %}">
 					<img src="{% static 'img/icons/employee.png'%}" width="160" >
-					<div class="flex flex-col justify-center" style="color: #BABABA;">
-						<h2 class="text-xl font-sans font-semibold">Employee</h2>
-						<h1 class="text-4xl font-sans font-bold">{{on_evaluation_employee}}</h1>
+					<div class="flex flex-col items-center justify-center lg:items-start" style="color: #BABABA;">
+						<h2 class="font-sans text-xl font-semibold">Employee</h2>
+						<h1 class="font-sans text-4xl font-bold">{{on_evaluation_employee}}</h1>
 					</div>
 
 				</a>
-				<a class="flex flex-1" href="{% pageurl client_list_index %}">
+				<a class="flex flex-col items-center flex-1 lg:flex-row" href="{% pageurl client_list_index %}">
 					<img src="{% static 'img/icons/client.png'%}" width="160" >
-					<div class="flex flex-col justify-center" style="color: #BABABA;">
-						<h2 class="text-xl font-sans font-semibold">Client</h2>
-						<h1 class="text-4xl font-sans font-bold">{{on_evaluation_client}}</h1>
+					<div class="flex flex-col items-center justify-center lg:items-start" style="color: #BABABA;">
+						<h2 class="font-sans text-xl font-semibold">Client</h2>
+						<h1 class="font-sans text-4xl font-bold">{{on_evaluation_client}}</h1>
 					</div>
 
 				</a>
 
 			</div>
+
 		</div>
 
 	</div>
 
-	<div class=" relative bg-white p-4 space-y-4" style="min-height: 500px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-		<h1 class="text-3xl font-sans font-bold" style="color: #ACACAC;">Recently Evaluated</h1>
-		<div class=" flex flex-col items-center justify-center">
+	<div class="relative p-4 mx-4 space-y-4 bg-white lg:mx-0 " style="min-height: 500px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+		<h1 class="font-sans text-xl font-bold lg:text-3xl" style="color: #ACACAC;">Recently Evaluated</h1>
+		<div class="flex flex-col items-center justify-center ">
 			<div id='recent_evaluations' class="flex flex-wrap" style="width: 95%;"></div>
 			
 		</div>
 		
-		<div id='button-container' class="flex absolute justify-end items-end" style="width: 95%; bottom: 10px;">
+		<div id='button-container' class="absolute flex items-end justify-center lg:justify-end " style="width: 95%; bottom: 10px;">
 			<div class="flex space-x-4 " >
 				<button id="recent-back" class="focus:outline-none focus:ring focus:border-blue-300">
-					<h1 class="text-lg font-sans font-semibold" style="color: rgb(26, 60, 124);">Back</h1>
+					<h1 class="font-sans text-sm font-semibold lg:text-lg" style="color: rgb(26, 60, 124);">Back</h1>
 				</button>
 
-				<h1 id='page-number-recent' class="text-lg font-sans font-bold" style="color: rgb(26, 60, 124);">1</h1>
+				<h1 id='page-number-recent' class="font-sans text-sm font-bold lg:text-lg" style="color: rgb(26, 60, 124);">1</h1>
 				
 				<button id="recent-next" class="focus:outline-none focus:ring focus:border-blue-300">
-					<h1 class="text-lg font-sans font-semibold" style="color: rgb(26, 60, 124);">Next</h1>
+					<h1 class="font-sans text-sm font-semibold lg:text-lg" style="color: rgb(26, 60, 124);">Next</h1>
 				</button>
 			</div>
 		</div>
-		
-
 	</div>
+
 </section>
 
 {% endblock %}

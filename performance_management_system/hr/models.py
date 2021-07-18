@@ -59,7 +59,7 @@ class EmployeeListPage(Page):
             if filter_query == 'evaluated':
                 context['filter'] = 'Evaluated'
             elif filter_query == 'on-evaluation':
-                context['filter'] = 'on-evaluation'
+                context['filter'] = 'On Evaluation'
             return Employee.objects.filter(status=filter_query)
 
         return Employee.objects.all()
@@ -129,6 +129,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             'categories': categories,
             'employee_id': id+'/',
             'employee': employee,
+            'user_model': request.user.hradmin ,
             'menu_lists': menu_lists
             }
         )
