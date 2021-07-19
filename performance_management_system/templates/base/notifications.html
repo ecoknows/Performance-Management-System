@@ -1,70 +1,28 @@
 {% extends 'base.html'%}
-{% load wagtailcore_tags static %}
+{% load wagtailcore_tags wagtailimages_tags static humanize %}
 
 
 {% block header %}
 	{% include 'includes/header.html' with title='NOTIFICATION' user_model=user_model %}
 {% endblock %}
 
-{% block style %}
-<style>
-
-</style>
-{% endblock style %}
-
 {% block content %}
 <section class="flex mx-auto space-x-6 default-section-padding min-height-800 max-width-1800">
 	<div class="flex-1 space-y-4 ">
-		
-		<div class="flex w-full p-4 bg-white shadow-box">
-			<img src='{% static "img/profile-placeholder-2.png" %}' class="object-cover w-32 h-32 rounded-full" >
-			<div class="flex flex-col justify-center px-4">
-				<h2 class="font-sans text-xl font-semibold text-gray-primary-color">Nicole Reyes</h2>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">Globe telecom has already evaluated</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">A few seconds ago</h2>
-			</div>
-		</div>
+
+		{% for notification in notifications %}
 
 		<div class="flex w-full p-4 bg-white shadow-box">
-			<img src='{% static "img/profile-placeholder-2.png" %}' class="object-cover w-32 h-32 rounded-full" >
+			{% image notification.user_evaluation.employee.profile_pic original as notification_image %}
+			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
 			<div class="flex flex-col justify-center px-4">
-				<h2 class="font-sans text-xl font-semibold text-gray-primary-color">Nicole Reyes</h2>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">Globe telecom has already evaluated</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">A few seconds ago</h2>
+				<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.user_evaluation.employee}}</h2>
+				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
+				<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
 			</div>
 		</div>
-		<div class="flex w-full p-4 bg-white shadow-box">
-			<img src='{% static "img/profile-placeholder-2.png" %}' class="object-cover w-32 h-32 rounded-full" >
-			<div class="flex flex-col justify-center px-4">
-				<h2 class="font-sans text-xl font-semibold text-gray-primary-color">Nicole Reyes</h2>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">Globe telecom has already evaluated</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">A few seconds ago</h2>
-			</div>
-		</div>
-		<div class="flex w-full p-4 bg-white shadow-box">
-			<img src='{% static "img/profile-placeholder-2.png" %}' class="object-cover w-32 h-32 rounded-full" >
-			<div class="flex flex-col justify-center px-4">
-				<h2 class="font-sans text-xl font-semibold text-gray-primary-color">Nicole Reyes</h2>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">Globe telecom has already evaluated</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">A few seconds ago</h2>
-			</div>
-		</div>
-		<div class="flex w-full p-4 bg-white shadow-box">
-			<img src='{% static "img/profile-placeholder-2.png" %}' class="object-cover w-32 h-32 rounded-full" >
-			<div class="flex flex-col justify-center px-4">
-				<h2 class="font-sans text-xl font-semibold text-gray-primary-color">Nicole Reyes</h2>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">Globe telecom has already evaluated</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">A few seconds ago</h2>
-			</div>
-		</div>
-		<div class="flex w-full p-4 bg-white shadow-box">
-			<img src='{% static "img/profile-placeholder-2.png" %}' class="object-cover w-32 h-32 rounded-full" >
-			<div class="flex flex-col justify-center px-4">
-				<h2 class="font-sans text-xl font-semibold text-gray-primary-color">Nicole Reyes</h2>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">Globe telecom has already evaluated</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">A few seconds ago</h2>
-			</div>
-		</div>
+		
+		{% endfor %}
 		
 	</div>
 	<div class="flex flex-1 ">

@@ -1,3 +1,4 @@
+from django.dispatch.dispatcher import receiver
 from django.http import HttpResponseRedirect, HttpResponse
 from django.db import models
 from django.utils import timezone
@@ -13,6 +14,7 @@ from wagtail.admin.edit_handlers import (
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from performance_management_system import LIST_MENU
+from performance_management_system.users.models import User
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client
 
@@ -27,11 +29,15 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             user_model = request.user.client
         if request.user.is_hr:
             user_model = request.user.hradmin
+        
+        notifications = Notification.objects.filter(reciever=request.user)
 
         return self.render(
             request,
             context_overrides={
-                'user_model' : user_model
+                'user_model' : user_model,
+                'notifications' : notifications,
+                'notifications_count' : len(notifications)
             },
             template="base/notifications.html",
         )
@@ -121,7 +127,7 @@ class EvaluationRateAssign(Orderable):
         on_delete=models.CASCADE, 
         null=True,
         related_name='evaluation_rates_assign')
-
+    
     
     rate = models.IntegerField(default=0)
     
@@ -147,13 +153,17 @@ class UserEvaluation(ClusterableModel, models.Model):
     percentage = models.DecimalField(default=0, decimal_places=2, max_digits=5)
     submit_date = models.DateTimeField(null=True)
 
+    hr_admin = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+    )
     
     panels = [
         FieldPanel('employee'),
         FieldPanel('client'),
     ]
             
-    
 
 class EvaluationPage(RoutablePageMixin, Page):
     evaluation_max_rate = models.IntegerField(default=0)
@@ -181,6 +191,7 @@ class EvaluationPage(RoutablePageMixin, Page):
     
     def get_menu_list(self):
         return LIST_MENU
+    
     
     @route(r'^(\d+)/$', name='id')
     def evaluate_user_with_id(self, request, id):
@@ -223,6 +234,12 @@ class EvaluationPage(RoutablePageMixin, Page):
                 client.status = 'evaluated'
                 client.save()
 
+            Notification.objects.create(
+                reciever=update_user_evaluation.hr_admin,
+                message=update_user_evaluation.client.company+' has already evaluated',
+                user_evaluation=update_user_evaluation
+            )
+
 
         menu_lists = self.get_menu_list()
         return self.render(
@@ -234,4 +251,25 @@ class EvaluationPage(RoutablePageMixin, Page):
             'employee_model': user_evaluation.employee
             }
         )
-            
+
+class Notification(models.Model):
+    reciever = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+    )
+
+    message = models.CharField(
+        max_length=255,
+        null=True,
+    )
+
+    seen = models.BooleanField(default=False)
+
+    user_evaluation = models.ForeignKey(
+        UserEvaluation,
+        on_delete=models.CASCADE,
+        null=True,
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True)

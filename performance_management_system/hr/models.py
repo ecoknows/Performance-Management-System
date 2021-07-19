@@ -258,7 +258,8 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
     def add_a_client(self, request, employee_id, client_id):
         UserEvaluation.objects.get_or_create(
             employee_id=employee_id,
-            client_id=client_id
+            client_id=client_id,
+            hr_admin=request.user
         )
         
         employee = Employee.objects.get(pk=employee_id)
