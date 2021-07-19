@@ -1,7 +1,7 @@
 {% load wagtailimages_tags static humanize wagtailcore_tags %}
 
 {% for recent_evaluation in recent_evaluations %}
-<a href='{% pageurl employee_details_index %}{{recent_evaluation.employee.pk}}/clients/{{recent_evaluation.pk}}' class="flex mb-4 space-x-1" style="width: 700px;">
+<a href='{% pageurl employee_details_index %}{{recent_evaluation.employee.pk}}/clients/{{recent_evaluation.pk}}' class="flex px-2 py-2 mb-4 space-x-1 hover:bg-gray-100" style="width: 700px;">
     {% image recent_evaluation.employee.profile_pic fill-80x80 as employee_pic %}
     <img src="{{employee_pic.url}}" class="mr-4 rounded-full employee-profile">
     <div class="flex-1">
@@ -19,16 +19,16 @@
                 <h2 class="font-sans text-sm font-semibold lg:text-lg" style="color: #979797;">Overview</h2>
                 {% if recent_evaluation.percentage < 50 %}
                 <div class="px-4 rounded-full lg:px-6" style="background-color: #8b0000; ">
-                    <h1 class="font-sans font-semibold text-white overview-text"">{{recent_evaluation.percentage}}% Bad</h1>
+                    <h1 class="font-sans font-semibold text-center text-white overview-text">{{recent_evaluation.percentage}}% Bad</h1>
                 </div>
                 {% elif recent_evaluation.percentage < 75%}
                 <div class="px-4 rounded-full lg:px-6" style="background-color: #8b5a00; ">
-                    <h1 class="font-sans font-semibold text-white overview-text"">{{recent_evaluation.percentage}}% Good</h1>
+                    <h1 class="font-sans font-semibold text-center text-white overview-text">{{recent_evaluation.percentage}}% Good</h1>
                 </div>
 
                 {% else %}
                 <div class="px-4 rounded-full lg:px-6" style="background-color: #138B00; ">
-                    <h1 class="font-sans font-semibold text-white overview-text"">{{recent_evaluation.percentage}}% Great</h1>
+                    <h1 class="font-sans font-semibold text-center text-white overview-text">{{recent_evaluation.percentage}}% Great</h1>
                 </div>
                 {% endif %}
             </div>

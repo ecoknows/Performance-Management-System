@@ -46,18 +46,18 @@
 <section class="container flex flex-col flex-1 pb-4 mx-auto space-y-4" style="padding-top: 120px;">
 	<div class="flex flex-col px-4 space-x-0 space-y-4 lg:px-0 lg:space-y-0 lg:space-x-4 lg:flex-row" >
 		
-		<div class="flex-1 p-4 bg-white" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-			<h1 class="font-sans text-xl font-bold lg:text-3xl" style="color: #ACACAC;">Evaluated</h1>
-			<div class="flex flex-col items-center lg:flex-row">
-				<a class="flex flex-col items-center flex-1 lg:flex-row" href="{% pageurl employee_list_index %}">
-					<img src="{% static 'img/icons/employee.png'%}" width="160" >
+		<div class="flex flex-col flex-1 bg-white" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+			<h1 class="mx-4 mt-2 font-sans text-xl font-bold lg:text-3xl" style="color: #ACACAC;">Evaluated</h1>
+			<div class="flex flex-col items-center lg:flex-row ">
+				<a class="flex flex-col items-center flex-1 h-full px-4 lg:flex-row hover:bg-gray-100" href="{% pageurl employee_list_index %}">
+					<img src="{% static 'img/icons/employee.png'%}" width="100" >
 					<div class="flex flex-col items-center justify-center lg:items-start" style="color: #BABABA;">
 						<h2 class="font-sans text-xl font-semibold">Employee</h2>
 						<h1 class="font-sans text-4xl font-bold">{{evaluated_employee}}</h1>
 					</div>
 
 				</a>
-				<a class="flex flex-col items-center flex-1 lg:flex-row" href="{% pageurl client_list_index %}">
+				<a class="flex flex-col items-center flex-1 h-full lg:flex-row hover:bg-gray-100" href="{% pageurl client_list_index %}">
 					<img src="{% static 'img/icons/client.png'%}" width="160" >
 					<div class="flex flex-col items-center justify-center lg:items-start" style="color: #BABABA;">
 						<h2 class="font-sans text-xl font-semibold">Client</h2>
@@ -70,18 +70,18 @@
 
 		</div>
 
-		<div class="flex-1 p-4 bg-white" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-			<h1 class="font-sans text-xl font-bold lg:text-3xl" style="color: #ACACAC;">On Evaluation</h1>
-			<div class="flex flex-col items-center lg:flex-row">
-				<a class="flex flex-col items-center flex-1 lg:flex-row" href="{% pageurl employee_list_index %}">
-					<img src="{% static 'img/icons/employee.png'%}" width="160" >
+		<div class="flex flex-col flex-1 bg-white" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+			<h1 class="mx-4 mt-2 font-sans text-xl font-bold lg:text-3xl" style="color: #ACACAC;">On Evaluation</h1>
+			<div class="flex flex-col items-center flex-1 lg:flex-row">
+				<a class="flex flex-col items-center flex-1 h-full px-4 lg:flex-row hover:bg-gray-100" href="{% pageurl employee_list_index %}">
+					<img src="{% static 'img/icons/employee.png'%}" width="100" >
 					<div class="flex flex-col items-center justify-center lg:items-start" style="color: #BABABA;">
 						<h2 class="font-sans text-xl font-semibold">Employee</h2>
 						<h1 class="font-sans text-4xl font-bold">{{on_evaluation_employee}}</h1>
 					</div>
 
 				</a>
-				<a class="flex flex-col items-center flex-1 lg:flex-row" href="{% pageurl client_list_index %}">
+				<a class="flex flex-col items-center flex-1 h-full lg:flex-row hover:bg-gray-100" href="{% pageurl client_list_index %}">
 					<img src="{% static 'img/icons/client.png'%}" width="160" >
 					<div class="flex flex-col items-center justify-center lg:items-start" style="color: #BABABA;">
 						<h2 class="font-sans text-xl font-semibold">Client</h2>
