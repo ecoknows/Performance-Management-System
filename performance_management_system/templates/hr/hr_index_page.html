@@ -4,11 +4,6 @@
 
 {% load static wagtailcore_tags wagtailimages_tags %}
 
-{% block body_class %}
-	flex
-	flex-col
-	h-screen
-{% endblock %}
 
 {% block header %}
 	{% include 'includes/header.html' with user_model=request.user.hradmin title='DASHBOARD' menu_text='Dashboard' %}
@@ -43,7 +38,7 @@
 
 {% block content %}
 
-<section class="container flex flex-col flex-1 pb-4 mx-auto space-y-4" style="padding-top: 120px;">
+<section class="container flex flex-col flex-1 pb-4 mx-auto space-y-4" style="padding-top: 100px;">
 	<div class="flex flex-col px-4 space-x-0 space-y-4 lg:px-0 lg:space-y-0 lg:space-x-4 lg:flex-row" >
 		
 		<div class="flex flex-col flex-1 bg-white" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">

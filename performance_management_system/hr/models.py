@@ -101,6 +101,7 @@ class ClientListPage(RoutablePageMixin,Page):
 
         context['clients'] = self.get_clients(request)
         context['menu_lists'] = self.get_menu_list()
+        context['notification_url'] = HRIndexPage.objects.live().first().url
         return context
     
 
@@ -128,6 +129,7 @@ class EmployeeListPage(Page):
 
         context['employees'] = self.get_employees(request, context)
         context['menu_lists'] = self.get_menu_list()
+        context['notification_url'] = HRIndexPage.objects.live().first().url
 
         return context
 
@@ -147,6 +149,11 @@ class ClientDetailsPage( Page):
             
         
         return super().serve(request)
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request)
+        context['notification_url'] = HRIndexPage.objects.live().first().url
+        return context
 
     
     parent_page_types = ['ClientListPage']
@@ -171,6 +178,12 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
     def default_route(self, request):
         return HttpResponseRedirect('../')
     
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request)
+
+        context['notification_url'] = HRIndexPage.objects.live().first().url
+
+        return context
     
 
     @route(r'^(\d+)/$', name='id')
@@ -322,6 +335,7 @@ class HrAdmin(models.Model):
 class HRIndexPage(BaseAbstractPage):
     max_count = 1
     parent_page_types = ['base.BaseIndexPage']
+    
 
     def get_context(self, request):
         context = super(HRIndexPage, self).get_context(request)

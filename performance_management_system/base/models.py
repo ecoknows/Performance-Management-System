@@ -20,8 +20,19 @@ class BaseAbstractPage(RoutablePageMixin, Page):
     
     @route(r'^notifications/$')
     def notification(self, request):
+        user_model = None
+        if request.user.is_employee:
+            user_model = request.user.employee
+        if request.user.is_client:
+            user_model = request.user.client
+        if request.user.is_hr:
+            user_model = request.user.hradmin
+
         return self.render(
             request,
+            context_overrides={
+                'user_model' : user_model
+            },
             template="base/notifications.html",
         )
 
