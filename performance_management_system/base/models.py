@@ -2,6 +2,9 @@ from django.dispatch.dispatcher import receiver
 from django.http import HttpResponseRedirect, HttpResponse
 from django.db import models
 from django.utils import timezone
+from django.template.response import TemplateResponse
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 
 from wagtail.core.models import Page, Orderable
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
@@ -22,6 +25,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
     
     @route(r'^notifications/$')
     def notification(self, request):
+
         user_model = None
         if request.user.is_employee:
             user_model = request.user.employee
@@ -32,12 +36,67 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         
         notifications = Notification.objects.filter(reciever=request.user)
 
+        user_evaluation_id = request.GET.get('user_evaluation_id', None)
+        notification_id = request.GET.get('notification_id', None)
+        selected_user_evaluation = notifications[0].user_evaluation
+
+        if user_evaluation_id:
+            if notification_id: 
+                notification = Notification.objects.get(pk=notification_id)
+                notification.seen = True
+                notification.save()
+            
+            selected_user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+
+            categories = EvaluationCategories.objects.all()
+            max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+            category_percentages = []
+            for category in categories:
+                rate_assigns = EvaluationRateAssign.objects.filter(
+                    evaluation_rate__evaluation_categories=category,
+                    user_evaluation = selected_user_evaluation
+                )
+                percentage = 0
+                for rate_assign in rate_assigns:
+                    percentage = rate_assign.rate + percentage
+                percentage = (percentage / (len(rate_assigns) * max_rate)) * 100
+                category_percentages.append(percentage)
+                
+
+
+
+
+            return JsonResponse(
+                data={
+                    'selected_html' : render_to_string(
+                        'base/selected_notification.html', 
+                        {
+                            'selected_name': selected_user_evaluation.employee,
+                            'selected_profile_pic': selected_user_evaluation.employee.profile_pic,
+                            'selected_position': selected_user_evaluation.employee.position,
+                            'categories': categories,
+                            'category_percentages': category_percentages
+                        }
+                    ),
+                    'notification_html' :  render_to_string(
+                        'hr/counter_notification.html',
+                        {
+                            'notifications_count' : 4,
+                            'id': request.user.id
+                        }
+                    )
+                },
+               
+            )
+
         return self.render(
             request,
             context_overrides={
                 'user_model' : user_model,
+                'user_evaluation_first_id' : notifications[0].user_evaluation.pk,
                 'notifications' : notifications,
-                'notifications_count' : len(notifications)
+                'notifications_count' : len(notifications),
+                'notification_first_id' : notifications[0].pk,
             },
             template="base/notifications.html",
         )

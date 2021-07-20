@@ -19,6 +19,9 @@
 .shadow-box{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);
 }
+.shadow-box-yellow{
+    box-shadow: 0 4px 8px 0 rgb(248, 155, 15), 0 6px 20px 0 rgba(0, 0, 0, 0.044);
+}
 
 .height-150{height: 150px;}
 .height-800{height: 800px;}

@@ -1,4 +1,4 @@
-{% load static wagtailcore_tags  wagtailimages_tags %}
+{% load static wagtailcore_tags  wagtailimages_tags notification_tags %}
 
 <header class="fixed hidden w-full lg:block" style="height: 100px; background-color: #F0F0F0; z-index: 1000;">
 	
@@ -74,10 +74,19 @@
 				<div id="menu-btn" class="p-2 mr-2 rounded-full focus:outline-none">
 					<div id="menu-btn__burger"></div>
 				</div>
+
+				<div class="relative flex ">
+					<a href='{{notification_url}}notifications' class="p-2 mr-2 bg-white rounded-full" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+						<img src='{% static "img/icons/notif.png" %}' width="18">
+					</a>
+					<div id='notification-container'>
+						{% notication_count request.user.pk as result_notif %}
+						{% if result_notif  > 0 %}
+						<span class="absolute -top-1.5 right-0 w-5 h-5 text-center text-white bg-red-600 rounded-full text-sm">{{result_notif}}</span>
+						{% endif %}
+					</div>
+				</div>
 		
-				<a href='{{notification_url}}notifications' class="p-2 mr-2 bg-white rounded-full" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-					<img src='{% static "img/icons/notif.png" %}' width="18">
-				</a>
 		
 				<div class="flex items-center px-2 mr-4 space-x-2 bg-white rounded-full" style="padding-top: 4px; padding-bottom: 4px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
 					<img src='{% static "img/icons/search.png" %}' width="18">

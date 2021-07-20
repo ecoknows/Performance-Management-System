@@ -1,0 +1,43 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<div class="flex flex-col items-center" >
+    {% image selected_profile_pic original as profile_pic %}
+    <img src='{{profile_pic.url}}' class="object-cover rounded-full w-44 h-44" >
+    <div class="text-center">
+        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{selected_name}}</h1>
+        <h1 class="font-sans text-2xl font-semibold leading-tight text-gray-primary-color">{{selected_position}}</h1>
+        <button class="px-4 py-1 mt-2 rounded-full bg-eval-color">
+            <h2 class="font-sans text-lg text-white font-base">VIEW EVALUATION</h2>
+        </button>
+    </div>
+</div>
+
+<div class="space-y-2">
+    <div>
+        <h2 class="font-sans text-xl text-gray-primary-color">Client</h2>
+        <h1 class="font-sans text-3xl font-bold text-gray-primary-color">&ensp; Globe Telecom</h1>
+    </div>
+    <div class="flex">
+        <div class="flex-1">
+            <h2 class="font-sans text-xl text-gray-primary-color">Categories</h2>
+            {% for category in categories %}
+            <h1 class="font-sans text-2xl font-bold text-gray-primary-color">&ensp; {{category}}</h1>
+            {% endfor %}
+            
+
+        </div>
+        <div class="flex flex-col items-end flex-1">
+            <h2 class="font-sans text-xl text-gray-primary-color">Percentage</h2>
+            {% for category_percentage in category_percentages %}
+            
+            {% if category_percentage < 50 %}
+            <h1 class="font-sans text-2xl font-bold text-red">{{category_percentage | floatformat:1}}%</h1>
+            {% elif category_percentage < 75 %}
+            <h1 class="font-sans text-2xl font-bold text-orange">{{category_percentage | floatformat:1}}%</h1>
+            {% else %}
+            <h1 class="font-sans text-2xl font-bold text-green">{{category_percentage | floatformat:1}}%</h1>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>

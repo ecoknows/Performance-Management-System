@@ -12,7 +12,6 @@ from performance_management_system import IntegerResource, StringResource
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.template.response import TemplateResponse
 
 import math
 

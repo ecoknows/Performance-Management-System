@@ -1,0 +1,6 @@
+{% load wagtailcore_tags notification_tags %}
+{% notication_count id as result_notif %}
+
+{% if result_notif  > 0 %}
+<span class="absolute -top-1.5 right-0 w-5 h-5 text-center text-white bg-red-600 rounded-full text-sm">{{result_notif}}</span>
+{% endif %}
