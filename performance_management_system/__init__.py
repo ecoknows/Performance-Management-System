@@ -10,20 +10,6 @@ class StringResource:
     CLIENT = 'Client'
     EMPLOYEE = 'Employee'
     HR_ADMIN = 'HR Admin'
-
-LIST_MENU = [
-    ['', 'All'],
-    ['?filter=evaluated','Evaluated'],
-    ['?filter=on-evaluation','On Evaluation'],
-]
-DETAILS_MENU = [
-    ['', 'Details'],
-    ['clients', 'Clients'],
-    ['pick-a-client','Pick a client'],
-    ['evaluated','Evaluated'],
-    ['on-evaluation','On Evaluation'],
-]
-
 DETAILS_MENU = [
     ['', 'Details'],
     ['clients', 'Clients'],

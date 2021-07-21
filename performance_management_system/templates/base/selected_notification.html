@@ -1,21 +1,21 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 <div class="flex flex-col items-center" >
-    {% image selected_profile_pic original as profile_pic %}
+    {% image selected_user_evaluation.employee.profile_pic original as profile_pic %}
     <img src='{{profile_pic.url}}' class="object-cover rounded-full w-44 h-44" >
     <div class="text-center">
-        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{selected_name}}</h1>
-        <h1 class="font-sans text-2xl font-semibold leading-tight text-gray-primary-color">{{selected_position}}</h1>
-        <button class="px-4 py-1 mt-2 rounded-full bg-eval-color">
-            <h2 class="font-sans text-lg text-white font-base">VIEW EVALUATION</h2>
-        </button>
+        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{selected_user_evaluation.employee}}</h1>
+        <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">{{selected_user_evaluation.employee.position}}</h1>
+        <a href="{{evaluation_index_page}}" class="px-4 py-1 font-sans text-lg text-white rounded-full bg-eval-color font-base ">
+            VIEW EVALUATION
+        </a>
     </div>
 </div>
 
 <div class="space-y-2">
     <div>
         <h2 class="font-sans text-xl text-gray-primary-color">Client</h2>
-        <h1 class="font-sans text-3xl font-bold text-gray-primary-color">&ensp; Globe Telecom</h1>
+        <h1 class="font-sans text-3xl font-bold text-gray-primary-color">&ensp; {{selected_user_evaluation.client.company}}</h1>
     </div>
     <div class="flex">
         <div class="flex-1">
@@ -29,8 +29,9 @@
         <div class="flex flex-col items-end flex-1">
             <h2 class="font-sans text-xl text-gray-primary-color">Percentage</h2>
             {% for category_percentage in category_percentages %}
-            
-            {% if category_percentage < 50 %}
+            {% if category_percentage == 0 %}
+            <h1 class="font-sans text-2xl font-bold text-blue">WAITING FOR EVALUATION</h1>
+            {% elif category_percentage < 50 %}
             <h1 class="font-sans text-2xl font-bold text-red">{{category_percentage | floatformat:1}}%</h1>
             {% elif category_percentage < 75 %}
             <h1 class="font-sans text-2xl font-bold text-orange">{{category_percentage | floatformat:1}}%</h1>

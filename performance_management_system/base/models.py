@@ -1,13 +1,14 @@
+
 from django.dispatch.dispatcher import receiver
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.db import models
 from django.utils import timezone
-from django.template.response import TemplateResponse
-from django.http import JsonResponse
-from django.template.loader import render_to_string
 
 from wagtail.core.models import Page, Orderable
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
+
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -16,7 +17,6 @@ from wagtail.admin.edit_handlers import (
 
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
-from performance_management_system import LIST_MENU
 from performance_management_system.users.models import User
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client
@@ -34,13 +34,13 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         if request.user.is_hr:
             user_model = request.user.hradmin
         
-        notifications = Notification.objects.filter(reciever=request.user)
+        notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
 
         user_evaluation_id = request.GET.get('user_evaluation_id', None)
         notification_id = request.GET.get('notification_id', None)
-        selected_user_evaluation = notifications[0].user_evaluation
 
         if user_evaluation_id:
+            from performance_management_system.hr.models import EmployeeDetailsPage
             if notification_id: 
                 notification = Notification.objects.get(pk=notification_id)
                 notification.seen = True
@@ -71,11 +71,10 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                     'selected_html' : render_to_string(
                         'base/selected_notification.html', 
                         {
-                            'selected_name': selected_user_evaluation.employee,
-                            'selected_profile_pic': selected_user_evaluation.employee.profile_pic,
-                            'selected_position': selected_user_evaluation.employee.position,
+                            'selected_user_evaluation' : selected_user_evaluation,
                             'categories': categories,
-                            'category_percentages': category_percentages
+                            'category_percentages': category_percentages,
+                            'evaluation_index_page': EmployeeDetailsPage.objects.live().first().url + str(selected_user_evaluation.employee.pk) +'/clients/' + str(selected_user_evaluation.pk)
                         }
                     ),
                     'notification_html' :  render_to_string(
@@ -93,10 +92,8 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             request,
             context_overrides={
                 'user_model' : user_model,
-                'user_evaluation_first_id' : notifications[0].user_evaluation.pk,
                 'notifications' : notifications,
                 'notifications_count' : len(notifications),
-                'notification_first_id' : notifications[0].pk,
             },
             template="base/notifications.html",
         )
@@ -249,7 +246,7 @@ class EvaluationPage(RoutablePageMixin, Page):
         return HttpResponseRedirect('../')
     
     def get_menu_list(self):
-        return LIST_MENU
+        return []
     
     
     @route(r'^(\d+)/$', name='id')

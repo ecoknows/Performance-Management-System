@@ -16,11 +16,11 @@ from wagtail.admin.edit_handlers import (
     MultiFieldPanel,
 )
 
-from performance_management_system.base.models import BaseAbstractPage, UserEvaluation, EvaluationCategories, EvaluationPage
+from performance_management_system.base.models import BaseAbstractPage, UserEvaluation, EvaluationCategories, EvaluationPage, Notification
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client
 from performance_management_system.users.models import User
-from performance_management_system import IntegerResource, StringResource, LIST_MENU, DETAILS_MENU
+from performance_management_system import IntegerResource, StringResource, DETAILS_MENU
 
 class ClientListPage(RoutablePageMixin,Page):
     max_count = 1
@@ -36,7 +36,7 @@ class ClientListPage(RoutablePageMixin,Page):
                 return UserEvaluation.objects.exclude(percentage=0).filter(
                     client_id=client_id
                 )
-            elif filter_query == 'on evaluation':
+            elif filter_query == 'on-evaluation':
                 self.filter  = 'On Evaluation'
                 return UserEvaluation.objects.filter(
                     percentage=0,
@@ -46,32 +46,60 @@ class ClientListPage(RoutablePageMixin,Page):
         return UserEvaluation.objects.filter(client_id=client_id)
 
     def get_clients(self, request):
-        # filter_query = request.GET.get('filter', None)
+        filter_query = request.GET.get('filter', None)
         
-        # if filter_query:
-        #     if filter_query == 'evaluated':
-        #         context['filter'] = 'Evaluated'
-        #     elif filter_query == 'on-evaluation':
-        #         context['filter'] = 'on-evaluation'
-        #     return Employee.objects.filter(status=filter_query)
+        if filter_query:
+            if filter_query == 'evaluated':
+                self.filter = 'Evaluated'
+            elif filter_query == 'on-evaluation':
+                self.filter = 'On Evaluation'
+            return Client.objects.filter(status=filter_query)
 
         return Client.objects.all()
     
-    def get_menu_list(self):
-        return LIST_MENU
 
     
+    @route(r'^$') 
+    def default_route(self, request):
+        hr_index_url = HRIndexPage.objects.first().url
+
+        clients = self.get_clients(request)
+        menu_lists = [
+            (hr_index_url,'Dashboard'),
+            [self.url, 'All'],
+            ['?filter=evaluated','Evaluated'],
+            ['?filter=on-evaluation','On Evaluation'],
+        ]
+        notification_url = HRIndexPage.objects.live().first().url
+
+        return self.render(
+            request,
+            context_overrides={
+                'clients': clients,
+                'menu_lists': menu_lists,
+                'notification_url': notification_url,
+                'filter': self.filter
+            }
+        )
+
     @route(r'^(\d+)/$')
     def client_details(self, request, id):
-        
+        hr_index_url = HRIndexPage.objects.first().url
+        menu_lists = [
+            (hr_index_url,'Dashboard'),
+            [self.url+id, 'All'],
+            ['?filter=evaluated','Evaluated'],
+            ['?filter=on-evaluation','On Evaluation'],
+        ]
         return self.render(
             request,
             context_overrides={
                 'user_evaluations': self.get_assign_employee(request, id),
-                'menu_lists': self.get_menu_list(),
+                'menu_lists': menu_lists,
                 'user_model': request.user.hradmin,
                 'employee_model': Client.objects.get(pk=id),
-                'evaluation_index': 'evaluated/'
+                'evaluation_index': 'evaluated/',
+                'filter': self.filter
             },
             template='client/client_index_page.html'
         )
@@ -80,12 +108,19 @@ class ClientListPage(RoutablePageMixin,Page):
     def client_details_evaluated(self, request, id, user_evaluation_id):
         user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
         evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
-        
+        hr_index_url = HRIndexPage.objects.first().url
+
+        menu_lists = [
+            (hr_index_url,'Dashboard'),
+            ['../../','Employees'],
+            ['../../../','Client Lists'],
+        ]
         return self.render(
             request,
             context_overrides={
                 'user_evaluation': user_evaluation,
                 'evaluation_categories': EvaluationCategories.objects.all(),
+                'menu_lists': menu_lists,
                 'disabled' : True,
                 'user_model' : request.user.hradmin,
                 'employee_model': user_evaluation.client,
@@ -96,13 +131,6 @@ class ClientListPage(RoutablePageMixin,Page):
         
     
     
-    def get_context(self, request):
-        context = super(ClientListPage, self).get_context(request)
-
-        context['clients'] = self.get_clients(request)
-        context['menu_lists'] = self.get_menu_list()
-        context['notification_url'] = HRIndexPage.objects.live().first().url
-        return context
     
 
 class EmployeeListPage(Page):
@@ -122,7 +150,14 @@ class EmployeeListPage(Page):
         return Employee.objects.all()
 
     def get_menu_list(self):
-        return LIST_MENU
+        hr_index_url = HRIndexPage.objects.first().url
+        
+        return [
+            (hr_index_url,'Dashboard'),
+            [self.url, 'All'],
+            ['?filter=evaluated','Evaluated'],
+            ['?filter=on-evaluation','On Evaluation'],
+        ]
 
     def get_context(self, request):
         context = super(EmployeeListPage, self).get_context(request)
@@ -163,16 +198,24 @@ class ClientDetailsPage( Page):
 
 class EmployeeDetailsPage(RoutablePageMixin, Page):
     max_count = 1
+    filter = 'All'
     
     def get_clients_not_picked(self, employee):
         return Client.objects.exclude(user_evaluation__employee=employee)
 
-    def get_user_evaluation_picked(self, employee):
+    def get_user_evaluation_picked(self, request, employee):
+        filter_query = request.GET.get('filter', None)
+        
+        if filter_query:
+            if filter_query == 'evaluated':
+                self.filter = 'Evaluated'
+                return UserEvaluation.objects.exclude(percentage=0).filter(employee=employee)
+            elif filter_query == 'on-evaluation':
+                self.filter = 'On Evaluation'
+                return UserEvaluation.objects.filter(employee=employee, percentage=0)
+
         return UserEvaluation.objects.filter(employee=employee)
         
-    def get_menu_list(self):
-        return DETAILS_MENU
-
     
     @route(r'^$') 
     def default_route(self, request):
@@ -182,6 +225,9 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
         context = super().get_context(request)
 
         context['notification_url'] = HRIndexPage.objects.live().first().url
+        context['menu_lists'] = [
+            ('/'+HRIndexPage.objects.live().first().url, 'Dashboard')
+        ]
 
         return context
     
@@ -191,7 +237,13 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
         employee = Employee.objects.get(pk=id)
         categories = EvaluationCategories.objects.all()
         
-        menu_lists = self.get_menu_list()
+        menu_lists = [
+            [HRIndexPage.objects.live().first().url, 'Dashboard'],
+            ['', 'Details'],
+            ['clients', 'Clients'],
+            ['pick-a-client','Pick a client'],
+        ]
+
         return self.render(
             request,
             context_overrides={
@@ -206,9 +258,15 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
     @route(r'^(\d+)/clients/$', name='id')
     def client_list(self, request, id):
         employee = Employee.objects.get(pk=id)
-        user_evaluations = self.get_user_evaluation_picked(employee=employee)
-        edited_menu_list = self.get_menu_list()
-        menu_lists = edited_menu_list
+        user_evaluations = self.get_user_evaluation_picked(request, employee=employee)
+        menu_lists = [
+            [HRIndexPage.objects.live().first().url, 'Dashboard'],
+            ['../', 'Details'],
+            ['../pick-a-client','Pick a client'],
+            [self.url+id+'/clients','All'],
+            ['?filter=evaluated','Evaluated'],
+            ['?filter=on-evaluation','On Evaluation'],
+        ]
         return self.render(
             request,
             context_overrides={
@@ -216,6 +274,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             'user_evaluations': user_evaluations,
             'employee': employee,
             'menu_lists': menu_lists,
+            'filter': self.filter,
             },
             template="hr/employee_client_list.html",
         )
@@ -224,13 +283,19 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
     def client_evaluation_details(self, request, id, user_evaluation_id):
         user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
         evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
-        
+        menu_lists = [
+            [HRIndexPage.objects.live().first().url, 'Dashboard'],
+            ['../../', 'Details'],
+            ['../../pick-a-client','Pick a client'],
+            ['../','Clients'],
+        ]
         return self.render(
             request,
             context_overrides={
                 'user_evaluation': user_evaluation,
                 'evaluation_categories': EvaluationCategories.objects.all(),
                 'disabled' : True,
+                'menu_lists': menu_lists,
                 'user_model' : request.user.hradmin,
                 'employee_model': user_evaluation.client,
                 'self': {'evaluation_max_rate': evaluation_max_rate}
@@ -242,7 +307,11 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
     def pick_a_client(self, request, id):
         employee = Employee.objects.get(pk=id)
         clients = self.get_clients_not_picked(employee=employee)
-        menu_lists = self.get_menu_list()
+        menu_lists = [
+            [HRIndexPage.objects.live().first().url, 'Dashboard'],
+            ['../', 'Details'],
+            ['../clients','Clients'],
+        ]
         return self.render(
             request,
             context_overrides={
@@ -256,7 +325,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
         
     @route(r'^(\d+)/pick-a-client/add/(\d+)/$')
     def add_a_client(self, request, employee_id, client_id):
-        UserEvaluation.objects.get_or_create(
+        user_evaluation = UserEvaluation.objects.create(
             employee_id=employee_id,
             client_id=client_id,
             hr_admin=request.user
@@ -267,6 +336,18 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
 
         client = Client.objects.get(pk=client_id)
         client.status = 'on-evaluation'
+
+        Notification.objects.create(
+            reciever=client.user,
+            message='A new employee have been assign',
+            user_evaluation=user_evaluation
+        )
+
+        Notification.objects.create(
+            reciever=employee.user,
+            message='A new client have been assign',
+            user_evaluation=user_evaluation
+        )
 
         employee.save()
         client.save()
@@ -348,8 +429,15 @@ class HRIndexPage(BaseAbstractPage):
         context['on_evaluation_employee'] = len(Employee.objects.filter(status='on-evaluation'))
         context['on_evaluation_client'] = len(Client.objects.filter(status='on-evaluation'))
 
-        context['employee_list_index'] = EmployeeListPage.objects.live().first()
-        context['client_list_index'] = ClientListPage.objects.live().first()
+        employee_list_index = EmployeeListPage.objects.live().first()
+        client_list_index = ClientListPage.objects.live().first()
+
+        context['employee_list_index'] = employee_list_index
+        context['client_list_index'] = client_list_index
+        context['menu_lists'] = [
+            [employee_list_index.url, 'Employees'],
+            [client_list_index.url, 'Clients']
+        ]
 
         return context
     

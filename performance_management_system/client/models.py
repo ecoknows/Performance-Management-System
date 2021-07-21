@@ -4,17 +4,109 @@ from django.utils import timezone
 from django.contrib.auth.models import Group
 
 from wagtail.core.models import Page
+from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 
 from wagtail.admin.edit_handlers import (
     FieldPanel,
 )
 from wagtail.images.edit_handlers import ImageChooserPanel
 
-from performance_management_system import IntegerResource, StringResource, IS_EVALUATED, LIST_MENU
+from performance_management_system import IntegerResource, StringResource, IS_EVALUATED
 from performance_management_system.users.models import User
-from performance_management_system.employee.models import Employee
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 
 
+class BaseAbstractPage(RoutablePageMixin, Page):
+    
+    @route(r'^notifications/$')
+    def notification(self, request):
+        from performance_management_system.base.models import Notification, UserEvaluation, EvaluationCategories,EvaluationPage,EvaluationRateAssign
+
+        user_model = None
+        if request.user.is_employee:
+            user_model = request.user.employee
+        if request.user.is_client:
+            user_model = request.user.client
+        if request.user.is_hr:
+            user_model = request.user.hradmin
+        
+        notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
+
+        user_evaluation_id = request.GET.get('user_evaluation_id', None)
+        notification_id = request.GET.get('notification_id', None)
+
+        if user_evaluation_id:
+            from performance_management_system.hr.models import EmployeeDetailsPage
+            if notification_id: 
+                notification = Notification.objects.get(pk=notification_id)
+                notification.seen = True
+                notification.save()
+            
+            selected_user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+
+            categories = EvaluationCategories.objects.all()
+            max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+            category_percentages = []
+            for category in categories:
+                rate_assigns = EvaluationRateAssign.objects.filter(
+                    evaluation_rate__evaluation_categories=category,
+                    user_evaluation = selected_user_evaluation
+                )
+                percentage = 0
+                for rate_assign in rate_assigns:
+                    percentage = rate_assign.rate + percentage
+                rate_assign_len = len(rate_assigns) 
+                
+                if rate_assign_len:
+                    percentage = (percentage / (rate_assign_len * max_rate)) * 100
+                else:
+                    percentage = 0
+                category_percentages.append(percentage)
+                
+
+
+
+
+            return JsonResponse(
+                data={
+                    'selected_html' : render_to_string(
+                        'base/selected_notification.html', 
+                        {
+                            'selected_user_evaluation' : selected_user_evaluation,
+                            'selected_employee': selected_user_evaluation.employee,
+                            'selected_profile_pic': selected_user_evaluation.employee.profile_pic,
+                            'selected_position': selected_user_evaluation.employee.position,
+                            'categories': categories,
+                            'category_percentages': category_percentages,
+                            'evaluation_index_page': EvaluationPage.objects.live().first().url+str(selected_user_evaluation.pk)
+                        }
+                    ),
+                    'notification_html' :  render_to_string(
+                        'hr/counter_notification.html',
+                        {
+                            'notifications_count' : 4,
+                            'id': request.user.id
+                        }
+                    )
+                },
+               
+            )
+
+        return self.render(
+            request,
+            context_overrides={
+                'user_model' : user_model,
+                'notifications' : notifications,
+                'notifications_count' : len(notifications),
+            },
+            template="base/notifications.html",
+        )
+
+    
+    class Meta:
+        abstract = True
+        
 class Client(models.Model):
     user = models.OneToOneField(
         User,
@@ -72,11 +164,11 @@ class Client(models.Model):
         super().delete()        
   
 
-class ClientIndexPage(Page):
+class ClientIndexPage(BaseAbstractPage):
     max_count = 1
 
     def get_menu_list(self):
-        return LIST_MENU
+        return []
 
     def get_assign_employee(self, request, context):
         from performance_management_system.base.models import UserEvaluation

@@ -52,19 +52,11 @@
 						{% endif %}
 					</h1>
 					<ul id='menu-container' class="absolute hidden w-full p-4 font-sans text-lg font-semibold bg-white rounded-lg" style="color: #747474; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-							{% if employee %}
-								{% for menu_list in menu_lists %}
-									<li>
-										<a href="{% pageurl page %}{{employee_id}}{{menu_list.0}}">{{menu_list.1}}</a>
-									</li>
-								{% endfor %}
-							{% else %}
-								{% for menu_list in menu_lists %}
-									<li>
-										<a href="{% pageurl page %}{{menu_list.0}}">{{menu_list.1}}</a>
-									</li>
-								{% endfor %}
-							{% endif %}
+							{% for menu_list in menu_lists %}
+								<li>
+									<a href="{{menu_list.0}}">{{menu_list.1}}</a>
+								</li>
+							{% endfor %}
 						<li>
 							<a href="/logout">Logout</a>
 						</li>
