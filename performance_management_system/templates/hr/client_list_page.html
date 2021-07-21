@@ -8,17 +8,17 @@
 
 {% block content %}
 
-<section class="container flex flex-wrap flex-1 mx-auto" style="padding-top: 120px;">
+<section class="container flex flex-wrap flex-1 mx-auto padding-top-120">
 
 	{% for client in clients %}
 
 		{% if client.status == 'none' %}
-		<div class="relative mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+		<div class="relative mb-10 mr-16 bg-white rounded-3xl width-28rem height-17rem shadow-box">
 			
 			<a href="{{client}}" class="flex flex-col h-full py-6">
 				<div class="flex justify-center flex-1 py-2 space-x-4 ">
 					{% image client.profile_pic original as profile_pic %}
-					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 150px;'>
+					<img src='{{profile_pic.url}}' class="object-contain height-150 width-90cent">
 				</div>
 				
 				<div>
@@ -30,36 +30,36 @@
 		</div>
 		{% elif client.status == 'evaluated'  %}
 		
-		<div class="relative mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(8, 162, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+		<div class="relative mb-10 mr-16 bg-white rounded-3xl width-28rem height-17rem shadow-box-green">
 			
-			<a href="#" class="absolute right-0 p-2">
+			<a data-client_id='{{client.user.pk}}' class="absolute right-0 p-2 cursor-pointer notify-button">
 				<img src='{% static "img/icons/notify.png" %}'>
 			</a>
 
 			<a href="{{client.pk}}" class="flex flex-col h-full py-6">
 				<div class="flex justify-center flex-1 py-2 space-x-4 ">
 					{% image client.profile_pic original as profile_pic %}
-					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 150px;'>
+					<img src='{{profile_pic.url}}' class="object-contain height-150 width-90cent">
 				</div>
 				
 				<div>
-					<h1 class="font-sans text-4xl text-center" style="color: #616161;">
+					<h1 class="font-sans text-4xl text-center text-gray-fourthary-color">
 						{{client.company}}
 					</h1>
 				</div>
 			</a>
 		</div>
 		{% else %}
-		<div class="relative mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(255, 0, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+		<div class="relative mb-10 mr-16 bg-white rounded-3xl width-28rem height-17rem shadow-box-red">
 			
-			<a href="#" class="absolute right-0 p-2">
+			<a data-client_id='{{client.user.pk}}' class="absolute right-0 p-2 cursor-pointer notify-button">
 				<img src='{% static "img/icons/notify.png" %}'>
 			</a>
 
 			<a href="{{client.pk}}" class="flex flex-col h-full py-6">
 				<div class="flex justify-center flex-1 py-2 space-x-4 ">
 					{% image client.profile_pic original as profile_pic %}
-					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 150px;'>
+					<img src='{{profile_pic.url}}' class="object-contain height-150 width-90cent">
 				</div>
 				
 				<div>
@@ -73,5 +73,11 @@
 	{% endfor %}
 		
 </section>
+{% endblock %}
 
+{% block scripts %}
+<script>
+	let csrf_token = '{{csrf_token}}'
+</script>
+<script src="{% static 'js/client_list_page.js' %}"></script>
 {% endblock %}

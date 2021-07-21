@@ -126,14 +126,14 @@
 					</div>
 					<div class="flex justify-center flex-1">
             {% for rates in self.evaluation_max_rate|times %}
-						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="text-lg font-sans font-semibold">{{forloop.counter}}</h1>
+						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="font-sans text-lg font-semibold">{{forloop.counter}}</h1>
             {% endfor %}
 					</div>
 				</div>
 				{% for rate in category.evaluation_rates.all %}
 						<div class="flex px-4 py-2 border-b border-gray-600 " style="min-height: 50px;">
 							<div class="flex-1">
-								<label class="text-xl font-sans">
+								<label class="font-sans text-xl">
 									{{rate}}
 								</label>
 							</div>
@@ -153,9 +153,9 @@
 				{% endfor %}
 			</div>
 		</div>
-    {% if disabled == None %}
+    {% if disabled == None and user_evaluation.percentage == 0 %}
     <div class="flex items-center justify-center py-10">
-      <input type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="py-2 px-4 text-white font-sans text-lg font-semibold">
+      <input type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="px-4 py-2 font-sans text-lg font-semibold text-white">
     </div>
     {% endif %}
 	</form>

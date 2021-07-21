@@ -1,14 +1,14 @@
 
 $(function(){
     $('.anchor-clickable').click(function(){
-        let user_evaluation_id = $(this).data('user_evaluation')
         let notification_id = $(this).data('notification-pk')
         let this_button = $(this)
         $.ajax({
             type: 'GET',
             data:{
-                'user_evaluation_id' : user_evaluation_id,
                 'notification_id': notification_id,
+                'make_it_seen': true,
+                'hr_admin_first_id' : hr_admin_first_id,
             },
             success: function (data) {
                 $('#notification-selected').html(data.selected_html)
@@ -17,10 +17,12 @@ $(function(){
             }
         });
     })
+
     $.ajax({
         type: 'GET',
         data:{
-            'user_evaluation_id' : user_evaluation_first_id,
+            'notification_id': notification_first_id,
+            'hr_admin_first_id' : hr_admin_first_id,
         },
         success: function (data) {
             $('#notification-selected').html(data.selected_html)

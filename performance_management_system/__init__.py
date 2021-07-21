@@ -10,6 +10,7 @@ class StringResource:
     CLIENT = 'Client'
     EMPLOYEE = 'Employee'
     HR_ADMIN = 'HR Admin'
+
 DETAILS_MENU = [
     ['', 'Details'],
     ['clients', 'Clients'],
@@ -33,6 +34,15 @@ IS_EVALUATED = [
     ('none', 'None'),
     ('evaluated', 'Evaluated'),
     ('on-evaluation','On Evaluation')
+]
+
+NOTIFICATION_TYPE = [
+    ('client-evaluated-hr','Client Evaluated'),
+    ('client-evaluated-employee','Client Evaluated'),
+    ('notify-evaluated-all-client','Notify evaluate all'),
+    ('notify-evaluated-specific-client','Notify evaluate specific'),
+    ('new-employee-client','A New Employee Assigned'),
+    ('new-client-employee','A New Client Assigned'),
 ]
 
 GRADIENT_BG = [

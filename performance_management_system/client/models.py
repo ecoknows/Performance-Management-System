@@ -33,17 +33,59 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         
         notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
 
-        user_evaluation_id = request.GET.get('user_evaluation_id', None)
+        hr_admin_id = request.GET.get('hr_admin_first_id', None)
         notification_id = request.GET.get('notification_id', None)
+        make_it_seen = request.GET.get('make_it_seen', False)
 
-        if user_evaluation_id:
+        if hr_admin_id:
+            from performance_management_system.hr.models import HrAdmin
+            notification = Notification.objects.get(pk=notification_id)
+
+            if make_it_seen: 
+                notification.seen = True
+                notification.save()
+
+
+            selected_hr_admin = HrAdmin.objects.get(pk = hr_admin_id)
+            on_evaluation_employee = None
+
+            if notification.notification_type == 'notify-evaluated-all-client':
+                on_evaluation_employee = request.user.client.user_evaluation.filter(percentage=0)
+            elif notification.notification_type == 'notify-evaluated-specific-client':
+                on_evaluation_employee = notification.user_evaluation
+
+            return JsonResponse(
+                data={
+                    'selected_html' : render_to_string(
+                        'base/selected_notification.html', 
+                        {
+                            'notification': notification,
+                            'selected_hr_admin': selected_hr_admin,
+                            'on_evaluation_employee': on_evaluation_employee,
+                            'evaluation_index_page': EvaluationPage.objects.live().first().url
+                        }
+                    ),
+                    'notification_html' :  render_to_string(
+                        'hr/counter_notification.html',
+                        {
+                            'notifications_count' : 4,
+                            'id': request.user.id
+                        }
+                    )
+                },
+               
+            )
+        
+
+        if notification_id:
             from performance_management_system.hr.models import EmployeeDetailsPage
-            if notification_id: 
-                notification = Notification.objects.get(pk=notification_id)
+            notification = Notification.objects.get(pk=notification_id)
+
+            if make_it_seen: 
                 notification.seen = True
                 notification.save()
             
-            selected_user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+            selected_user_evaluation = notification.user_evaluation
 
             categories = EvaluationCategories.objects.all()
             max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
@@ -73,10 +115,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                     'selected_html' : render_to_string(
                         'base/selected_notification.html', 
                         {
-                            'selected_user_evaluation' : selected_user_evaluation,
-                            'selected_employee': selected_user_evaluation.employee,
-                            'selected_profile_pic': selected_user_evaluation.employee.profile_pic,
-                            'selected_position': selected_user_evaluation.employee.position,
+                            'notification' : notification,
                             'categories': categories,
                             'category_percentages': category_percentages,
                             'evaluation_index_page': EvaluationPage.objects.live().first().url+str(selected_user_evaluation.pk)
@@ -92,6 +131,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 },
                
             )
+        
 
         return self.render(
             request,

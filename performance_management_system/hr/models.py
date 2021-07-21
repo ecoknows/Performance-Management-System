@@ -1,4 +1,5 @@
 from django.db import models
+from django.http import JsonResponse
 from django.template.response import TemplateResponse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect, render
@@ -71,6 +72,20 @@ class ClientListPage(RoutablePageMixin,Page):
             ['?filter=on-evaluation','On Evaluation'],
         ]
         notification_url = HRIndexPage.objects.live().first().url
+
+        client_id = request.POST.get('client_id', None)
+
+        if client_id:
+            client = User.objects.get(pk=client_id)
+            Notification.objects.create(
+                reciever=client,
+                message='Kindly finish the remaining evaluation ',
+                hr_admin=request.user.hradmin,
+                notification_type='notify-evaluated-all-client'
+            )
+            return JsonResponse(data={
+                'message': 'The client has been successfully notified!'
+            })
 
         return self.render(
             request,
@@ -267,6 +282,29 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             ['?filter=evaluated','Evaluated'],
             ['?filter=on-evaluation','On Evaluation'],
         ]
+
+        
+        client_id = request.POST.get('client_id', None)
+        user_evaluation_id = request.POST.get('user_evaluation_id', None)
+
+        print('HARDOG : ' , client_id, user_evaluation_id)
+
+        if client_id and user_evaluation_id:
+            client = User.objects.get(pk=client_id)
+            user_evaluation  = UserEvaluation.objects.get(pk=user_evaluation_id)
+
+            Notification.objects.create(
+                reciever=client,
+                message='Kindly Evaluate '+ str(user_evaluation.employee),
+                hr_admin=request.user.hradmin,
+                user_evaluation= user_evaluation,
+                notification_type='notify-evaluated-specific-client'
+            )
+            return JsonResponse(data={
+                'message': 'The client has been successfully notified!'
+            })
+
+
         return self.render(
             request,
             context_overrides={
@@ -340,13 +378,15 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
         Notification.objects.create(
             reciever=client.user,
             message='A new employee have been assign',
-            user_evaluation=user_evaluation
+            user_evaluation=user_evaluation,
+            notification_type='new-employee-client'
         )
 
         Notification.objects.create(
             reciever=employee.user,
             message='A new client have been assign',
-            user_evaluation=user_evaluation
+            user_evaluation=user_evaluation,
+            notification_type='new-client-employee'
         )
 
         employee.save()

@@ -1,4 +1,6 @@
 
+
+from performance_management_system import NOTIFICATION_TYPE
 from django.dispatch.dispatcher import receiver
 from django.http import HttpResponseRedirect
 from django.db import models
@@ -36,17 +38,17 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         
         notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
 
-        user_evaluation_id = request.GET.get('user_evaluation_id', None)
         notification_id = request.GET.get('notification_id', None)
+        make_it_seen = request.GET.get('make_it_seen', False)
 
-        if user_evaluation_id:
+        if notification_id:
             from performance_management_system.hr.models import EmployeeDetailsPage
-            if notification_id: 
-                notification = Notification.objects.get(pk=notification_id)
+            notification = Notification.objects.get(pk=notification_id)
+            if make_it_seen: 
                 notification.seen = True
                 notification.save()
             
-            selected_user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+            selected_user_evaluation = notification.user_evaluation
 
             categories = EvaluationCategories.objects.all()
             max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
@@ -71,7 +73,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                     'selected_html' : render_to_string(
                         'base/selected_notification.html', 
                         {
-                            'selected_user_evaluation' : selected_user_evaluation,
+                            'notification' : notification,
                             'categories': categories,
                             'category_percentages': category_percentages,
                             'evaluation_index_page': EmployeeDetailsPage.objects.live().first().url + str(selected_user_evaluation.employee.pk) +'/clients/' + str(selected_user_evaluation.pk)
@@ -293,7 +295,8 @@ class EvaluationPage(RoutablePageMixin, Page):
             Notification.objects.create(
                 reciever=update_user_evaluation.hr_admin,
                 message=update_user_evaluation.client.company+' has already evaluated',
-                user_evaluation=update_user_evaluation
+                user_evaluation=update_user_evaluation,
+                notification_type='client-evaluated-hr',
             )
 
 
@@ -325,6 +328,18 @@ class Notification(models.Model):
     user_evaluation = models.ForeignKey(
         UserEvaluation,
         on_delete=models.CASCADE,
+        null=True,
+    )
+
+    hr_admin = models.ForeignKey(
+        'hr.HrAdmin',
+        on_delete=models.CASCADE,
+        null=True,
+    )
+
+    notification_type = models.CharField(
+        max_length=255,
+        choices=NOTIFICATION_TYPE,
         null=True,
     )
 

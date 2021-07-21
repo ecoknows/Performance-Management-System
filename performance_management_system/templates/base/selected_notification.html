@@ -1,11 +1,12 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
+{% if notification.notification_type == 'client-evaluated-hr' %}
 <div class="flex flex-col items-center" >
-    {% image selected_user_evaluation.employee.profile_pic original as profile_pic %}
+    {% image notification.user_evaluation.employee.profile_pic original as profile_pic %}
     <img src='{{profile_pic.url}}' class="object-cover rounded-full w-44 h-44" >
     <div class="text-center">
-        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{selected_user_evaluation.employee}}</h1>
-        <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">{{selected_user_evaluation.employee.position}}</h1>
+        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee}}</h1>
+        <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee.position}}</h1>
         <a href="{{evaluation_index_page}}" class="px-4 py-1 font-sans text-lg text-white rounded-full bg-eval-color font-base ">
             VIEW EVALUATION
         </a>
@@ -15,7 +16,7 @@
 <div class="space-y-2">
     <div>
         <h2 class="font-sans text-xl text-gray-primary-color">Client</h2>
-        <h1 class="font-sans text-3xl font-bold text-gray-primary-color">&ensp; {{selected_user_evaluation.client.company}}</h1>
+        <h1 class="font-sans text-3xl font-bold text-gray-primary-color">&ensp; {{notification.user_evaluation.client.company}}</h1>
     </div>
     <div class="flex">
         <div class="flex-1">
@@ -42,3 +43,63 @@
         </div>
     </div>
 </div>
+{% elif notification.notification_type == 'notify-evaluated-all-client' %}
+<div class="flex flex-col items-center" >
+    {% image selected_hr_admin.profile_pic original as profile_pic %}
+    <img src='{{profile_pic.url}}' class="object-cover rounded-full w-44 h-44" >
+    <div class="text-center">
+        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{selected_hr_admin}}</h1>
+        <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">HR Admin</h1>
+    </div>
+</div>
+
+<div class="space-y-2">
+    <div>
+        <h2 class="font-sans text-2xl font-semibold text-gray-primary-color">Message:</h2>
+        <div class="px-4 space-y-4">
+            <h1 class="font-sans text-3xl font-bold text-gray-primary-color">Please kindly evaluate the following employee as soon as possible</h1>
+            <div class="px-4 py-2">
+                {% for user_evaluation in on_evaluation_employee%}
+                <div class="flex items-center">
+                    
+                    {% image user_evaluation.employee.profile_pic original as profile_pic %}
+                    <div>
+                        <img src='{{profile_pic.url}}' class="object-cover w-12 h-12 rounded-full" >
+                    </div>
+                    <div class="flex-1 px-4">
+                        <h1 class="font-sans text-lg font-extrabold leading-tight text-gray-primary-color">{{user_evaluation.employee}}</h1>
+                        <h1 class="mb-2 font-sans font-semibold leading-tight text-md text-gray-primary-color">{{user_evaluation.employee.position}}</h1>
+                    </div>
+                    <div>
+                        <a href="{{evaluation_index_page}}{{user_evaluation.pk}}"  class="flex-1 px-4 py-1 font-sans text-lg text-white rounded-full bg-eval-color font-base ">EVALUATE</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% elif notification.notification_type == 'notify-evaluated-specific-client' %}
+<div class="flex flex-col items-center" >
+    {% image selected_hr_admin.profile_pic original as profile_pic %}
+    <img src='{{profile_pic.url}}' class="object-cover rounded-full w-44 h-44" >
+    <div class="text-center">
+        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{selected_hr_admin}}</h1>
+        <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">HR Admin</h1>
+    </div>
+</div>
+
+<div class="space-y-2">
+    <div>
+        <h2 class="font-sans text-2xl font-semibold text-gray-primary-color">Message:</h2>
+        <div class="px-4 space-y-4">
+            <h1 class="font-sans text-3xl font-bold text-gray-primary-color">Please kindly evaluate {{on_evaluation_employee.employee}}</h1>
+            <div class="px-4 py-2">
+                Specific
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endif %}
