@@ -21,7 +21,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
     
     @route(r'^notifications/$')
     def notification(self, request):
-        from performance_management_system.base.models import Notification, UserEvaluation, EvaluationCategories,EvaluationPage,EvaluationRateAssign
+        from performance_management_system.base.models import Notification, EvaluationCategories,EvaluationPage,EvaluationRateAssign
 
         user_model = None
         if request.user.is_employee:
@@ -33,7 +33,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         
         notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
 
-        hr_admin_id = request.GET.get('hr_admin_first_id', None)
+        hr_admin_id = request.GET.get('hr_admin_id', None)
         notification_id = request.GET.get('notification_id', None)
         make_it_seen = request.GET.get('make_it_seen', False)
 
@@ -51,7 +51,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
 
             if notification.notification_type == 'notify-evaluated-all-client':
                 on_evaluation_employee = request.user.client.user_evaluation.filter(percentage=0)
-            elif notification.notification_type == 'notify-evaluated-specific-client':
+            elif notification.notification_type == 'notify-evaluated-specific-client' or notification.notification_type == 'new-employee-client' or notification.notification_type == 'evaluated-form-is-send-to-employee':
                 on_evaluation_employee = notification.user_evaluation
 
             return JsonResponse(
@@ -138,6 +138,10 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             context_overrides={
                 'user_model' : user_model,
                 'notifications' : notifications,
+                'notification_url': self.url,
+                'menu_lists': [
+                    [ClientIndexPage.objects.live().first().url,'Employees']
+                ],
                 'notifications_count' : len(notifications),
             },
             template="base/notifications.html",
@@ -208,7 +212,11 @@ class ClientIndexPage(BaseAbstractPage):
     max_count = 1
 
     def get_menu_list(self):
-        return []
+        return [
+            [self.url,'All'],
+            ['?filter=evaluated','Evaluated'],
+            ['?filter=on-evaluation','On Evaluation'],
+        ]
 
     def get_assign_employee(self, request, context):
         from performance_management_system.base.models import UserEvaluation
@@ -220,7 +228,7 @@ class ClientIndexPage(BaseAbstractPage):
                 return UserEvaluation.objects.exclude(percentage=0).filter(
                     client=request.user.client
                 )
-            elif filter_query == 'on evaluation':
+            elif filter_query == 'on-evaluation':
                 context['filter'] = 'On Evaluation'
                 return UserEvaluation.objects.filter(
                     percentage=0,

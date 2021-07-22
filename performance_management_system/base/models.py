@@ -21,7 +21,7 @@ from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from performance_management_system.users.models import User
 from performance_management_system.employee.models import Employee
-from performance_management_system.client.models import Client
+from performance_management_system.client.models import Client, ClientIndexPage
 
 class BaseAbstractPage(RoutablePageMixin, Page):
     
@@ -95,6 +95,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             context_overrides={
                 'user_model' : user_model,
                 'notifications' : notifications,
+                'notification_url': self.url,
                 'notifications_count' : len(notifications),
             },
             template="base/notifications.html",
@@ -248,7 +249,10 @@ class EvaluationPage(RoutablePageMixin, Page):
         return HttpResponseRedirect('../')
     
     def get_menu_list(self):
-        return []
+        
+        return [
+            [ClientIndexPage.objects.live().first().url,'Employees']
+        ]
     
     
     @route(r'^(\d+)/$', name='id')
@@ -298,6 +302,22 @@ class EvaluationPage(RoutablePageMixin, Page):
                 user_evaluation=update_user_evaluation,
                 notification_type='client-evaluated-hr',
             )
+            
+            Notification.objects.create(
+                reciever=update_user_evaluation.employee.user,
+                message=update_user_evaluation.client.company+' has already evaluated',
+                user_evaluation=update_user_evaluation,
+                notification_type='client-evaluated-employee',
+            )
+            
+
+            Notification.objects.create(
+                reciever=update_user_evaluation.client.user,
+                message='Thank you for evaluating, I have send the result to ' + str(update_user_evaluation.employee),
+                user_evaluation=update_user_evaluation,
+                hr_admin=update_user_evaluation.hr_admin,
+                notification_type='evaluated-form-is-send-to-employee',
+            )
 
 
         menu_lists = self.get_menu_list()
@@ -306,6 +326,7 @@ class EvaluationPage(RoutablePageMixin, Page):
             context_overrides={
             'user_evaluation': user_evaluation,
             'menu_lists': menu_lists,
+            'notification_url':ClientIndexPage.objects.live().first().url,
             'user_model': request.user.client,
             'employee_model': user_evaluation.employee
             }

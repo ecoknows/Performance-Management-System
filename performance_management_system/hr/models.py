@@ -77,12 +77,22 @@ class ClientListPage(RoutablePageMixin,Page):
 
         if client_id:
             client = User.objects.get(pk=client_id)
+
             Notification.objects.create(
                 reciever=client,
                 message='Kindly finish the remaining evaluation ',
                 hr_admin=request.user.hradmin,
                 notification_type='notify-evaluated-all-client'
             )
+
+            user_evaluations = client.client.user_evaluation.filter(percentage=0)
+            for user_evaluation in user_evaluations:
+                Notification.objects.create(
+                    reciever=user_evaluation.employee.user,
+                    message='Dear employee, I have now notify ' + user_evaluation.client.company + ' to evaluate all the remaining evaluation',
+                    hr_admin=request.user.hradmin,
+                    notification_type='client-has-been-notify'
+                )
             return JsonResponse(data={
                 'message': 'The client has been successfully notified!'
             })
@@ -284,21 +294,25 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
         ]
 
         
-        client_id = request.POST.get('client_id', None)
         user_evaluation_id = request.POST.get('user_evaluation_id', None)
 
-        print('HARDOG : ' , client_id, user_evaluation_id)
 
-        if client_id and user_evaluation_id:
-            client = User.objects.get(pk=client_id)
+        if  user_evaluation_id:
             user_evaluation  = UserEvaluation.objects.get(pk=user_evaluation_id)
 
             Notification.objects.create(
-                reciever=client,
-                message='Kindly Evaluate '+ str(user_evaluation.employee),
+                reciever=user_evaluation.client.user,
+                message='Please Evaluate '+ str(user_evaluation.employee),
                 hr_admin=request.user.hradmin,
                 user_evaluation= user_evaluation,
                 notification_type='notify-evaluated-specific-client'
+            )
+            Notification.objects.create(
+                reciever=user_evaluation.employee.user,
+                message='Rest assured I have notify '+ user_evaluation.client.company + ' to evalaute',
+                hr_admin=request.user.hradmin,
+                user_evaluation= user_evaluation,
+                notification_type='client-has-been-notify'
             )
             return JsonResponse(data={
                 'message': 'The client has been successfully notified!'
@@ -377,6 +391,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
 
         Notification.objects.create(
             reciever=client.user,
+            hr_admin=request.user.hradmin,
             message='A new employee have been assign',
             user_evaluation=user_evaluation,
             notification_type='new-employee-client'
@@ -384,6 +399,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
 
         Notification.objects.create(
             reciever=employee.user,
+            hr_admin=request.user.hradmin,
             message='A new client have been assign',
             user_evaluation=user_evaluation,
             notification_type='new-client-employee'

@@ -43,6 +43,9 @@ NOTIFICATION_TYPE = [
     ('notify-evaluated-specific-client','Notify evaluate specific'),
     ('new-employee-client','A New Employee Assigned'),
     ('new-client-employee','A New Client Assigned'),
+
+    ('evaluated-form-is-send-to-employee', 'Thank You for Evaluating'),
+    ('client-has-been-notify','Client has been notify' )
 ]
 
 GRADIENT_BG = [
