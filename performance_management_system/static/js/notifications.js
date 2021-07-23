@@ -1,5 +1,6 @@
 
 $(function(){
+    let old_button = undefined
     $('.anchor-clickable').click(function(){
         let notification_id = $(this).data('notification-pk')
         let hr_admin_id = $(this).data('hr_admin_id')
@@ -15,6 +16,11 @@ $(function(){
                 $('#notification-selected').html(data.selected_html)
                 $('#notification-container').html(data.notification_html)
                 this_button.addClass('shadow-box').removeClass('shadow-box-yellow')
+                if (old_button){
+                    old_button.removeClass('border-box-blue')
+                }
+                this_button.addClass('border-box-blue')
+                old_button= this_button
             }
         });
     })

@@ -12,7 +12,13 @@
 
 		{% for notification in notifications %}
 		{% if notification.notification_type == 'client-evaluated-hr' %}
-		<a data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white{% if notification.seen %} shadow-box {% else %} shadow-box-yellow {% endif %}">
+		<a data-notification-pk='{{notification.pk}}' 
+		class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
+				{% if notification.seen %} 
+					shadow-box
+				{% else %} 
+					shadow-box-yellow 
+				{% endif %}">
 			{% image notification.user_evaluation.employee.profile_pic original as notification_image %}
 			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
 			<div class="flex flex-col justify-center px-4">
@@ -26,7 +32,12 @@
 
 		</a>
 		{% elif notification.notification_type == 'client-evaluated-employee'  %}
-		<a data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white{% if notification.seen %} shadow-box {% else %} shadow-box-yellow {% endif %}">
+		<a data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
+		{% if notification.seen %} 
+			shadow-box
+		{% else %} 
+			shadow-box-yellow 
+		{% endif %}">
 			{% image notification.user_evaluation.client.profile_pic original as notification_image %}
 			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
 			<div class="flex flex-col justify-center px-4">
@@ -42,7 +53,12 @@
 		
 		{% elif notification.notification_type == 'notify-evaluated-all-client' or notification.notification_type == 'notify-evaluated-specific-client'%}
 
-		<a data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white{% if notification.seen %} shadow-box {% else %} shadow-box-yellow {% endif %}">
+		<a data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
+		{% if notification.seen %} 
+			shadow-box
+		{% else %} 
+			shadow-box-yellow 
+		{% endif %}">
 			{% image notification.hr_admin.profile_pic original as notification_image %}
 			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
 			<div class="flex flex-col justify-center px-4">
@@ -57,7 +73,12 @@
 		</a>
 		{% elif notification.notification_type == 'new-client-employee' %}
 
-		<a data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white{% if notification.seen %} shadow-box {% else %} shadow-box-yellow {% endif %}">
+		<a data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
+		{% if notification.seen %} 
+			shadow-box
+		{% else %} 
+			shadow-box-yellow 
+		{% endif %}">
 			{% image notification.user_evaluation.client.profile_pic original as notification_image %}
 			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
 			<div class="flex flex-col justify-center px-4">
@@ -72,7 +93,12 @@
 		
 		{% elif notification.notification_type == 'new-employee-client' %}
 		
-		<a  data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white{% if notification.seen %} shadow-box {% else %} shadow-box-yellow {% endif %}">
+		<a  data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
+		{% if notification.seen %} 
+			shadow-box
+		{% else %} 
+			shadow-box-yellow 
+		{% endif %}">
 			{% image notification.user_evaluation.employee.profile_pic original as notification_image %}
 			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
 			<div class="flex flex-col justify-center px-4">
@@ -87,7 +113,12 @@
 
 		{% elif notification.notification_type == 'evaluated-form-is-send-to-employee' %}
 		
-		<a  data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white{% if notification.seen %} shadow-box {% else %} shadow-box-yellow {% endif %}">
+		<a  data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
+		{% if notification.seen %} 
+			shadow-box
+		{% else %} 
+			shadow-box-yellow 
+		{% endif %}">
 			{% image notification.hr_admin.profile_pic original as notification_image %}
 			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
 			<div class="flex flex-col justify-center px-4">
@@ -101,7 +132,12 @@
 		</a>
 
 		{% elif notification.notification_type == 'client-has-been-notify' %}
-		<a  data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white{% if notification.seen %} shadow-box {% else %} shadow-box-yellow {% endif %}">
+		<a  data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
+		{% if notification.seen %} 
+			shadow-box
+		{% else %} 
+			shadow-box-yellow 
+		{% endif %}">
 			{% image notification.hr_admin.profile_pic original as notification_image %}
 			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
 			<div class="flex flex-col justify-center px-4">

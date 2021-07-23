@@ -126,63 +126,64 @@
     </div>
 </div>
 {% elif notification.notification_type == 'notify-evaluated-specific-client' %}
+
+
 <div class="flex flex-col items-center" >
     {% image on_evaluation_employee.employee.profile_pic original as profile_pic %}
     <img src='{{profile_pic.url}}' class="object-cover rounded-full w-44 h-44" >
     <div class="text-center">
         <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee}}</h1>
         <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee.position}}</h1>
-        
         <a href="{{evaluation_index_page}}{{on_evaluation_employee.pk}}" class="px-4 py-1 font-sans text-lg text-white rounded-full bg-eval-color font-base ">
-            VIEW EVALUATION
+            EVALUATE NOW
         </a>
     </div>
 </div>
 
-<div class="space-y-2">
-    <div>
-        <h2 class="font-sans text-2xl font-semibold text-gray-primary-color">Message:</h2>
-        <div class="px-4 space-y-4">
-            <h1 class="font-sans text-3xl font-bold text-gray-primary-color">
-                Hello dear client, I'am {{selected_hr_admin}} an HR Admin,
-                please kindly evaluate {{on_evaluation_employee.employee}} as soon as possible
-                Thank you.
-            </h1>
-            <div class="px-4 py-2">
-                
-            </div>
-        </div>
-        
-    </div>
+<div class="px-4 py-4 space-y-1 font-sans text-xl font-semibold text-gray-fourthary-color">
+    <h1>Dear {{notification.reciever.client.company}},</h1>
+    
+    <p>
+        Please kindly evaluate  your employe {{on_evaluation_employee.employee}} I understand 
+        that you have a lot of work to do on your company, but incase that you forgot to evaluate your employee
+        please evaluate it as soon as possible, don't worry I will notify {{on_evaluation_employee.employee}} as
+        soon as the evaluation is finish.
+    </p>
+
+    <br>
+    <h1>Thank you so much.</h1>
+    <h1 class="text-sm">{{notification.created_at}}</h1>    
+    <br>
+    <h1 >Sincerely yours, </h1>
+    <h1>{{notification.hr_admin}}</h1>
+    <h1 class="text-lg">HR Admin</h1>
+    
 </div>
 {% elif notification.notification_type == 'new-client-employee'  %}
 
-<div class="flex flex-col items-center" >
-    {% image on_evaluation_employee.client.profile_pic original as profile_pic %}
-    <img src='{{profile_pic.url}}' class="object-cover rounded-full w-44 h-44" >
-    <div class="text-center">
-        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{on_evaluation_employee.client.company}}</h1>
-        <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">Client</h1>
-        
-    </div>
+
+<div class="px-4 space-y-1 font-sans text-xl font-semibold text-gray-fourthary-color">
+    <h1 >{{notification.created_at}}</h1>
+    <br>
+    <h1>{{notification.reciever.employee}}</h1>
+    <h1>{{notification.reciever.employee.position}}</h1>
+    <h1>{{notification.reciever.employee.address}}</h1>
+    <br>
+    
+    <h1>Dear {{notification.reciever.employee.first_name}},</h1>
+    <p>
+        I want to inform you that a new client have been assign to you, it's company name is {{on_evaluation_employee.client.company}}
+        kindly wait for it to evaluate you, if the result of your performance doesn't come within days, contact me to notify it to evaluate
+    </p>
+    
+    <br>
+    <h1>Thank you and goodluck.</h1>
+    <br>
+    <h1 >Sincerely yours, </h1>
+    <h1>{{notification.hr_admin}}</h1>
+    <h1 class="text-lg">HR Admin</h1>
 </div>
 
-<div class="space-y-2">
-    <div>
-        <h2 class="font-sans text-2xl font-semibold text-gray-primary-color">Message:</h2>
-        <div class="px-4 space-y-4">
-            <h1 class="font-sans text-3xl font-bold text-gray-primary-color">
-                Hello dear employee, I'am {{selected_hr_admin}} an HR Admin,
-                I have now assign an evaluation form to {{on_evaluation_employee.client.company}}, your client,
-                please kindly wait your result, I will notify you as soon as possible.
-            </h1>
-            <div class="px-4 py-2">
-                
-            </div>
-        </div>
-        
-    </div>
-</div>
 
 {% elif notification.notification_type == 'new-employee-client'  %}
 
@@ -192,23 +193,29 @@
     <div class="text-center">
         <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee}}</h1>
         <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee.position}}</h1>
-        
+        <a href="{{evaluation_index_page}}{{on_evaluation_employee.pk}}" class="px-4 py-1 font-sans text-lg text-white rounded-full bg-eval-color font-base ">
+            VIEW EVALUATION
+        </a>
     </div>
 </div>
 
-<div class="space-y-2">
-    <div>
-        <h2 class="font-sans text-2xl font-semibold text-gray-primary-color">Message:</h2>
-        <div class="px-4 space-y-4">
-            <h1 class="font-sans text-3xl font-bold text-gray-primary-color">
-                Dear employee, I'am {{selected_hr_admin}} an HR Admin,
-                I have now assign an evaluation form to {{on_evaluation_employee.client.company}}, your client,
-                please kindly wait your result, I will notify you as soon as possible.
-            </h1>
-        </div>
-        
-    </div>
+<div class="px-4 py-4 space-y-1 font-sans text-xl font-semibold text-gray-fourthary-color">
+    <h1>Dear {{notification.reciever.client.company}},</h1>
+    <p>
+        I want to inform you that a new client have been assign to you, it's company name is {{on_evaluation_employee.client.company}}
+        kindly wait for it to evaluate you, if the result of your performance doesn't come within days, contact me to notify it to evaluate
+    </p>
+    
+    <br>
+    <h1>Thank you and goodluck.</h1>
+    <h1 class="text-sm">{{notification.created_at}}</h1>    
+    <br>
+    <h1 >Sincerely yours, </h1>
+    <h1>{{notification.hr_admin}}</h1>
+    <h1 class="text-lg">HR Admin</h1>
+    
 </div>
+
 
 {% elif notification.notification_type == 'evaluated-form-is-send-to-employee' %}
 
@@ -243,28 +250,28 @@
 
 {% elif notification.notification_type == 'client-has-been-notify' %}
 
-<div class="flex flex-col items-center" >
-    {% image notification.hr_admin.profile_pic original as profile_pic %}
-    <img src='{{profile_pic.url}}' class="object-cover rounded-full w-44 h-44" >
-    <div class="text-center">
-        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{notification.hr_admin}}</h1>
-        <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">HR Admin</h1>
-        
-    </div>
-</div>
+<div class="px-4 space-y-1 font-sans text-xl font-semibold text-gray-fourthary-color">
+    <h1 >{{notification.created_at}}</h1>
+    <br>
+    <h1>{{notification.reciever.employee}}</h1>
+    <h1>{{notification.reciever.employee.position}}</h1>
+    <h1>{{notification.reciever.employee.address}}</h1>
+    <br>
+    
+    <h1>Dear {{notification.reciever.employee.first_name}},</h1>
+    <p>
+        I have notify {{on_evaluation_employee.client.company}} to evaluate your performance, just kindly wait them to finish it,
+        it might take sometime to evaluate you depending on how many employee that your client needs to evaluate, but rest assured
+        we will notify you as soon your performance is evaluated, if the result of your performance doesn't come within days,
+        you can contact me again, to do the honor of notifying your client again, sorry for the inconvenience. 
+    </p>
 
-<div class="space-y-2">
-    <div>
-        <h2 class="font-sans text-2xl font-semibold text-gray-primary-color">Message:</h2>
-        <div class="px-4 space-y-4">
-            <h1 class="font-sans text-3xl font-bold text-gray-primary-color">
-                Dear employee, I have now notify {{on_evaluation_employee.client.company}}, please wait for the client 
-                to evaluate
-                
-            </h1>
-        </div>
-        
-    </div>
+    <br>
+    <h1>Thank you for consideration.</h1>
+    <br>
+    <h1 >Sincerely yours, </h1>
+    <h1>{{notification.hr_admin}}</h1>
+    <h1 class="text-lg">HR Admin</h1>
 </div>
 
 {% endif %}

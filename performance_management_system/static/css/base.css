@@ -33,6 +33,9 @@
 .shadow-box-red{
     box-shadow: 0 4px 8px 0 rgba(255, 0, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.044);
 }
+.border-box-blue{
+    border:3px solid #0075b8;
+}
 
 .height-150{height: 150px;}
 .height-800{height: 800px;}

@@ -36,7 +36,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         notification_id = request.GET.get('notification_id', None)
         make_it_seen = request.GET.get('make_it_seen', False)
 
-        print('EHY', hr_admin_id)
 
         if hr_admin_id:
             from performance_management_system.hr.models import HrAdmin
