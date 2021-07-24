@@ -259,6 +259,7 @@ class EvaluationPage(RoutablePageMixin, Page):
     def evaluate_user_with_id(self, request, id):
         user_evaluation = UserEvaluation.objects.get(pk=id)
         evaluation_sum = 0
+        submit_success = None
 
         if request.method == 'POST' and request.POST.get('submit-btn', None):
             
@@ -315,9 +316,11 @@ class EvaluationPage(RoutablePageMixin, Page):
                 reciever=update_user_evaluation.client.user,
                 message='Thank you for evaluating, I have send the result to ' + str(update_user_evaluation.employee),
                 user_evaluation=update_user_evaluation,
-                hr_admin=update_user_evaluation.hr_admin,
+                hr_admin=update_user_evaluation.hr_admin.hradmin,
                 notification_type='evaluated-form-is-send-to-employee',
             )
+            
+            submit_success = 'success'
 
 
         menu_lists = self.get_menu_list()
@@ -328,7 +331,8 @@ class EvaluationPage(RoutablePageMixin, Page):
             'menu_lists': menu_lists,
             'notification_url':ClientIndexPage.objects.live().first().url,
             'user_model': request.user.client,
-            'employee_model': user_evaluation.employee
+            'employee_model': user_evaluation.employee,
+            'submit_success': submit_success
             }
         )
 

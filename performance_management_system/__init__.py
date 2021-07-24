@@ -23,12 +23,6 @@ DETAILS_MENU_EMPLOYEE = [
     ['clients', 'Clients'],
 ]
 
-DETAILS_MENU_EMPLOYEE_CLIENTS = [
-    ['../', 'Dashboard'],
-    ['clients/', 'All'],
-    ['clients/?filter=evaluated','Evaluated'],
-    ['clients/?filter=on-evaluation','On Evaluation'],
-]
 
 IS_EVALUATED = [
     ('none', 'None'),

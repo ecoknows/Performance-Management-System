@@ -12,7 +12,7 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.images.edit_handlers import ImageChooserPanel
 
-from performance_management_system import IntegerResource, StringResource, DETAILS_MENU_EMPLOYEE, IS_EVALUATED, DETAILS_MENU_EMPLOYEE_CLIENTS
+from performance_management_system import IntegerResource, StringResource, DETAILS_MENU_EMPLOYEE, IS_EVALUATED
 from performance_management_system.users.models import User
 
 
@@ -62,7 +62,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                             'notification': notification,
                             'selected_hr_admin': selected_hr_admin,
                             'on_evaluation_employee': on_evaluation_employee,
-                            'evaluation_index_page': EvaluationPage.objects.live().first().url
+                            'evaluation_index_page': EmployeeIndexPage.objects.live().first().url
                         }
                     ),
                     'notification_html' :  render_to_string(
@@ -118,7 +118,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                             'notification' : notification,
                             'categories': categories,
                             'category_percentages': category_percentages,
-                            'evaluation_index_page': EvaluationPage.objects.live().first().url+str(selected_user_evaluation.pk)
+                            'evaluation_index_page': EmployeeIndexPage.objects.live().first().url
                         }
                     ),
                     'notification_html' :  render_to_string(
@@ -260,6 +260,7 @@ class EmployeeIndexPage(BaseAbstractPage):
             'employee_id': str(id)+'/',
             'menu_lists': menu_lists,
             'user_model': request.user.employee,
+            'notification_url' : self.url,
             },
             template='hr/employee_details_page.html'
         )
@@ -267,12 +268,19 @@ class EmployeeIndexPage(BaseAbstractPage):
     @route(r'^clients/$')
     def client_list(self, request):
         user_evaluations = self.get_user_evaluation(request, employee=request.user.employee)
+        menu_lists = [
+            (self.url,'Dashboard'),
+            [self.url +'clients', 'All'],
+            ['?filter=evaluated','Evaluated'],
+            ['?filter=on-evaluation','On Evaluation'],
+        ]
         return self.render(
             request,
             context_overrides={
                 'user_evaluations': user_evaluations,
                 'filter': self.filter,
-                'menu_lists': DETAILS_MENU_EMPLOYEE_CLIENTS
+                'menu_lists': menu_lists,
+                'notification_url' : self.url 
             },
             template='employee/client_list.html'
         )
@@ -292,6 +300,7 @@ class EmployeeIndexPage(BaseAbstractPage):
                 'disabled' : True,
                 'user_model' : request.user.employee,
                 'employee_model': user_evaluation.client,
+                'notification_url' : self.url,
                 'self': {'evaluation_max_rate': evaluation_max_rate}
             },
             template="base/evaluation_page.html",

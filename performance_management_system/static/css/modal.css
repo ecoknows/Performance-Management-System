@@ -1,0 +1,48 @@
+
+#success{
+    background:#03a679;
+    color:#f0f0f0;  
+  }
+  
+#failure{
+background:#ff3939;
+color:#f0f0f0;  
+}
+
+.notify{  
+position:fixed;
+z-index: 100;
+top:0px;
+width:100%;
+height:0;  
+box-sizing:border-box;
+color:white;  
+text-align:center;
+overflow:hidden;
+box-sizing:border-box;
+transition:height .2s;
+}
+
+#notifyType:before{
+display:block;
+margin-top:15px; 
+
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+-webkit-appearance: none; 
+margin: 0; 
+}
+
+.active{  
+height:50px;
+}
+
+.success:before{
+Content:"Evaluation has been sent! successfully thank you ";
+}
+
+.failure:before{
+Content:"Message not sent check the input";
+}
+  

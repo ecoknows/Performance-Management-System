@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-{% load wagtailimages_tags %}
+{% load wagtailimages_tags static %}
 
 {% block body_class %}
 	flex
@@ -9,6 +9,13 @@
 
 {% block header %}
 	{% include 'includes/header.html' with user_model=request.user.hradmin employee_model=employee menu_text='Pick a client' %}
+	<div class="notify "style="z-index: 2000;"><span id="notifyType" class="" ></span></div>  
+{% endblock %}
+
+{% block head_style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/evaluation_page.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">
+
 {% endblock %}
 
 {% block content %}
@@ -17,7 +24,7 @@
 	<h1 class="font-sans text-4xl font-bold text-center" style="color: #EF8767; letter-spacing: 0.2em;">PICK A CLIENT</h1>
 	<div class="flex flex-wrap ">
 		{% for client in clients %}
-			<a href="add/{{client.pk}}" class="flex flex-col p-6 mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+			<a href="add/{{client.pk}}" data-client_name='{{client}}' data-employee_name='{{employee}}' class="flex flex-col p-6 mb-10 mr-16 bg-white confirmation-client rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
 				
 				<div class="flex justify-center flex-1 space-x-4">
 					{% image client.profile_pic original as profile_pic %}
@@ -35,4 +42,15 @@
 	</div>
 </section>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+	let submit_success = '{{submit_success}}'
+	$('.confirmation-client').on('click', function () {
+        return confirm($(this).data('client_name') + ' will be the client of ' + $(this).data('employee_name')+ ' is this right?');
+    });
+	
+</script>
+<script src="{% static 'js/modal.js' %}"></script>
 {% endblock %}

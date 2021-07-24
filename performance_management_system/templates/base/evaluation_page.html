@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-{% load wagtailcore_tags forloop_tags wagtailimages_tags %}
+{% load wagtailcore_tags forloop_tags wagtailimages_tags static %}
 
 {% block body_class %}
 	flex
@@ -9,82 +9,12 @@
 
 {% block header %}
 	{% include 'includes/header.html' with user_model=user_model employee_model=employee_model menu_text='Evaluation'%}
+	<div class="notify "style="z-index: 2000;"><span id="notifyType" class="" ></span></div>  
 {% endblock %}
 
-{% block style %}
-<style>
-
-@keyframes click-wave {
-  0% {
-    height: 30px;
-    width: 30px;
-    opacity: 0.35;
-    position: relative;
-  }
-  100% {
-    height: 200px;
-    width: 200px;
-    margin-left: -80px;
-    margin-top: -80px;
-    opacity: 0;
-  }
-}
-
-.option-input {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  -ms-appearance: none;
-  -o-appearance: none;
-  appearance: none;
-  position: relative;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 30px;
-  width: 30px;
-  transition: all 0.15s ease-out 0s;
-  background: #cbd1d8;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  display: inline-block;
-  margin-right: 1rem;
-  outline: none;
-  position: relative;
-}
-.option-input:hover {
-  background: #9faab7;
-}
-.option-input:checked {
-  background: #40e0d0;
-}
-.option-input:checked::before {
-  height: 30px;
-  width: 30px;
-  position: absolute;
-  content: '✔';
-  display: inline-block;
-  font-size: 26.66667px;
-  text-align: center;
-  line-height: 30px;
-}
-.option-input:checked::after {
-  -webkit-animation: click-wave 0.65s;
-  -moz-animation: click-wave 0.65s;
-  animation: click-wave 0.65s;
-  background: #40e0d0;
-  content: '';
-  display: block;
-  position: relative;
-}
-.option-input.radio {
-  border-radius: 50%;
-}
-.option-input.radio::after {
-  border-radius: 50%;
-}
-
-</style>
+{% block head_style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/evaluation_page.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -153,11 +83,16 @@
 				{% endfor %}
 			</div>
 		</div>
-    {% if disabled == None and user_evaluation.percentage == 0 %}
     <div class="flex items-center justify-center py-10">
-      <input type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="px-4 py-2 font-sans text-lg font-semibold text-white">
+      <input id='submit-evaluation' type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="px-4 py-2 font-sans text-lg font-semibold text-white">
     </div>
-    {% endif %}
 	</form>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+	let submit_success = '{{submit_success}}'
+</script>
+<script src="{% static 'js/modal.js' %}"></script>
 {% endblock %}

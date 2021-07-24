@@ -2,6 +2,7 @@ from django.db import models
 from django.http import JsonResponse
 from django.template.response import TemplateResponse
 from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import redirect
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.template.loader import render_to_string
@@ -357,6 +358,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
 
     @route(r'^(\d+)/pick-a-client/$')
     def pick_a_client(self, request, id):
+        
         employee = Employee.objects.get(pk=id)
         clients = self.get_clients_not_picked(employee=employee)
         menu_lists = [
