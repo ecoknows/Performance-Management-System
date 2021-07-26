@@ -4,7 +4,7 @@ from django.utils import timezone
 
 from wagtail.contrib.modeladmin.views import CreateView
 
-from performance_management_system.base.models import UserEvaluation, EvaluationCategories, EvaluationPage
+from performance_management_system.base.models import EvaluationRateAssign, UserEvaluation, EvaluationCategories, EvaluationPage
 from performance_management_system.hr.models import EmployeeDetailsPage
 from performance_management_system.users.models import User
 from performance_management_system import IntegerResource, StringResource
@@ -51,19 +51,35 @@ def data_chart(request, category_id, employee_id):
     max_page = request.GET.get('max_page', 1)
     is_2x2 = request.GET.get('2x2', False)
 
-    paginator = Paginator(employee_evaluations, max_page)
     
 
     label = []
     data = []
     table = []
 
-    try:
-        employee_evaluations = paginator.page(page)
-    except PageNotAnInteger:
-        employee_evaluations = paginator.page(1)
-    except EmptyPage:
-        employee_evaluations = paginator.page(paginator.num_pages)
+    # evaluation_rate_assigns = EvaluationRateAssign.objects.filter(evaluation_rate__evaluation_categories_id=category_id, user_evaluation__employee_id=employee_id).order_by('user_evaluation__client')
+    
+    # summation = 0
+    # n = 0
+    # client_name = None
+
+    # for evaluation_rate_assign in evaluation_rate_assigns:
+    #     summation = summation + evaluation_rate_assign.rate 
+    #     current_client_name = evaluation_rate_assign.user_evaluation.client.company
+    #     n = n + 1
+    #     if client_name != current_client_name:
+    #         client_name = current_client_name
+    #         print(summation)
+    #         if n != 0:
+    #             percentage = math.ceil((summation / 15) * 100)
+    #             label.append(client_name)
+    #             data.append(percentage)
+    #             table.append([client_name, percentage])
+    #             summation = 0
+    #             n = 0
+
+
+    ## DEYM
 
     for employee_evaluation in employee_evaluations:
         client_name = employee_evaluation.client.company
@@ -73,30 +89,56 @@ def data_chart(request, category_id, employee_id):
             evaluation_rate__evaluation_categories_id=category_id
         )
 
+
         n = len(evaluations)
         summation = 0
         
-        # WALA SYA SA PART NA TO IBAHIN AH TANDAAN MO ECO PARANG AWA MO NA 
-
-        # for hatdog in employee_evaluation.evaluation_rates_assign.all():
-        #     print(summation, ' L: ', hatdog.evaluation_rate )
 
 
-        for evaluation in evaluations:
-            summation = summation + evaluation.rate
-        percentage = math.ceil(((summation/n) / max_rate) * 100)
-        label.append(client_name)
-        data.append(percentage)
-        table.append([client_name, percentage])
+        if n != 0:
+            for evaluation in evaluations:
+                summation = summation + evaluation.rate
+            percentage = math.ceil(((summation/n) / max_rate) * 100)
+            label.append(client_name)
+            data.append(percentage)
+            table.append([client_name, percentage])
+
+    paginator = Paginator(data, max_page)
+    
+    try:
+        data = paginator.page(page)
+    except PageNotAnInteger:
+        data = paginator.page(1)
+    except EmptyPage:
+        data = paginator.page(paginator.num_pages)
+        
+    paginator = Paginator(label, max_page)
+    
+    try:
+        label = paginator.page(page).object_list
+    except PageNotAnInteger:
+        label = paginator.page(1).object_list
+    except EmptyPage:
+        label = paginator.page(paginator.num_pages).object_list
+
+    
+    paginator = Paginator(table, max_page)
+    
+    try:
+        table = paginator.page(page).object_list
+    except PageNotAnInteger:
+        table = paginator.page(1).object_list
+    except EmptyPage:
+        table = paginator.page(paginator.num_pages).object_list
     
 
         
     return JsonResponse(data={
         'labels': label,
-        'data': data,
+        'data': data.object_list,
         'html_chart' : render_to_string('includes/chart_table.html', {'tables': table, 'is_2x2': is_2x2}),
-        'has_previous' : employee_evaluations.has_previous(),
-        'has_next' : employee_evaluations.has_next()
+        'has_previous' : data.has_previous(),
+        'has_next' : data.has_next()
     })
 
 def get_recent(request):

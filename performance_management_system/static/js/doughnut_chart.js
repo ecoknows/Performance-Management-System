@@ -22,7 +22,6 @@ $(function () {
         var ctx = $chart[0].getContext('2d');
 
         $('#doughnut-chart-tbody').html(data.html_chart)
-
         chart = new Chart( ctx, {
             type: 'doughnut',
             data: {

@@ -1,5 +1,7 @@
 $(function(){
     $( ".infinite-chart" ).each(function() {
+        var ctx = $(this)[0].getContext('2d');
+
         $.ajax({
             url: $(this).data("url"),
             type: 'GET',
@@ -9,7 +11,6 @@ $(function(){
             },
             success: function (data) {
                 
-            var ctx = $(this)[0].getContext('2d');
             
             new Chart( ctx, {
                 type: 'doughnut',
