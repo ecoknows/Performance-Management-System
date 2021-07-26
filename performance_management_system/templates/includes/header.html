@@ -68,6 +68,11 @@
 				</div>
 
 				<div class="relative flex ">
+					{% if menu_text == 'Evaluation' %}
+					<button id='print-evaluation' class="p-2 mr-2 bg-white rounded-full" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+						<img src='{% static "img/icons/printer.png" %}' width="20">
+					</button>
+					{% endif %}
 					<a href='{{notification_url}}notifications' class="p-2 mr-2 bg-white rounded-full" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
 						<img src='{% static "img/icons/notif.png" %}' width="18">
 					</a>

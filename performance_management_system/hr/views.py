@@ -75,10 +75,15 @@ def data_chart(request, category_id, employee_id):
 
         n = len(evaluations)
         summation = 0
+        
+        # WALA SYA SA PART NA TO IBAHIN AH TANDAAN MO ECO PARANG AWA MO NA 
+
+        # for hatdog in employee_evaluation.evaluation_rates_assign.all():
+        #     print(summation, ' L: ', hatdog.evaluation_rate )
+
 
         for evaluation in evaluations:
             summation = summation + evaluation.rate
-
         percentage = math.ceil(((summation/n) / max_rate) * 100)
         label.append(client_name)
         data.append(percentage)

@@ -234,7 +234,35 @@
 
 		</div>
 
-		<div class="flex flex-col flex-1 h-full space-y-4" > 
+		<div class="flex flex-col flex-1 h-full space-y-4 overflow-y-auto" > 
+
+			
+			<div class='flex-1 p-4 bg-white' style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">{{categories.3}}</h1>
+				
+				<div style="position: relative; height: 230px;">
+					<canvas id="radar-chart" style="width: 100%;" data-url='/data_chart/{{categories.3.pk}}/{{employee_id}}'></canvas>
+				</div>
+				
+				
+				<div class="flex flex-row items-center justify-center space-x-8 " style="color: #5785DE;">
+					<div class="flex-1 text-center">
+						<button id='back-btn-radar' class="hidden">
+							<h1 class="font-bold text-md">Back</h1>
+						</button>	
+					</div>
+					<div id='page-number-radar' class="font-bold text-md">1</div>
+					<div class="flex-1 text-center">
+						<button id='next-btn-radar'>
+							<h1 class="font-bold text-md">Next</h1>
+						</button>
+					</div>
+
+				</div>
+
+			</div>
+
+			
 			
 			<div class='flex flex-col justify-center flex-1 px-4 py-2 space-y-2 bg-white' style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
 				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">{{categories.5}}</h1>
@@ -269,30 +297,40 @@
 				</div>
 			</div>
 
-			<div class='flex-1 p-4 bg-white' style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">{{categories.3}}</h1>
+			{% for infinite_category in infinite_categories %}
+			<div class='flex flex-col justify-center flex-1 px-4 py-2 space-y-2 bg-white' style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">{{infinite_category}}</h1>
 				
-				<div style="position: relative; height: 230px;">
-					<canvas id="radar-chart" style="width: 100%;" data-url='/data_chart/{{categories.3.pk}}/{{employee_id}}'></canvas>
+				<div style="height: 100px; position: relative; width: 100%;">
+					<canvas class='infinite-chart' style="width: 100%;"  data-url='/data_chart/{{infinite_category.pk}}/{{employee_id}}'></canvas>
 				</div>
+				<table>
+					
+					<tbody id="doughnut-chart-tbody">
+							
+					</tbody>
+
+				</table>
 				
-				
+
+
+
 				<div class="flex flex-row items-center justify-center space-x-8 " style="color: #5785DE;">
 					<div class="flex-1 text-center">
-						<button id='back-btn-radar' class="hidden">
+						<button id='back-btn-doughnut' class="hidden">
 							<h1 class="font-bold text-md">Back</h1>
 						</button>	
 					</div>
-					<div id='page-number-radar' class="font-bold text-md">1</div>
+					<div id='page-number-doughnut' class="font-bold text-md">1</div>
 					<div class="flex-1 text-center">
-						<button id='next-btn-radar'>
+						<button id='next-btn-doughnut'>
 							<h1 class="font-bold text-md">Next</h1>
 						</button>
 					</div>
 
 				</div>
-
 			</div>
+			{% endfor %}
 
 
 
@@ -312,4 +350,5 @@
 <script src="{% static 'js/pie_chart.js' %}"></script>
 <script src="{% static 'js/doughnut_chart.js' %}"></script>
 <script src="{% static 'js/line_chart.js' %}"></script>
+<script src="{% static 'js/chart_infinite.js' %}"></script>
 {% endblock %}

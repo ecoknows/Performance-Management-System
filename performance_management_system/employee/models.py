@@ -256,7 +256,8 @@ class EmployeeIndexPage(BaseAbstractPage):
         return self.render(
             request,
             context_overrides={
-            'categories': categories,
+            'categories': categories[:7],
+            'infinite_categories': categories[7:],
             'employee_id': str(id)+'/',
             'menu_lists': menu_lists,
             'user_model': request.user.employee,

@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block content %}
-<section class="container mx-auto" style="padding-top: 120px;">
+<section  class="container mx-auto" style="padding-top: 120px;"  id='evaluation-page'>
   {% if disabled %}
   <div class="flex flex-col items-center py-10">
     <div class="flex space-x-4">
@@ -83,9 +83,11 @@
 				{% endfor %}
 			</div>
 		</div>
+	{% if disabled == None  %}
     <div class="flex items-center justify-center py-10">
       <input id='submit-evaluation' type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="px-4 py-2 font-sans text-lg font-semibold text-white">
     </div>
+	{% endif %}
 	</form>
 </section>
 {% endblock %}
@@ -94,5 +96,9 @@
 <script>
 	let submit_success = '{{submit_success}}'
 </script>
+<script src="{% static 'js/html2canvas.min.js' %}"></script>
 <script src="{% static 'js/modal.js' %}"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script> -->
+<script src="{% static 'js/autoPrint.js' %}"></script>
 {% endblock %}
