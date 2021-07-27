@@ -35,7 +35,7 @@ $(function () {
                         blue_gradient
                     ],
                     borderColor:'#FF7A00',
-                    label: 'My dataset', // for legend
+                    label: 'Percentage', // for legend
                     tension: 0.1,
                     pointRadius: 6,
                     pointHoverRadius: 6
@@ -178,7 +178,7 @@ $(function () {
                         blue_gradient
                     ],
                     borderColor:'#00A62E',
-                    label: 'My dataset', // for legend
+                    label: 'Percentage', // for legend
                     tension: 0.1,
                     pointRadius: 6,
                     pointHoverRadius: 6
@@ -202,6 +202,19 @@ $(function () {
                 }
             }
         });
+          
+        if(data.has_previous){
+          back_btn.show()
+        }else{
+          back_btn.hide()
+        }
+
+        if(data.has_next){
+          next_btn.show()
+        }else{
+          next_btn.hide()
+        }
+
         
         
 

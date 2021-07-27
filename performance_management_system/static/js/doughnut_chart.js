@@ -37,7 +37,7 @@ $(function () {
                         orange_gradient,
                         blue_gradient
                     ],
-                    label: 'My dataset', // for legend
+                    label: 'Percentage', // for legend
                 }]
             },
             options: {
@@ -50,6 +50,20 @@ $(function () {
                 },
             }
         });
+
+          
+        if(data.has_previous){
+          back_btn.show()
+        }else{
+          back_btn.hide()
+        }
+
+        if(data.has_next){
+          next_btn.show()
+        }else{
+          next_btn.hide()
+        }
+
         
 
 

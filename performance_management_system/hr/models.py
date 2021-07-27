@@ -7,6 +7,8 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.template.loader import render_to_string
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.contrib.postgres.search import SearchVector
+from wagtail import search
 
 
 from wagtail.contrib.routable_page.models import route
@@ -47,17 +49,6 @@ class ClientListPage(RoutablePageMixin,Page):
 
         return UserEvaluation.objects.filter(client_id=client_id)
 
-    def get_clients(self, request):
-        filter_query = request.GET.get('filter', None)
-        
-        if filter_query:
-            if filter_query == 'evaluated':
-                self.filter = 'Evaluated'
-            elif filter_query == 'on-evaluation':
-                self.filter = 'On Evaluation'
-            return Client.objects.filter(status=filter_query)
-
-        return Client.objects.all()
     
 
     
@@ -65,7 +56,14 @@ class ClientListPage(RoutablePageMixin,Page):
     def default_route(self, request):
         hr_index_url = HRIndexPage.objects.first().url
 
-        clients = self.get_clients(request)
+        filter_query = request.GET.get('filter', None)
+        
+        if filter_query:
+            if filter_query == 'evaluated':
+                self.filter = 'Evaluated'
+            elif filter_query == 'on-evaluation':
+                self.filter = 'On Evaluation'
+
         menu_lists = [
             (hr_index_url,'Dashboard'),
             [self.url, 'All'],
@@ -101,10 +99,10 @@ class ClientListPage(RoutablePageMixin,Page):
         return self.render(
             request,
             context_overrides={
-                'clients': clients,
                 'menu_lists': menu_lists,
                 'notification_url': notification_url,
-                'filter': self.filter
+                'filter': self.filter,
+                'filter_query': filter_query
             }
         )
 
@@ -154,26 +152,49 @@ class ClientListPage(RoutablePageMixin,Page):
             },
             template="base/evaluation_page.html",
         )
+
+    @route(r'^search/$')
+    def client_search(self, request):
+
+        search_query = request.GET.get('search_query', None)
+        filter_query = request.GET.get('filter', None)
+
+        if search_query:
+            clients = Client.objects.filter(company__icontains=search_query)
+
+            
+            if filter_query :
+                print(filter_query)
+                clients = clients.filter( status=filter_query)
+
+            return TemplateResponse(
+                request,
+                'hr/search_client.html',
+                {
+                    'clients' : clients
+                }
+            )
+
+        if filter_query:
+            clients = Client.objects.filter(status=filter_query)
+        else:
+            clients = Client.objects.all()
+
+        return TemplateResponse(
+                request,
+                'hr/search_client.html',
+                {
+                    'clients' : clients
+                }
+            )
         
     
     
     
 
-class EmployeeListPage(Page):
+class EmployeeListPage(RoutablePageMixin,Page):
     max_count = 1
     parent_page_types = ['HRIndexPage']
-    
-    def get_employees(self, request, context):
-        filter_query = request.GET.get('filter', None)
-        
-        if filter_query:
-            if filter_query == 'evaluated':
-                context['filter'] = 'Evaluated'
-            elif filter_query == 'on-evaluation':
-                context['filter'] = 'On Evaluation'
-            return Employee.objects.filter(status=filter_query)
-
-        return Employee.objects.all()
 
     def get_menu_list(self):
         hr_index_url = HRIndexPage.objects.first().url
@@ -187,12 +208,54 @@ class EmployeeListPage(Page):
 
     def get_context(self, request):
         context = super(EmployeeListPage, self).get_context(request)
+        filter_query = request.GET.get('filter', None)
 
-        context['employees'] = self.get_employees(request, context)
+        if filter_query:
+            context['filter_query'] = filter_query
+            if filter_query == 'evaluated':
+                context['filter'] = 'Evaluated'
+            elif filter_query == 'on-evaluation':
+                context['filter'] = 'On Evaluation'
+            
         context['menu_lists'] = self.get_menu_list()
         context['notification_url'] = HRIndexPage.objects.live().first().url
 
         return context
+
+    
+    @route(r'^search/$')
+    def employee_search(self, request):
+
+        search_query = request.GET.get('search_query', None)
+        filter_query = request.GET.get('filter', None)
+
+        if search_query:
+            employees = Employee.objects.annotate(
+                search=SearchVector('first_name','last_name','middle_name')
+            ).filter(search__icontains=search_query)
+
+            if filter_query:
+                employees = employees.filter( status=filter_query)
+
+            return TemplateResponse(
+                request,
+                'hr/search_employee.html',
+                {
+                    'employees' : employees
+                }
+            )
+        if filter_query:
+            employees = Employee.objects.filter(status=filter_query)
+        else:
+            employees = Employee.objects.all()
+
+        return TemplateResponse(
+                request,
+                'hr/search_employee.html',
+                {
+                    'employees' : employees
+                }
+            )
 
 
 

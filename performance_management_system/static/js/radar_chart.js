@@ -49,6 +49,20 @@ $(function () {
                 },
             }
         });
+
+          
+        if(data.has_previous){
+          back_btn.show()
+        }else{
+          back_btn.hide()
+        }
+
+        if(data.has_next){
+          next_btn.show()
+        }else{
+          next_btn.hide()
+        }
+
         
 
 

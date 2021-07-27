@@ -1,34 +1,16 @@
-$(function(){
-    $('.notify-button').click(function(){
-        let client_id = $(this).data('client_id')
-        let user_evaluation_id = $(this).data('user_evaluation_id')
-
-        $.ajax({
-            type:'POST',
-            data:{
-                'client_id': client_id,
-                'user_evaluation_id': user_evaluation_id,
-                'csrfmiddlewaretoken': csrf_token,
-            },
-            success: function(data){
-                console.log(data.message);
-            }
-        })
-    })
-})
 
 $(function(){
 
     let search_input = $('#search-input')
     let url = search_input.data('url')
-    let container = $('#client-list-page')
+    let container = $('#employee-list-page')
 
     $.ajax({
         url : url,
         type: 'GET',
         data:{
             'search_query' : search_input.val(),
-            'filter': filter == 'None' ? null : filter,
+            'filter': filter == 'None' ? null : filter
         },
         success: function(data){
             container.html(data)
@@ -47,7 +29,7 @@ $(function(){
             type: 'GET',
             data:{
                 'search_query' : search_query,
-                'filter': filter == 'None' ? null : filter,
+                'filter': filter == 'None' ? null : filter
             },
             success: function(data){
                 container.html(data)

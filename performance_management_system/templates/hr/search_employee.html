@@ -1,17 +1,7 @@
-{% extends 'base.html'%}
 
 {% load static wagtailimages_tags %}
 
-
-{% block header %}
-	{% include 'includes/header.html' with user_model=request.user.hradmin employee=True menu_text='All' %}
-{% endblock header %}
-
-{% block content %}
-
-<section id='employee-list-page' class="container flex flex-wrap flex-1 mx-auto" style="padding-top: 120px;">
-
-	{% for employee in employees %}
+{% for employee in employees %}
 
 		{% if employee.status == 'none' %}
 		
@@ -92,14 +82,3 @@
 
 
 	{% endfor %}
-		
-</section>
-
-{% endblock %}
-
-{% block scripts %}
-<script>
-	let filter = '{{filter_query}}'
-</script>
-<script src="{% static 'js/employee_list_page.js' %}"></script>
-{% endblock %}

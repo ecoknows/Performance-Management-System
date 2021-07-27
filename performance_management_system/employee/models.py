@@ -140,7 +140,8 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 'notifications' : notifications,
                 'notification_url': self.url,
                 'menu_lists': [
-                    [EmployeeIndexPage.objects.live().first().url,'Employees']
+                    [EmployeeIndexPage.objects.live().first().url,'Dashboard'],
+                    [EmployeeIndexPage.objects.live().first().url+ 'clients','Clients'],
                 ],
                 'notifications_count' : len(notifications),
             },

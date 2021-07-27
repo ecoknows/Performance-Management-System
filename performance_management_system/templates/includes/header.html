@@ -87,7 +87,7 @@
 		
 				<div class="flex items-center px-2 mr-4 space-x-2 bg-white rounded-full" style="padding-top: 4px; padding-bottom: 4px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
 					<img src='{% static "img/icons/search.png" %}' width="18">
-					<input class='focus:outline-none' style="background-color: transparent;" placeholder="Search">
+					<input id='search-input' data-url='{% pageurl page %}search' class='focus:outline-none' style="background-color: transparent;" placeholder="Search">
 				</div>
 		
 				<div class="flex items-start space-x-4">

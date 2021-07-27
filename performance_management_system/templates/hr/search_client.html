@@ -1,16 +1,7 @@
-{% extends 'base.html'%}
+
 {% load static wagtailimages_tags %}
 
-
-{% block header %}
-	{% include 'includes/header.html' with employee_model=employee_model user_model=request.user.hradmin client=True menu_text='All' %}
-{% endblock %}
-
-{% block content %}
-
-<section id='client-list-page' class="container flex flex-wrap flex-1 mx-auto padding-top-120">
-
-	{% for client in clients %}
+{% for client in clients %}
 
 		{% if client.status == 'none' %}
 		<div class="relative mb-10 mr-16 bg-white rounded-3xl width-28rem height-17rem shadow-box">
@@ -71,14 +62,3 @@
 		</div>
 		{% endif %}
 	{% endfor %}
-		
-</section>
-{% endblock %}
-
-{% block scripts %}
-<script>
-	let csrf_token = '{{csrf_token}}'
-	let filter = '{{filter_query}}'
-</script>
-<script src="{% static 'js/client_list_page.js' %}"></script>
-{% endblock %}
