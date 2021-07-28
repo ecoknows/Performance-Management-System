@@ -1,18 +1,17 @@
 
 $(function(){
-
     let search_input = $('#search-input')
     let url = search_input.data('url')
-    let container = $('#employee-list-page')
+    let container = $('#client-list-page')
 
     $.ajax({
         url : url,
         type: 'GET',
         data:{
             'search_query' : search_input.val(),
-            'filter': filter == 'None' ? null : filter,
-            'user_filter': user_filter == 'None' ? null : user_filter,
-            'user_filter_exclude':  user_filter_exclude == 'None' ? null : user_filter_exclude,
+            'filter_query': filter_query,
+            'employee_id': employee_id,
+            
         },
         success: function(data){
             container.html(data)
@@ -31,9 +30,9 @@ $(function(){
             type: 'GET',
             data:{
                 'search_query' : search_query,
-                'filter': filter == 'None' ? null : filter,
-                'user_filter': user_filter == 'None' ? null : user_filter,
-                'user_filter_exclude':  user_filter_exclude == 'None' ? null : user_filter_exclude,
+                'filter_query': filter_query,
+                'employee_id': employee_id,
+                
             },
             success: function(data){
                 container.html(data)

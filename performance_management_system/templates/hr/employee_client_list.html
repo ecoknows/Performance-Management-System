@@ -9,7 +9,7 @@
 {% block content %}
 
 <section class="container flex-1 mx-auto space-y-10" style="padding-top: 120px;">
-	<div class="flex flex-wrap ">
+	<div  id='client-list-page' class="flex flex-wrap ">
 		{% for user_evaluation in user_evaluations %}
 			{% if user_evaluation.percentage > 0 %}
 			<div class="relative mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgb(8, 162, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
@@ -63,6 +63,8 @@
 {% block scripts %}
 <script>
 	let csrf_token = '{{csrf_token}}'
+	let filter_query = '{{filter_query}}'
+	let employee_id = '{{employee_id}}'
 </script>
-<script src="{% static 'js/client_list_page.js' %}"></script>
+<script src="{% static 'js/client_search_specified.js' %}"></script>
 {% endblock %}

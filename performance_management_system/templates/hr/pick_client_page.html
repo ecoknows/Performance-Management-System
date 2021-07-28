@@ -22,7 +22,7 @@
 
 <section class="container flex-1 mx-auto space-y-10" style="padding-top: 120px;">
 	<h1 class="font-sans text-4xl font-bold text-center" style="color: #EF8767; letter-spacing: 0.2em;">PICK A CLIENT</h1>
-	<div class="flex flex-wrap ">
+	<div id='client-list-page' class="flex flex-wrap ">
 		{% for client in clients %}
 			<a href="add/{{client.pk}}" data-client_name='{{client}}' data-employee_name='{{employee}}' class="flex flex-col p-6 mb-10 mr-16 bg-white confirmation-client rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
 				
@@ -47,10 +47,13 @@
 {% block scripts %}
 <script>
 	let submit_success = '{{submit_success}}'
-	$('.confirmation-client').on('click', function () {
-        return confirm($(this).data('client_name') + ' will be the client of ' + $(this).data('employee_name')+ ' is this right?');
-    });
+
+
 	
+	let filter = '{{filter_query}}'
+	let user_filter = '{{user_filter}}'
+	let user_filter_exclude = '{{user_filter_exclude}}'
 </script>
 <script src="{% static 'js/modal.js' %}"></script>
+<script src="{% static 'js/client_list_page.js' %}"></script>
 {% endblock %}

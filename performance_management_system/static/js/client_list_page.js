@@ -28,7 +28,9 @@ $(function(){
         type: 'GET',
         data:{
             'search_query' : search_input.val(),
-            'filter': filter == 'None' ? null : filter,
+            'filter': filter == 'None' || filter == 'All' ? null : filter,
+            'user_filter': user_filter == 'None'  ? null : user_filter,
+            'user_filter_exclude': user_filter_exclude == 'None'  ? null : user_filter_exclude,
         },
         success: function(data){
             container.html(data)
@@ -47,7 +49,9 @@ $(function(){
             type: 'GET',
             data:{
                 'search_query' : search_query,
-                'filter': filter == 'None' ? null : filter,
+                'filter': filter == 'None' || filter == 'All' ? null : filter,
+                'user_filter': user_filter == 'None' ? null : user_filter,
+                'user_filter_exclude': user_filter_exclude == 'None'  ? null : user_filter_exclude,
             },
             success: function(data){
                 container.html(data)

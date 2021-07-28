@@ -100,6 +100,8 @@
 {% block scripts %}
 <script>
 	let filter = '{{filter_query}}'
+	let user_filter = '{{user_filter}}'
+	let user_filter_exclude = '{{user_filter_exclude}}'
 </script>
 <script src="{% static 'js/employee_list_page.js' %}"></script>
 {% endblock %}

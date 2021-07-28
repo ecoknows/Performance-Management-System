@@ -15,7 +15,7 @@
 {% block content %}
 
 
-<section class="container flex flex-wrap flex-1 mx-auto" style="padding-top: 120px;">
+<section id='employee-list-container' class="container flex flex-wrap flex-1 mx-auto" style="padding-top: 120px;">
 
 	{% for user_evaluation in user_evaluations %}
 		{% if user_evaluation.percentage == 0 %}
@@ -76,4 +76,13 @@
 </section>
 
 
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+	let filter_query = '{{filter_query}}'
+	let client_id = '{{client_id}}'
+</script>
+<script src="{% static 'js/employee_search_specified.js' %}"></script>
 {% endblock %}

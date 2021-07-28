@@ -1,0 +1,59 @@
+
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+
+{% for user_evaluation in user_evaluations %}
+    {% if user_evaluation.percentage == 0 %}
+
+    <div  class="relative mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 22rem; box-shadow: 0 4px 8px 0 rgb(255, 0, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+        
+        <a href='evaluated/{{user_evaluation.pk}}' class="flex flex-col items-center justify-center h-full ">
+            <div class="flex justify-center space-x-4">
+                {% image user_evaluation.employee.profile_pic fill-150x150 as profile_pic %}
+                <img src='{{profile_pic.url}}' class="rounded-full" width="200">
+                <!-- <div class="flex items-center flex-1 ">
+                    <img src='{{profile_pic.url}}' width="100%" >
+                </div> -->
+            </div>
+            
+            <div>
+                <h1 class="font-sans text-5xl font-bold text-center" style="color: #616161;">
+                    {{user_evaluation.employee.first_name}} {{user_evaluation.employee.last_name}}
+                </h1>
+                
+                <h2 class="font-sans text-2xl font-semibold text-center" style="color: #979797;">
+                    {{user_evaluation.employee.position}}
+                </h2>
+            </div>
+        </a>
+    </div>
+
+    {% elif user_evaluation.percentage > 0 %}
+    
+    <div  class="relative mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 22rem; box-shadow: 0 4px 8px 0 rgb(8, 162, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+        
+        <a href='evaluated/{{user_evaluation.pk}}' class="flex flex-col items-center justify-center h-full ">
+            <div class="flex justify-center space-x-4">
+                {% image user_evaluation.employee.profile_pic fill-150x150 as profile_pic %}
+                <img src='{{profile_pic.url}}' class="rounded-full" width="200">
+                <!-- <div class="flex items-center flex-1 ">
+                    <img src='{{profile_pic.url}}' width="100%" >
+                </div> -->
+            </div>
+            
+            <div>
+                <h1 class="font-sans text-5xl font-bold text-center" style="color: #616161;">
+                    {{user_evaluation.employee.first_name}} {{user_evaluation.employee.last_name}}
+                </h1>
+                
+                <h2 class="font-sans text-2xl font-semibold text-center" style="color: #979797;">
+                    {{user_evaluation.employee.position}}
+                </h2>
+            </div>
+        </a>
+    </div>
+
+    {% endif %}
+
+
+{% endfor %}

@@ -10,7 +10,6 @@
 
 
 $(function(){
-	console.log(submit_success);
 	if (submit_success == 'success'){
 		$(".notify").toggleClass("active");
 		$("#notifyType").toggleClass("success");

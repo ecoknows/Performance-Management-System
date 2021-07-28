@@ -1,21 +1,21 @@
 {% load static wagtailcore_tags  wagtailimages_tags notification_tags %}
 
-<header class="fixed hidden w-full lg:block" style="height: 100px; background-color: #F0F0F0; z-index: 1000;">
+<header class="fixed hidden w-full lg:block height-100 bg-color-gray z-index-1k">
 	
 	<div class="container flex items-center justify-between h-full mx-auto">
 		<div class="space-x-2">
 			{% if title %}
-				<h1 class="font-sans text-4xl font-bold tracking-widest" style="color: #EF8767">{{title}}</h1>
+				<h1 class="font-sans text-4xl font-bold tracking-widest text-color-primary">{{title}}</h1>
 			{% elif employee_model %}
 				<div class="flex space-x-4">
 					{% image employee_model.profile_pic fill-60x60 as employee_pic %}
 					
-					<img src="{{employee_pic.url}}" class="rounded-full" style="width: 60px; height: 60px;">
+					<img src="{{employee_pic.url}}" class="rounded-full width-60 height-60">
 					<div class="flex flex-col justify-center">
-						<h1 class="font-sans text-3xl font-bold" style="color: #616161;">
+						<h1 class="font-sans text-3xl font-bold text-gray" >
 							{{employee_model}}
 						</h1>
-						<h2 class="font-sans text-lg font-semibold" style="color: #979797;">
+						<h2 class="font-sans text-lg font-semibold text-gray-1">
 							{{employee_model.position}}
 						</h2>
 					</div>
@@ -23,20 +23,20 @@
 			{% else %}
 				{% if employee %}
 				<span>
-					<a class="font-sans text-4xl font-bold tracking-widest" style="color: #EF8767">EMPLOYEE</a>
+					<a class="font-sans text-4xl font-bold tracking-widest text-color-primary" >EMPLOYEE</a>
 				</span>
 				<span>
-					<a href='../client-list-page' class='font-sans text-2xl font-bold tracking-widest' style="color: #CDCDCD;">CLIENT</a>
+					<a href='../client-list-page' class='font-sans text-2xl font-bold tracking-widest text-gray-2'>CLIENT</a>
 				</span>
 				{% elif client %}
 				<span>
-					<a href='../employee-list-page' class="font-sans text-2xl font-bold tracking-widest" style="color: #CDCDCD">EMPLOYEE</a>
+					<a href='../employee-list-page' class="font-sans text-2xl font-bold tracking-widest text-gray-2">EMPLOYEE</a>
 				</span>
 				<span>
-					<a class='font-sans text-4xl font-bold tracking-widest' style="color: #EF8767;">CLIENT</a>
+					<a class='font-sans text-4xl font-bold tracking-widest text-color-primary'>CLIENT</a>
 				</span>
 				{% else %}
-					<h1 class="font-sans text-4xl font-bold tracking-widest" style="color: #EF8767">DASHBOARD</h1>
+					<h1 class="font-sans text-4xl font-bold tracking-widest text-color-primary" >DASHBOARD</h1>
 				{% endif %}
 			{% endif %}
 			</div>
@@ -44,14 +44,14 @@
 			<div class="flex items-center">
 		
 				<div class="relative w-40" >
-					<h1 class="mr-2 font-sans text-lg font-semibold text-right" style="color: #747474;">
+					<h1 class="mr-2 font-sans text-lg font-semibold text-right text-gray-3" >
 						{% if filter %}
 						{{filter}}
 						{% else %}
 						{{menu_text}}
 						{% endif %}
 					</h1>
-					<ul id='menu-container' class="absolute hidden w-full p-4 font-sans text-lg font-semibold bg-white rounded-lg" style="color: #747474; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+					<ul id='menu-container' class="absolute hidden w-full p-4 font-sans text-lg font-semibold bg-white rounded-lg text-gray-3 shadow-box">
 							{% for menu_list in menu_lists %}
 								<li>
 									<a href="{{menu_list.0}}">{{menu_list.1}}</a>
@@ -69,11 +69,11 @@
 
 				<div class="relative flex ">
 					{% if menu_text == 'Evaluation' %}
-					<button id='print-evaluation' class="p-2 mr-2 bg-white rounded-full" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+					<button id='print-evaluation' class="p-2 mr-2 bg-white rounded-full shadow-box">
 						<img src='{% static "img/icons/printer.png" %}' width="20">
 					</button>
 					{% endif %}
-					<a href='{{notification_url}}notifications' class="p-2 mr-2 bg-white rounded-full" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+					<a href='{{notification_url}}notifications' class="p-2 mr-2 bg-white rounded-full shadow-box">
 						<img src='{% static "img/icons/notif.png" %}' width="18">
 					</a>
 					<div id='notification-container'>
@@ -83,11 +83,19 @@
 						{% endif %}
 					</div>
 				</div>
-		
-		
-				<div class="flex items-center px-2 mr-4 space-x-2 bg-white rounded-full" style="padding-top: 4px; padding-bottom: 4px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-					<img src='{% static "img/icons/search.png" %}' width="18">
-					<input id='search-input' data-url='{% pageurl page %}search' class='focus:outline-none' style="background-color: transparent;" placeholder="Search">
+				
+				<div >
+					<div class="flex items-center px-2 mr-4 space-x-2 bg-white rounded-full shadow-box padding-y-4" >
+						<img src='{% static "img/icons/search.png" %}' width="18">
+						<input id='search-input' data-url='{% pageurl search_page %}search' class='focus:outline-none bg-color-transparent' placeholder="Search">
+					</div>
+
+					
+					<ul id='pop-box' class="absolute hidden p-4 mt-2 space-y-2 overflow-y-auto font-sans text-lg font-semibold bg-white rounded-lg min-height-300 max-height-600 w-60 text-gray-3 shadow-box" >
+						
+					</ul>
+				
+
 				</div>
 		
 				<div class="flex items-start space-x-4">
@@ -97,11 +105,11 @@
 					<div class="leading-3 ">
 						<h2 class="font-sans text-2xl font-bold">{{user_model.company}}</h2>
 						{% if request.user.is_hr %}
-						<h3 class="font-semibold text-md" style="color: #979797;">HR Admin</h3>
+						<h3 class="font-semibold text-md text-gray-1">HR Admin</h3>
 						{% elif request.user.is_employee %}	
-						<h3 class="font-semibold text-md" style="color: #979797;">Employee</h3>
+						<h3 class="font-semibold text-md text-gray-1">Employee</h3>
 						{% else %}
-						<h3 class="font-semibold text-md" style="color: #979797;">Client</h3>
+						<h3 class="font-semibold text-md text-gray-1">Client</h3>
 						{% endif %}
 					</div>
 					{% else %}
@@ -110,11 +118,11 @@
 					<div class="leading-3 ">
 						<h2 class="font-sans text-2xl font-bold">{{request.user.last_name}}</h2>
 						{% if request.user.is_hr %}
-						<h3 class="font-semibold text-md" style="color: #979797;">HR Admin</h3>
+						<h3 class="font-semibold text-md text-gray-1">HR Admin</h3>
 						{% elif request.user.is_employee %}	
-						<h3 class="font-semibold text-md" style="color: #979797;">Employee</h3>
+						<h3 class="font-semibold text-md text-gray-1">Employee</h3>
 						{% else %}
-						<h3 class="font-semibold text-md" style="color: #979797;">Client</h3>
+						<h3 class="font-semibold text-md text-gray-1">Client</h3>
 						{% endif %}
 					</div>
 					{% endif %}

@@ -27,6 +27,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
     
     @route(r'^notifications/$')
     def notification(self, request):
+        from performance_management_system.hr.models import HRIndexPage
 
         user_model = None
         if request.user.is_employee:
@@ -96,6 +97,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 'user_model' : user_model,
                 'notifications' : notifications,
                 'notification_url': self.url,
+                'search_page': HRIndexPage.objects.live().first(),
                 'notifications_count' : len(notifications),
             },
             template="base/notifications.html",
