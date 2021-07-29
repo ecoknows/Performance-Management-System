@@ -1,17 +1,16 @@
 
 $(function(){
+
     let search_input = $('#search-input')
     let url = search_input.data('url')
-    let container = $('#client-list-container')
+    let container = $('#pick-client-container')
 
     $.ajax({
-        url : url,
+        url : url + '/pick_client',
         type: 'GET',
         data:{
             'search_query' : search_input.val(),
-            'filter_query': filter_query,
             'employee_id': employee_id,
-            
         },
         success: function(data){
             container.html(data)
@@ -22,17 +21,12 @@ $(function(){
         e.preventDefault();
         let search_query = $(this).val()
 
-        
-
-        
         $.ajax({
-            url : url,
+            url : url  + '/pick_client',
             type: 'GET',
             data:{
                 'search_query' : search_query,
-                'filter_query': filter_query,
                 'employee_id': employee_id,
-                
             },
             success: function(data){
                 container.html(data)

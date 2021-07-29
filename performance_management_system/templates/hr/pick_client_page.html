@@ -22,24 +22,7 @@
 
 <section class="container flex-1 mx-auto space-y-10" style="padding-top: 120px;">
 	<h1 class="font-sans text-4xl font-bold text-center" style="color: #EF8767; letter-spacing: 0.2em;">PICK A CLIENT</h1>
-	<div id='client-list-page' class="flex flex-wrap ">
-		{% for client in clients %}
-			<a href="add/{{client.pk}}" data-client_name='{{client}}' data-employee_name='{{employee}}' class="flex flex-col p-6 mb-10 mr-16 bg-white confirmation-client rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-				
-				<div class="flex justify-center flex-1 space-x-4">
-					{% image client.profile_pic original as profile_pic %}
-					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 150px; '>
-				</div>
-				
-				<div>
-					<h1 class="font-sans text-4xl text-center" style="color: #616161;">
-						{{client.company}}
-					</h1>
-
-				</div>
-			</a>
-		{% endfor %}
-	</div>
+	<div id='pick-client-container' class="flex flex-wrap "></div>
 </section>
 
 {% endblock %}
@@ -47,13 +30,8 @@
 {% block scripts %}
 <script>
 	let submit_success = '{{submit_success}}'
-
-
-	
-	let filter = '{{filter_query}}'
-	let user_filter = '{{user_filter}}'
-	let user_filter_exclude = '{{user_filter_exclude}}'
+	let employee_id = '{{employee_id}}'
 </script>
 <script src="{% static 'js/modal.js' %}"></script>
-<script src="{% static 'js/client_list_page.js' %}"></script>
+<script src="{% static 'js/pick_client_search.js' %}"></script>
 {% endblock %}

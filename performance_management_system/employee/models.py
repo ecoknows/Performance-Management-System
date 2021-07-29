@@ -263,6 +263,7 @@ class EmployeeIndexPage(BaseAbstractPage):
             'menu_lists': menu_lists,
             'user_model': request.user.employee,
             'notification_url' : self.url,
+            'search_page' : self,
             },
             template='hr/employee_details_page.html'
         )

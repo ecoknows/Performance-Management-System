@@ -3,7 +3,7 @@ $(function(){
 
     let search_input = $('#search-input')
     let url = search_input.data('url')
-    let container = $('#employee-list-page')
+    let container = $('#employee-list-container')
 
     $.ajax({
         url : url,
