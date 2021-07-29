@@ -693,18 +693,22 @@ class HRIndexPage(BaseAbstractPage):
         search_query = request.GET.get('search_query', None).split()
 
         if search_query :        
-            # employees = Employee.objects.annotate(
-            #     search=SearchVector('last_name','first_name','middle_name')
-            # ).filter(search__icontains=search_query)
-            # print(employees)
             qset1 =  reduce(operator.__or__, [Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(position__icontains=query) for query in search_query])
             qset2 =  reduce(operator.__or__, [Q(company__icontains=query) for query in search_query])
 
             employees = Employee.objects.filter(qset1).distinct()
             clients = Client.objects.filter(qset2).distinct()
+
+            results = list(chain(employees, clients))
+
+            if len(results) == 0:
+                return JsonResponse(data={
+                    'empty': True
+                })
+
         
             return TemplateResponse(request, 'base/pop_search.html', {
-                'results' : list(chain(employees, clients)),
+                'results' : results,
                 'employee_details_index': EmployeeDetailsPage.objects.live().first(),
                 'client_details_index': ClientListPage.objects.live().first()
             })

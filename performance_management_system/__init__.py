@@ -19,11 +19,6 @@ DETAILS_MENU = [
     ['on-evaluation','On Evaluation'],
 ]
 
-DETAILS_MENU_EMPLOYEE = [
-    ['clients', 'Clients'],
-]
-
-
 IS_EVALUATED = [
     ('none', 'None'),
     ('evaluated', 'Evaluated'),

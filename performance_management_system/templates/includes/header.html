@@ -87,11 +87,11 @@
 				<div >
 					<div class="flex items-center px-2 mr-4 space-x-2 bg-white rounded-full shadow-box padding-y-4" >
 						<img src='{% static "img/icons/search.png" %}' width="18">
-						<input id='search-input' data-url='{% pageurl search_page %}search' class='focus:outline-none bg-color-transparent' placeholder="Search">
+						<input id='search-input' autocomplete="off" data-url='{% pageurl search_page %}search' class='focus:outline-none bg-color-transparent' placeholder="Search">
 					</div>
 
 					
-					<ul id='pop-box' class="absolute hidden p-4 mt-2 space-y-2 overflow-y-auto font-sans text-lg font-semibold bg-white rounded-lg min-height-300 max-height-600 w-60 text-gray-3 shadow-box" >
+					<ul id='pop-box' class="absolute hidden p-4 mt-2 space-y-2 overflow-y-auto font-sans text-lg font-semibold bg-white rounded-lg max-height-600 w-60 text-gray-3 shadow-box" >
 						
 					</ul>
 				

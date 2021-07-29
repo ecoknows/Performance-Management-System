@@ -2,6 +2,8 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import Group
+from django.template.response import TemplateResponse
+from django.db.models import Q
 
 from wagtail.core.models import Page
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
@@ -15,6 +17,10 @@ from performance_management_system import IntegerResource, StringResource, IS_EV
 from performance_management_system.users.models import User
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+
+from itertools import chain
+import operator
+from functools import reduce
 
 
 class BaseAbstractPage(RoutablePageMixin, Page):
@@ -143,6 +149,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                     [ClientIndexPage.objects.live().first().url,'Employees']
                 ],
                 'notifications_count' : len(notifications),
+                'search_page': ClientIndexPage.objects.live().first()
             },
             template="base/notifications.html",
         )
@@ -210,6 +217,30 @@ class Client(models.Model):
 
 class ClientIndexPage(BaseAbstractPage):
     max_count = 1
+    
+    @route(r'^search/$')
+    def pop_search(self, request):
+        from performance_management_system.base.models import UserEvaluation, EvaluationPage
+
+        search_query = request.GET.get('search_query', None).split()
+
+        if search_query :        
+            qset1 =  reduce(operator.__or__, [Q(employee__first_name__icontains=query) | Q(employee__last_name__icontains=query) | Q(employee__position__icontains=query) for query in search_query])
+
+            user_evaluations = UserEvaluation.objects.filter(qset1, client=request.user.client).distinct()
+
+            if len(user_evaluations) == 0:
+                return JsonResponse(data={
+                    'empty': True
+                })
+
+            return TemplateResponse(request, 'client/pop_search.html', {
+                'results' : user_evaluations,
+                'user_evaluation_details_index' : EvaluationPage.objects.live().first(),
+            })
+        return JsonResponse(data={
+            'empty': True
+        })
 
     def get_menu_list(self):
         return [
@@ -218,34 +249,77 @@ class ClientIndexPage(BaseAbstractPage):
             ['?filter=on-evaluation','On Evaluation'],
         ]
 
-    def get_assign_employee(self, request, context):
-        from performance_management_system.base.models import UserEvaluation
+        
+    @route(r'^$') 
+    def default_route(self, request):
+        from performance_management_system.base.models import EvaluationPage
+        
         filter_query = request.GET.get('filter', None)
+        filter_text = None
         
         if filter_query:
-            if filter_query == 'evaluated':
-                context['filter'] = 'Evaluated'
-                return UserEvaluation.objects.exclude(percentage=0).filter(
-                    client=request.user.client
-                )
-            elif filter_query == 'on-evaluation':
-                context['filter'] = 'On Evaluation'
-                return UserEvaluation.objects.filter(
-                    percentage=0,
-                    client=request.user.client
-                )
+            if filter_query == 'on-evaluation':
+                filter_text = 'On Evaluation'
+            elif filter_query  == 'evaluated':
+                filter_text = 'Evaluated'
 
-        return UserEvaluation.objects.filter(client=request.user.client)
-        
-    def get_context(self, request):
-        context = super(ClientIndexPage, self).get_context(request)
+        return self.render(
+            request,
+            context_overrides={
+                'menu_lists': self.get_menu_list(),
+                'user_model': request.user.client,
+                'title': 'EMPLOYEES',
+                'evaluation_index': EvaluationPage.objects.live().first().url,
+                'search_page': self,
+                'filter': filter_text,
+                'filter_query': filter_query,
+            }
+        )
+    
+    @route(r'^search/employee/$')
+    def employee_search(self, request):
+        from performance_management_system.base.models import UserEvaluation,EvaluationPage
 
-        from performance_management_system.base.models import EvaluationPage
+        search_query = request.GET.get('search_query', None).split()
+        filter_query = request.GET.get('filter_query', None)
 
-        context['user_evaluations'] = self.get_assign_employee(request, context)
-        context['menu_lists'] = self.get_menu_list()
-        context['user_model'] = request.user.client
-        context['title'] = 'EMPLOYEES'
-        context['evaluation_index'] = EvaluationPage.objects.live().first().url
+        user_evaluations = None
 
-        return context
+        if search_query:
+            qset1 =  reduce(operator.__or__, [Q(employee__first_name__icontains=query) | Q(employee__last_name__icontains=query) | Q(employee__position__icontains=query)  for query in search_query])
+
+            user_evaluations = UserEvaluation.objects.filter(qset1, client=request.user.client).distinct()
+
+            if filter_query:
+                if filter_query == 'on-evaluation':
+                    user_evaluations = user_evaluations.filter(percentage=0)
+                elif filter_query == 'evaluated':
+                    user_evaluations = user_evaluations.exclude(percentage=0)
+            
+
+            return TemplateResponse(
+                request,
+                'client/search_employee_specified.html',
+                {
+                    'user_evaluations' : user_evaluations,
+                    'evaluation_page_index' : EvaluationPage.objects.live().first()
+                }
+            )
+
+        user_evaluations = UserEvaluation.objects.filter(client=request.user.client)
+
+        if filter_query:
+            if filter_query == 'on-evaluation':
+                user_evaluations = user_evaluations.filter(percentage=0, client=request.user.client)
+            elif filter_query == 'evaluated':
+                user_evaluations = user_evaluations.exclude(percentage=0).filter(client=request.user.client)
+
+
+        return TemplateResponse(
+                request,
+                'client/search_employee_specified.html',
+                {
+                    'user_evaluations' : user_evaluations,
+                    'evaluation_page_index' : EvaluationPage.objects.live().first()
+                }
+            )

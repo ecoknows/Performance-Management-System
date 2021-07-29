@@ -8,7 +8,7 @@
 
 {% block content %}
 
-<section class="container flex flex-wrap flex-1 mx-auto" style="padding-top: 120px;">
+<section id='client-list-container' class="container flex flex-wrap flex-1 mx-auto" style="padding-top: 120px;">
 
 	{% for user_evaluation in user_evaluations %}
 
@@ -50,4 +50,12 @@
 		
 </section>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+	let csrf_token = '{{csrf_token}}'
+	let filter_query = '{{filter_query}}'
+</script>
+<script src="{% static 'js/employee/client_search_specified.js' %}"></script>
 {% endblock %}

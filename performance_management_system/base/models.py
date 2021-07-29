@@ -334,7 +334,8 @@ class EvaluationPage(RoutablePageMixin, Page):
             'notification_url':ClientIndexPage.objects.live().first().url,
             'user_model': request.user.client,
             'employee_model': user_evaluation.employee,
-            'submit_success': submit_success
+            'submit_success': submit_success,
+            'search_page': ClientIndexPage.objects.live().first()
             }
         )
 

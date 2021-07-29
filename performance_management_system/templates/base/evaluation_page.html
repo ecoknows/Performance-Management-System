@@ -18,32 +18,49 @@
 {% endblock %}
 
 {% block content %}
-<section  class="container mx-auto" style="padding-top: 120px;"  id='evaluation-page'>
-  {% if disabled %}
-  <div class="flex flex-col items-center py-10">
-    <div class="flex space-x-4">
-      {% image user_evaluation.employee.profile_pic fill-120x120 as employee_pic %}
-      <img src="{{employee_pic.url}}" class="rounded-full" style="width: 120px; height: 120px;">
-      
-      <div class="flex flex-col justify-center">
-        <h1 class="font-sans text-3xl font-bold" style="color: #616161;">
-          {{user_evaluation.employee}}
-        </h1>
-        <h2 class="font-sans text-lg font-semibold" style="color: #979797;">
-          {{user_evaluation.employee.position}}
-        </h2>
-      </div>
-    </div>
+<section  class="container mx-auto padding-top-120" id='evaluation-page'>
 
-  </div>
-  {% endif %}
+	{% if disabled %}
+	<div class="flex flex-col items-center py-10">
+		<div class="flex space-x-4">
+			{% image user_evaluation.employee.profile_pic fill-120x120 as employee_pic %}
+			<img src="{{employee_pic.url}}" class="rounded-full" style="width: 120px; height: 120px;">
+			
+			<div class="flex flex-col justify-center">
+			<h1 class="font-sans text-3xl font-bold" style="color: #616161;">
+				{{user_evaluation.employee}}
+			</h1>
+			<h2 class="font-sans text-lg font-semibold" style="color: #979797;">
+				{{user_evaluation.employee.position}}
+			</h2>
+			</div>
+		</div>
+
+	</div>
+
+	{% endif %}
+	
+	<div class="pb-4 pl-8 show-on-print">
+		<h1 class="font-sans text-xl font-bold text-gray">Client</h1>
+		<div class="flex space-x-2">
+			{% image user_evaluation.client.profile_pic fill-40x40 as client_pic %}
+			<img src="{{client_pic.url}}" class="rounded-full" style="width: 40px; height: 40px;">
+			
+			<div class="flex flex-col justify-center">
+				<h1 class="font-sans text-xl font-bold" style="color: #616161;">
+					{{user_evaluation.client}}
+				</h1>
+			</div>
+		</div>
+	</div>
+
 	<form method="POST">
 		{% csrf_token %}
 		<div>
 			{% load forloop_tags %}
 			<div class="flex">
 				<div class="flex-1">
-          
+			
 				</div>
 			</div>
 			{% for category in evaluation_categories %}
@@ -55,9 +72,9 @@
 						</label>
 					</div>
 					<div class="flex justify-center flex-1">
-            {% for rates in self.evaluation_max_rate|times %}
+			{% for rates in self.evaluation_max_rate|times %}
 						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="font-sans text-lg font-semibold">{{forloop.counter}}</h1>
-            {% endfor %}
+			{% endfor %}
 					</div>
 				</div>
 				{% for rate in category.evaluation_rates.all %}
@@ -67,7 +84,7 @@
 									{{rate}}
 								</label>
 							</div>
-              {% get_rate_assign rate user_evaluation %}
+				{% get_rate_assign rate user_evaluation %}
 							<div class="flex items-center justify-center flex-1">
 								{% for i in self.evaluation_max_rate|times %}
 									<input type="radio" {% if  disabled %} disabled {% endif %}  name="question-{{rate.pk}}" value="{{forloop.counter}}" {% if rate.rate == forloop.counter %}checked{% endif %} required class=" option-input radio"
@@ -84,9 +101,9 @@
 			</div>
 		</div>
 	{% if disabled == None  %}
-    <div class="flex items-center justify-center py-10">
-      <input id='submit-evaluation' type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="px-4 py-2 font-sans text-lg font-semibold text-white">
-    </div>
+	<div class="flex items-center justify-center py-10">
+		<input id='submit-evaluation' type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="px-4 py-2 font-sans text-lg font-semibold text-white">
+	</div>
 	{% endif %}
 	</form>
 </section>
@@ -96,7 +113,6 @@
 <script>
 	let submit_success = '{{submit_success}}'
 </script>
-<script src="{% static 'js/html2canvas.min.js' %}"></script>
 <script src="{% static 'js/modal.js' %}"></script>
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script> -->
