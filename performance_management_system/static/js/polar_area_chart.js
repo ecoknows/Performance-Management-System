@@ -21,6 +21,10 @@ $(function () {
         var ctx = $chart[0].getContext('2d');
 
         $('#polar-chart-tbody').html(data.html_chart)
+        
+        if (data.data != '')
+          page_number.html(page_status)
+
 
         chart = new Chart( ctx, {
             type: 'polarArea',

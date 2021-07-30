@@ -23,6 +23,10 @@ $(function () {
 
         $('#pie-chart-tbody').html(data.html_chart)
 
+        
+        if (data.data != '')
+          page_number.html(page_status)
+
         chart = new Chart( ctx, {
             type: 'pie',
             data: {

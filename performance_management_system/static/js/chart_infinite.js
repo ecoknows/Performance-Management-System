@@ -20,6 +20,10 @@ $(function(){
             success: function (data) {
             table.html(data.html_chart)
             
+            if (data.data != '')
+              page_number.html(page_status)
+    
+            
             chart = new Chart( ctx, {
                 type: 'doughnut',
                 data: {

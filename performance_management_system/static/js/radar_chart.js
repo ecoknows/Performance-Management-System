@@ -20,6 +20,10 @@ $(function () {
       success: function (data) {
 
         var ctx = $chart[0].getContext('2d');
+        
+        if (data.data != '')
+          page_number.html(page_status)
+
 
 
         chart = new Chart( ctx, {

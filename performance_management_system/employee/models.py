@@ -288,6 +288,7 @@ class EmployeeIndexPage(BaseAbstractPage):
     
     @route(r'^clients/$')
     def client_list(self, request):
+        from performance_management_system.base.models import UserEvaluation, EvaluationCategories
         
         filter_query = request.GET.get('filter', None)
         filter_text = None
@@ -305,15 +306,22 @@ class EmployeeIndexPage(BaseAbstractPage):
             ['?filter=evaluated','Evaluated'],
             ['?filter=on-evaluation','On Evaluation'],
         ]
+
+        latest_evaluation = UserEvaluation.objects.latest('assigned_date')
+        categories = EvaluationCategories.objects.all()
+
+
         return self.render(
             request,
             context_overrides={
                 'filter': self.filter,
                 'menu_lists': menu_lists,
                 'notification_url' : self.url,
+                'latest_evaluation': latest_evaluation,
                 'search_page' : self,
                 'filter_query': filter_query,
                 'filter_text': filter_text,
+                'categories': categories,
             },
             template='employee/client_list.html'
         )

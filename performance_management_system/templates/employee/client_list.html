@@ -8,45 +8,75 @@
 
 {% block content %}
 
-<section id='client-list-container' class="container flex flex-wrap flex-1 mx-auto" style="padding-top: 120px;">
+<section  class="container flex-1 mx-auto space-y-8" style="padding-top: 120px;">
 
-	{% for user_evaluation in user_evaluations %}
-
-		{% if user_evaluation.percentage > 0  %}
-		
-		<div class="relative mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(8, 162, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-			
-			<a href="{{user_evaluation.pk}}" class="flex flex-col h-full py-6">
+	<div class="flex " style="height: 410px;">
+		{% if latest_evaluation.percentage > 0  %}
+		<div class="relative bg-white rounded-3xl shadow-box-green" style="width: 50%; height: 100%; ">
+			<a href="{{latest_evaluation.pk}}" class="flex flex-col h-full py-6">
 				<div class="flex justify-center flex-1 py-2 space-x-4 ">
-					{% image user_evaluation.client.profile_pic original as profile_pic %}
-					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 150px;'>
+					{% image latest_evaluation.client.profile_pic original as profile_pic %}
+					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 300px;'>
 				</div>
 				
 				<div>
 					<h1 class="font-sans text-4xl text-center" style="color: #616161;">
-						{{user_evaluation.client.company}}
+						{{latest_evaluation.client.company}}
 					</h1>
 				</div>
 			</a>
 		</div>
 		{% else %}
-		<div class="relative mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(255, 0, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-			
-			<a href="#" class="flex flex-col h-full py-6">
+		<div class="relative bg-white rounded-3xl shadow-box-red" style="width: 50%; height: 100%; ">
+			<a href="{{latest_evaluation.pk}}" class="flex flex-col h-full py-6">
 				<div class="flex justify-center flex-1 py-2 space-x-4 ">
-					{% image user_evaluation.client.profile_pic original as profile_pic %}
-					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 150px;'>
+					{% image latest_evaluation.client.profile_pic original as profile_pic %}
+					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 300px;'>
 				</div>
 				
 				<div>
 					<h1 class="font-sans text-4xl text-center" style="color: #616161;">
-						{{user_evaluation.client.company}}
+						{{latest_evaluation.client.company}}
 					</h1>
 				</div>
 			</a>
 		</div>
 		{% endif %}
-	{% endfor %}
+		<div class="flex-1 p-6">
+			<h1 class="font-sans text-3xl font-extrabold text-gray">Current Client</h1>
+			<div class="py-2">
+				<div class="flex space-x-2 font-sans text-xl text-gray">
+					<h1 class="font-bold">Client Name: </h1>
+					<h2 class="font-semibold">{{latest_evaluation.client.company}}</h2>
+				</div>
+				<div class="flex space-x-2 font-sans text-xl text-gray">
+					<h1 class="font-bold">Date Assigned: </h1>
+					<h2 class="font-semibold">{{latest_evaluation.assigned_date}}</h2>
+				</div>
+			</div>
+			<div class="py-2 ">
+				<h1 class="inline-block font-sans text-3xl font-extrabold text-gray">Evaluation Status </h1>
+				<h2 class="inline-block font-sans text-xl font-bold text-gray">
+					(Waiting for Evaluation)
+				</h2>
+
+				<div class="py-2 overflow-y-auto"  style="height: 200px;"> 
+					{% for category in categories %}
+					<div class="flex ">
+						<h2 class="flex-1 font-sans text-xl font-bold text-gray"> {{category}}</h2>
+						<h2 class="flex-1 font-sans text-xl font-bold text-blue"> Not Evaluated </h2>
+					</div>
+					{% endfor %}
+					
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<div id="client-list-container" class="px-2 py-2 space-x-7 whitespace-nowrap" style="height: 250px; width: 100%; overflow-x: scroll;">
+		
+	</div>
 		
 </section>
 

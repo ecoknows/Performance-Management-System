@@ -65,27 +65,27 @@
 			</div>
 			{% for category in evaluation_categories %}
 			<div>
-				<div class="flex px-4 py-2 text-white " style="background-color: #2b4949;">
+				<div class="flex flex-col px-4 py-2 text-white lg:flex-row " style="background-color: #2b4949;">
 					<div class="flex-1">
 						<label class="font-sans text-2xl font-bold ">
 							{{category}}
 						</label>
 					</div>
-					<div class="flex justify-center flex-1">
+					<div class="flex justify-end flex-1 lg:justify-center">
 			{% for rates in self.evaluation_max_rate|times %}
 						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="font-sans text-lg font-semibold">{{forloop.counter}}</h1>
 			{% endfor %}
 					</div>
 				</div>
 				{% for rate in category.evaluation_rates.all %}
-						<div class="flex px-4 py-2 border-b border-gray-600 " style="min-height: 50px;">
+						<div class="flex flex-col px-4 py-2 space-y-2 border-b border-gray-600 lg:flex-row lg:space-y-0 " style="min-height: 50px;">
 							<div class="flex-1">
 								<label class="font-sans text-xl">
 									{{rate}}
 								</label>
 							</div>
 				{% get_rate_assign rate user_evaluation %}
-							<div class="flex items-center justify-center flex-1">
+							<div class="flex items-center justify-end flex-1 lg:justify-center">
 								{% for i in self.evaluation_max_rate|times %}
 									<input type="radio" {% if  disabled %} disabled {% endif %}  name="question-{{rate.pk}}" value="{{forloop.counter}}" {% if rate.rate == forloop.counter %}checked{% endif %} required class=" option-input radio"
 										style='

@@ -3,7 +3,7 @@
 {% for table in tables %}
 <tr class="font-sans text-lg {% if is_2x2 %} flex flex-1 {% endif %}" style="color: #626262;">
     <td class="flex items-center space-x-2">
-        <div class="w-4 h-4 bg-gray-700" style="{{forloop.counter | gradient_bg}}"></div>
+        <div class="w-4 h-4 style="{{forloop.counter | gradient_bg}}"></div>
         {% if is_2x2 %}
         <h3 class="font-normal">{{table.0 |truncatechars:4 }}</h3>
         {% else %}

@@ -213,6 +213,7 @@ class UserEvaluation(ClusterableModel, models.Model):
     
     percentage = models.DecimalField(default=0, decimal_places=2, max_digits=5)
     submit_date = models.DateTimeField(null=True)
+    assigned_date = models.DateTimeField(auto_now_add=True, null=True)
 
     hr_admin = models.ForeignKey(
         User,

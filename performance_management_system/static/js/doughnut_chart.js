@@ -21,6 +21,10 @@ $(function () {
 
         var ctx = $chart[0].getContext('2d');
 
+        
+        if (data.data != '')
+          page_number.html(page_status)
+
         $('#doughnut-chart-tbody').html(data.html_chart)
         chart = new Chart( ctx, {
             type: 'doughnut',
