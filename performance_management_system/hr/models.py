@@ -20,7 +20,7 @@ from wagtail.admin.edit_handlers import (
     MultiFieldPanel,
 )
 
-from performance_management_system.base.models import BaseAbstractPage, UserEvaluation, EvaluationCategories, EvaluationPage, Notification
+from performance_management_system.base.models import BaseAbstractPage, UserEvaluation, EvaluationCategories, EvaluationPage, Notification, EvaluationRateAssign
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client
 from performance_management_system.users.models import User
@@ -446,6 +446,22 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
                 filter_text = 'On Evaluation'
             elif filter_query  == 'evaluated':
                 filter_text = 'Evaluated'
+            
+        latest_evaluation = UserEvaluation.objects.latest('assigned_date')
+        categories = EvaluationCategories.objects.all()
+        max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        category_percentages = []
+
+        for category in categories:
+            rate_assigns = EvaluationRateAssign.objects.filter(
+                evaluation_rate__evaluation_categories=category,
+                user_evaluation = latest_evaluation
+            )
+            percentage = 0
+            for rate_assign in rate_assigns:
+                percentage = rate_assign.rate + percentage
+            percentage = (percentage / (len(rate_assigns) * max_rate)) * 100
+            category_percentages.append(percentage)
 
 
         return self.render(
@@ -456,6 +472,9 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             'filter': filter_text,
             'filter_query': filter_query,
             'search_page': self,
+            'latest_evaluation': latest_evaluation,
+            'categories': categories,
+            'category_percentages': category_percentages,
             'employee_id': id,
             },
             template="hr/employee_client_list.html",
@@ -550,6 +569,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
         search_query = request.GET.get('search_query', None).split()
         filter_query = request.GET.get('filter_query', None)
         employee_id = request.GET.get('employee_id', None)
+        latest_evaluation_id = request.GET.get('latest_evaluation_id', None)
 
         user_evaluations = None
 
@@ -570,7 +590,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
                 request,
                 'hr/search_client_specified.html',
                 {
-                    'user_evaluations' : user_evaluations,
+                    'user_evaluations' : user_evaluations.exclude(pk=latest_evaluation_id),
                 }
             )
 
@@ -588,7 +608,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
                 request,
                 'hr/search_client_specified.html',
                 {
-                    'user_evaluations' : user_evaluations,
+                    'user_evaluations' : user_evaluations.exclude(pk=latest_evaluation_id),
                 }
             )
     

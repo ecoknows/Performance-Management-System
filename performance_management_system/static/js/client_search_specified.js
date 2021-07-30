@@ -11,6 +11,7 @@ $(function(){
             'search_query' : search_input.val(),
             'filter_query': filter_query,
             'employee_id': employee_id,
+            'latest_evaluation_id': latest_evaluation_id,
             
         },
         success: function(data){
@@ -32,7 +33,7 @@ $(function(){
                 'search_query' : search_query,
                 'filter_query': filter_query,
                 'employee_id': employee_id,
-                
+                'latest_evaluation_id': latest_evaluation_id,
             },
             success: function(data){
                 container.html(data)

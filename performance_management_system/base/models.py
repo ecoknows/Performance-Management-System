@@ -15,6 +15,9 @@ from django.template.loader import render_to_string
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     InlinePanel,
+    ObjectList,
+    TabbedInterface,
+    RichTextField
 )
 
 from modelcluster.fields import ParentalKey
@@ -229,13 +232,28 @@ class UserEvaluation(ClusterableModel, models.Model):
 
 class EvaluationPage(RoutablePageMixin, Page):
     evaluation_max_rate = models.IntegerField(default=0)
+    legend_evaluation = RichTextField(null=True)
     
     content_panels = Page.content_panels + [
         FieldPanel('evaluation_max_rate'),
+        FieldPanel('legend_evaluation')
+    ]
+
+    categories_panels = [
         InlinePanel('evaluation_categories', label="Evaluation Categories"),
     ]
     
     parent_page_types = ['client.ClientIndexPage']
+
+    edit_handler  = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Content'),
+            ObjectList(categories_panels, heading="Categories"),
+            ObjectList(Page.promote_panels, heading='Promotional Stuff'),
+            ObjectList(Page.settings_panels, heading='Settings Stuff'),
+        ]
+    )
+
 
     def get_context(self, request):
         context = super().get_context(request)

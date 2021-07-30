@@ -17,6 +17,25 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">
 {% endblock %}
 
+{% block style %}
+<style>
+	ul{
+		list-style-type: disc;
+	}
+	ol, ul{
+		padding-left: 50px;
+	}
+	hr{
+		border-top: 1px solid rgb(49, 49, 49);
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+	#legend-evaluation p:empty { height: 1.5rem; }
+	#legend-evaluation p { font-size: 1.1rem; }
+	#legend-evaluation h2 { font-size: 2rem; }
+	#legend-evaluation h4 { font-size: 1.2rem; }
+</style>
+{% endblock %}
 {% block content %}
 <section  class="container mx-auto padding-top-120" id='evaluation-page'>
 
@@ -51,6 +70,49 @@
 					{{user_evaluation.client}}
 				</h1>
 			</div>
+		</div>
+	</div>
+
+	<div id='legend-evaluation' class="px-6 font-sans" style="color: #353535;">
+		{{ self.legend_evaluation|richtext }}
+	</div>
+
+	<div class="flex px-6 py-6 font-sans text-xl" style="color: #353535;">
+		<div class="flex-1">
+			<div>
+				<h1 class="inline-block font-bold">Employee Name: </h1>
+				<h1 class="inline-block">{{employee_model}}</h1>
+			</div>
+			
+			<div>
+				<h1 class="inline-block font-bold">Project Assign: </h1>
+				<h1 class="inline-block">Assign</h1>
+			</div>
+			
+			<div>
+				<h1 class="inline-block font-bold">Date: </h1>
+				<h1 class="inline-block">January 26, 2021</h1>
+			</div>
+
+		</div>
+
+		<div class="flex-1">
+			
+			<div>
+				<h1 class="inline-block font-bold">Reports: </h1>
+				<h1 class="inline-block">N/A</h1>
+			</div>
+			
+			<div>
+				<h1 class="inline-block font-bold">Position: </h1>
+				<h1 class="inline-block">Computer Science</h1>
+			</div>
+			
+			<div>
+				<h1 class="inline-block font-bold">Hiring Date: </h1>
+				<h1 class="inline-block">January 26, 2021</h1>
+			</div>
+
 		</div>
 	</div>
 
@@ -97,6 +159,14 @@
 							</div>
 						</div>
 					{% endfor %}
+				<div>
+					<div class="flex flex-col px-4 py-2 text-white lg:flex-row " style="background-color: #2b4949;">
+						<h1>	
+							Indicate specific tasks or critical incidences covered by the competency and your remarks on their outputs
+						</h1>
+					</div>
+					<textarea rows="4" class="p-4" style="width: 100%; background-color: transparent;" placeholder='Please type here....'></textarea>
+				</div>
 				{% endfor %}
 			</div>
 		</div>

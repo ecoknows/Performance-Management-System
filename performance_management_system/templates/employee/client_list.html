@@ -1,22 +1,22 @@
 {% extends 'base.html'%}
-{% load static wagtailimages_tags %}
+{% load static wagtailimages_tags wagtailcore_tags %}
 
 
 {% block header %}
-	{% include 'includes/header.html' with user_model=request.user.employee title='CLIENTS' menu_text='All' %}
+	{% include 'includes/header.html' with user_model=request.user.employee title='CLIENT' menu_text='All' %}
 {% endblock %}
 
 {% block content %}
 
 <section  class="container flex-1 mx-auto space-y-8" style="padding-top: 120px;">
 
-	<div class="flex " style="height: 410px;">
+	<div class="flex " style="height: 600px;">
 		{% if latest_evaluation.percentage > 0  %}
 		<div class="relative bg-white rounded-3xl shadow-box-green" style="width: 50%; height: 100%; ">
-			<a href="{{latest_evaluation.pk}}" class="flex flex-col h-full py-6">
+			<a href="{{latest_evaluation.pk}}" class="flex flex-col h-full py-6">	
 				<div class="flex justify-center flex-1 py-2 space-x-4 ">
 					{% image latest_evaluation.client.profile_pic original as profile_pic %}
-					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 300px;'>
+					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 400px;'>
 				</div>
 				
 				<div>
@@ -29,9 +29,9 @@
 		{% else %}
 		<div class="relative bg-white rounded-3xl shadow-box-red" style="width: 50%; height: 100%; ">
 			<a href="{{latest_evaluation.pk}}" class="flex flex-col h-full py-6">
-				<div class="flex justify-center flex-1 py-2 space-x-4 ">
+				<div class="flex items-center justify-center flex-1 py-2 space-x-4 ">
 					{% image latest_evaluation.client.profile_pic original as profile_pic %}
-					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 300px;'>
+					<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 400px;'>
 				</div>
 				
 				<div>
@@ -60,23 +60,38 @@
 					(Waiting for Evaluation)
 				</h2>
 
-				<div class="py-2 overflow-y-auto"  style="height: 200px;"> 
-					{% for category in categories %}
-					<div class="flex ">
-						<h2 class="flex-1 font-sans text-xl font-bold text-gray"> {{category}}</h2>
-						<h2 class="flex-1 font-sans text-xl font-bold text-blue"> Not Evaluated </h2>
+				<div class="py-2 overflow-y-auto"  style="height: 400px;"> 
+					<div class="flex">
+						<div class="flex-1">
+							{% for category in categories %}
+								<h2 class="flex-1 font-sans text-xl font-bold text-gray"> {{category}}</h2>
+							{% endfor %}
+						</div>
+						
+						<div class="flex flex-col items-end flex-1">
+							{% for category_percentage in category_percentages %}
+							{% if category_percentage == 0 %}
+							<h1 class="font-sans text-2xl font-bold text-blue">WAITING FOR EVALUATION</h1>
+							{% elif category_percentage < 50 %}
+							<h1 class="font-sans text-2xl font-bold text-red">{{category_percentage | floatformat:1}}%</h1>
+							{% elif category_percentage < 75 %}
+							<h1 class="font-sans text-2xl font-bold text-orange">{{category_percentage | floatformat:1}}%</h1>
+							{% else %}
+							<h1 class="font-sans text-2xl font-bold text-green">{{category_percentage | floatformat:1}}%</h1>
+							{% endif %}
+							{% endfor %}
+						</div>
+
 					</div>
-					{% endfor %}
-					
 				</div>
 
 			</div>
 		</div>
 	</div>
 
-	<div id="client-list-container" class="px-2 py-2 space-x-7 whitespace-nowrap" style="height: 250px; width: 100%; overflow-x: scroll;">
+	<!-- <div id="client-list-container" class="px-2 py-2 space-x-7 whitespace-nowrap" style="height: 250px; width: 100%; overflow-x: scroll;">
 		
-	</div>
+	</div> -->
 		
 </section>
 
@@ -87,5 +102,5 @@
 	let csrf_token = '{{csrf_token}}'
 	let filter_query = '{{filter_query}}'
 </script>
-<script src="{% static 'js/employee/client_search_specified.js' %}"></script>
+<!-- <script src="{% static 'js/employee/client_search_specified.js' %}"></script> -->
 {% endblock %}

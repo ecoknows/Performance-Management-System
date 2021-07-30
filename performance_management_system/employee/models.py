@@ -147,7 +147,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 'notification_url': self.url,
                 'menu_lists': [
                     [EmployeeIndexPage.objects.live().first().url,'Dashboard'],
-                    [EmployeeIndexPage.objects.live().first().url+ 'clients','Clients'],
+                    [EmployeeIndexPage.objects.live().first().url+ 'client','Client'],
                 ],
                 'notifications_count' : len(notifications),
                 'search_page': EmployeeIndexPage.objects.live().first()
@@ -261,7 +261,7 @@ class EmployeeIndexPage(BaseAbstractPage):
 
     def get_menu_list(self):
         return [
-                  ['clients', 'Clients'],
+                  ['client', 'Client'],
                ]
 
 
@@ -286,9 +286,9 @@ class EmployeeIndexPage(BaseAbstractPage):
             template='hr/employee_details_page.html'
         )
     
-    @route(r'^clients/$')
-    def client_list(self, request):
-        from performance_management_system.base.models import UserEvaluation, EvaluationCategories
+    @route(r'^client/$')
+    def current_client(self, request):
+        from performance_management_system.base.models import UserEvaluation, EvaluationCategories, EvaluationPage, EvaluationRateAssign
         
         filter_query = request.GET.get('filter', None)
         filter_text = None
@@ -302,13 +302,27 @@ class EmployeeIndexPage(BaseAbstractPage):
 
         menu_lists = [
             (self.url,'Dashboard'),
-            [self.url +'clients', 'All'],
+            [self.url +'client', 'All'],
             ['?filter=evaluated','Evaluated'],
             ['?filter=on-evaluation','On Evaluation'],
         ]
 
         latest_evaluation = UserEvaluation.objects.latest('assigned_date')
         categories = EvaluationCategories.objects.all()
+        max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        category_percentages = []
+
+        for category in categories:
+            rate_assigns = EvaluationRateAssign.objects.filter(
+                evaluation_rate__evaluation_categories=category,
+                user_evaluation = latest_evaluation
+            )
+            percentage = 0
+            for rate_assign in rate_assigns:
+                percentage = rate_assign.rate + percentage
+            percentage = (percentage / (len(rate_assigns) * max_rate)) * 100
+            category_percentages.append(percentage)
+                
 
 
         return self.render(
@@ -322,11 +336,12 @@ class EmployeeIndexPage(BaseAbstractPage):
                 'filter_query': filter_query,
                 'filter_text': filter_text,
                 'categories': categories,
+                'category_percentages': category_percentages,
             },
             template='employee/client_list.html'
         )
     
-    @route(r'clients/(\d+)/$')
+    @route(r'client/(\d+)/$')
     def client_evaluation_details(self, request, user_evaluation_id):
         from performance_management_system.base.models import UserEvaluation, EvaluationPage, EvaluationCategories
 
@@ -348,7 +363,7 @@ class EmployeeIndexPage(BaseAbstractPage):
             template="base/evaluation_page.html",
         )
 
-    @route(r'^search/clients/$')
+    @route(r'^search/client/$')
     def client_search_specified(self, request):
         from performance_management_system.base.models import UserEvaluation
 
