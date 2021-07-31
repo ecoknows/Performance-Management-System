@@ -157,6 +157,7 @@
 				</div>
 			{% endfor %}
 			<div >
+
 				<div class="flex flex-col px-4 py-2 text-white lg:flex-row " style=" background-color: #2b4949;">
 					<div class="flex-1">
 						<label class="inline-block font-sans text-2xl font-bold">
@@ -169,7 +170,9 @@
 				</div>
 
 				<div class="flex flex-col px-4 py-2 space-y-2 lg:flex-row lg:space-y-0" style="min-height: 50px;">
+
 					<div class="flex flex-1 px-2 space-x-4 border-r-2 border-gray-300">
+
 						<div class="flex-1">
 							<h1 class="font-sans text-xl font-bold text-gray">MONTH</h1>
 							<ul class="font-sans text-lg text-gray">
@@ -181,31 +184,34 @@
 								<li class="py-1">June</li>
 							</ul>
 						</div>
+
 						<div >
-							<h1 class="font-sans text-xl font-bold text-gray">LATE</h1>
-							<ul class="font-sans text-lg text-gray">
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
-							</ul>
+							<h1 class="font-sans text-xl font-bold text-gray">LATE </h1>
+							<div class="font-sans text-lg text-gray">
+								<div ><input type='number' required name='late-0' class="px-1 py-1 bg-transparent" placeholder="# of late/s" value="{{user_evaluation.late_and_absence.0.0}}"></div>
+								<div ><input type='number' required name='late-1' class="px-1 py-1 bg-transparent" placeholder="# of late/s" value="{{user_evaluation.late_and_absence.1.0}}"></div>
+								<div ><input type='number' required name='late-2' class="px-1 py-1 bg-transparent" placeholder="# of late/s" value="{{user_evaluation.late_and_absence.2.0}}"></div>
+								<div ><input type='number' required name='late-3' class="px-1 py-1 bg-transparent" placeholder="# of late/s" value="{{user_evaluation.late_and_absence.3.0}}"></div>
+								<div ><input type='number' required name='late-4' class="px-1 py-1 bg-transparent" placeholder="# of late/s" value="{{user_evaluation.late_and_absence.4.0}}"></div>
+								<div ><input type='number' required name='late-5' class="px-1 py-1 bg-transparent" placeholder="# of late/s" value="{{user_evaluation.late_and_absence.5.0}}"></div>
+							</div>
 						</div>
+
 						<div >
 							<h1 class="font-sans text-xl font-bold text-gray">ABSENCES</h1>
-							<ul class="font-sans text-lg text-gray">
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
-							</ul>
+							<div class="font-sans text-lg text-gray">
+								<div ><input type='number' required name='absence-0' class="px-1 py-1 bg-transparent" placeholder="# of absence/s" value="{{user_evaluation.late_and_absence.0.1}}"></div>
+								<div ><input type='number' required name='absence-1' class="px-1 py-1 bg-transparent" placeholder="# of absence/s" value="{{user_evaluation.late_and_absence.1.1}}"></div>
+								<div ><input type='number' required name='absence-2' class="px-1 py-1 bg-transparent" placeholder="# of absence/s" value="{{user_evaluation.late_and_absence.2.1}}"></div>
+								<div ><input type='number' required name='absence-3' class="px-1 py-1 bg-transparent" placeholder="# of absence/s" value="{{user_evaluation.late_and_absence.3.1}}"></div>
+								<div ><input type='number' required name='absence-4' class="px-1 py-1 bg-transparent" placeholder="# of absence/s" value="{{user_evaluation.late_and_absence.4.1}}"></div>
+								<div ><input type='number' required name='absence-5' class="px-1 py-1 bg-transparent" placeholder="# of absence/s" value="{{user_evaluation.late_and_absence.5.1}}"></div>
+							</div>
 						</div>
 
 					</div>
-					<div class="flex flex-1 px-4 space-x-4">
+
+					<div class="flex flex-1 px-2 space-x-4">
 						<div class="flex-1">
 							<h1 class="font-sans text-xl font-bold text-gray">MONTH</h1>
 							<ul class="font-sans text-lg text-gray">
@@ -219,25 +225,25 @@
 						</div>
 						<div >
 							<h1 class="font-sans text-xl font-bold text-gray">LATE</h1>
-							<ul class="font-sans text-lg text-gray">
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
-							</ul>
+							<div class="font-sans text-lg text-gray">
+								<div ><input type='number' required name='late-6' class="px-1 py-1 bg-transparent" placeholder="# of late/s" value="{{user_evaluation.late_and_absence.6.0}}" ></div>
+								<div ><input type='number' required name='late-7' class="px-1 py-1 bg-transparent" placeholder="# of late/s" value="{{user_evaluation.late_and_absence.7.0}}"></div>
+								<div ><input type='number' required name='late-8' class="px-1 py-1 bg-transparent" placeholder="# of late/s" value="{{user_evaluation.late_and_absence.8.0}}"></div>
+								<div ><input type='number' required name='late-9' class="px-1 py-1 bg-transparent" placeholder="# of late/s" value="{{user_evaluation.late_and_absence.9.0}}"></div>
+								<div ><input type='number' required name='late-10' class="px-1 py-1 bg-transparent" placeholder="# of late/s" value="{{user_evaluation.late_and_absence.10.0}}"></div>
+								<div ><input type='number' required name='late-11' class="px-1 py-1 bg-transparent" placeholder="# of late/s" value="{{user_evaluation.late_and_absence.11.0}}"></div>
+							</div>
 						</div>
 						<div >
 							<h1 class="font-sans text-xl font-bold text-gray">ABSENCES</h1>
-							<ul class="font-sans text-lg text-gray">
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
-								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
-							</ul>
+							<div class="font-sans text-lg text-gray">
+								<div ><input type='number' required name='absence-6' class="px-1 py-1 bg-transparent" placeholder="# of absence/s" value="{{user_evaluation.late_and_absence.6.1}}"></div>
+								<div ><input type='number' required name='absence-7' class="px-1 py-1 bg-transparent" placeholder="# of absence/s" value="{{user_evaluation.late_and_absence.7.1}}"></div>
+								<div ><input type='number' required name='absence-8' class="px-1 py-1 bg-transparent" placeholder="# of absence/s" value="{{user_evaluation.late_and_absence.8.1}}"></div>
+								<div ><input type='number' required name='absence-9' class="px-1 py-1 bg-transparent" placeholder="# of absence/s" value="{{user_evaluation.late_and_absence.9.1}}"></div>
+								<div ><input type='number' required name='absence-10' class="px-1 py-1 bg-transparent" placeholder="# of absence/s" value="{{user_evaluation.late_and_absence.10.1}}"></div>
+								<div ><input type='number' required name='absence-11' class="px-1 py-1 bg-transparent" placeholder="# of absence/s" value="{{user_evaluation.late_and_absence.11.1}}"></div>
+							</div>
 						</div>
 
 					</div>

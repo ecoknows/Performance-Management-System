@@ -25,6 +25,7 @@ from modelcluster.models import ClusterableModel
 from performance_management_system.users.models import User
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client, ClientIndexPage
+from django.contrib.postgres.fields import ArrayField
 
 class BaseAbstractPage(RoutablePageMixin, Page):
     
@@ -245,6 +246,7 @@ class UserEvaluation(ClusterableModel, models.Model):
     submit_date = models.DateTimeField(null=True)
     assigned_date = models.DateTimeField(auto_now_add=True, null=True)
     project_assign = models.CharField(max_length=255, null=True)
+    late_and_absence = ArrayField(ArrayField(models.IntegerField()), null=True)
 
     hr_admin = models.ForeignKey(
         User,
@@ -333,10 +335,20 @@ class EvaluationPage(RoutablePageMixin, Page):
                 )
                         
             # update_user_evaluation = UserEvaluation.objects.get(pk=id)
+            late_and_absences = []
+            for count in range(12):
+                late = request.POST['late-'+str(count)]
+                absence = request.POST['absence-'+str(count)]
+
+                late_and_absences.append([late,absence])
+            
+            
+
 
             perfect_rate = len(EvaluationRates.objects.all()) * self.evaluation_max_rate
             user_evaluation.percentage = (evaluation_sum / perfect_rate) * 100
             user_evaluation.submit_date = timezone.now()
+            user_evaluation.late_and_absence = late_and_absences 
             user_evaluation.save()
 
             employee = user_evaluation.employee

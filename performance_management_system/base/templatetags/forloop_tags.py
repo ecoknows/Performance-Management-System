@@ -27,7 +27,6 @@ def get_rate_assign(rate, user_evaluation):
 
 @register.simple_tag
 def get_task(user_evaluation, category):
-    print('ECOPOGI' ,user_evaluation, user_evaluation.percentage,category)
     try:
         if user_evaluation.percentage > 0:
             task = user_evaluation.evaluation_task.get(category=category)
