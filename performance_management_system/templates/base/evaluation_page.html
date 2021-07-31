@@ -22,7 +22,7 @@
 	#legend-evaluation ul{
 		list-style-type: disc;
 	}
-	#legend-evaluation ol, ul{
+	#legend-evaluation ol, #legend-evaluation ul{
 		padding-left: 50px;
 	}
 	#legend-evaluation hr{
@@ -39,25 +39,6 @@
 {% block content %}
 <section  class="container mx-auto starting-padding-top" id='evaluation-page'>
 
-	{% if disabled %}
-	<div class="flex flex-col items-center py-10">
-		<div class="flex space-x-4">
-			{% image user_evaluation.employee.profile_pic fill-120x120 as employee_pic %}
-			<img src="{{employee_pic.url}}" class="rounded-full" style="width: 120px; height: 120px;">
-			
-			<div class="flex flex-col justify-center">
-			<h1 class="font-sans text-3xl font-bold" style="color: #616161;">
-				{{user_evaluation.employee}}
-			</h1>
-			<h2 class="font-sans text-lg font-semibold" style="color: #979797;">
-				{{user_evaluation.employee.position}}
-			</h2>
-			</div>
-		</div>
-
-	</div>
-
-	{% endif %}
 
 	
 	<div class="pb-4 pl-8 show-on-print">
@@ -78,11 +59,30 @@
 		{{ self.legend_evaluation|richtext }}
 	</div>
 
+	
+	<div class="flex flex-col items-center py-10">
+		<div class="flex space-x-4">
+			{% image user_evaluation.employee.profile_pic fill-120x120 as employee_pic %}
+			<img src="{{employee_pic.url}}" class="rounded-full" style="width: 120px; height: 120px;">
+			
+			<div class="flex flex-col justify-center">
+			<h1 class="font-sans text-3xl font-bold" style="color: #616161;">
+				{{user_evaluation.employee}}
+			</h1>
+			<h2 class="font-sans text-lg font-semibold" style="color: #979797;">
+				{{user_evaluation.employee.position}}
+			</h2>
+			</div>
+		</div>
+
+	</div>
+
+
 	<div class="flex px-6 py-6 font-sans text-xl" style="color: #353535;">
 		<div class="flex-1">
 			<div>
 				<h1 class="inline-block font-bold">Employee Name: </h1>
-				<h1 class="inline-block">{{employee_model}}</h1>
+				<h1 class="inline-block">{{user_evaluation.employee}}</h1>
 			</div>
 			
 			<div>
@@ -97,12 +97,12 @@
 			
 			<div>
 				<h1 class="inline-block font-bold">Position: </h1>
-				<h1 class="inline-block">{{employee_model.position}}</h1>
+				<h1 class="inline-block">{{user_evaluation.employee.position}}</h1>
 			</div>
 			
 			<div>
 				<h1 class="inline-block font-bold">Hiring Date: </h1>
-				<h1 class="inline-block">{{user_evaluation.submit_date}}</h1>
+				<h1 class="inline-block">{{user_evaluation.assigned_date}}</h1>
 			</div>
 
 		</div>
@@ -110,12 +110,7 @@
 
 	<form method="POST">
 		{% csrf_token %}
-		<div>
-			<div class="flex">
-				<div class="flex-1">
-			
-				</div>
-			</div>
+		<div class="pb-4">
 			{% for category in evaluation_categories %}
 			<div>
 				<div class="flex flex-col px-4 py-2 text-white lg:flex-row " style="background-color: #2b4949;">
@@ -125,31 +120,33 @@
 						</label>
 					</div>
 					<div class="flex justify-end flex-1 lg:justify-center">
-			{% for rates in self.evaluation_max_rate|times %}
+						{% for rates in self.evaluation_max_rate|times %}
 						<h1 style='margin-right: 1rem; width: 30px; text-align:center;' class="font-sans text-lg font-semibold">{{forloop.counter}}</h1>
-			{% endfor %}
+						{% endfor %}
 					</div>
 				</div>
+				
 				{% for rate in category.evaluation_rates.all %}
-						<div class="flex flex-col px-4 py-2 space-y-2 border-b border-gray-600 lg:flex-row lg:space-y-0 " style="min-height: 50px;">
-							<div class="flex-1">
-								<label class="font-sans text-xl">
-									{{rate}}
-								</label>
-							</div>
-				{% get_rate_assign rate user_evaluation %}
-							<div class="flex items-center justify-end flex-1 lg:justify-center">
-								{% for i in self.evaluation_max_rate|times %}
-									<input type="radio" {% if  disabled %} disabled {% endif %}  name="question-{{rate.pk}}" value="{{forloop.counter}}" {% if rate.rate == forloop.counter %}checked{% endif %} required class=" option-input radio"
-										style='
-										color: white;
-										font-family: "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
-										'
-									>
-								{% endfor %}
-							</div>
+					<div class="flex flex-col px-4 py-2 space-y-2 border-b border-gray-600 lg:flex-row lg:space-y-0 " style="min-height: 50px;">
+						<div class="flex-1">
+							<label class="font-sans text-xl">
+								{{rate}}
+							</label>
 						</div>
-					{% endfor %}
+						{% get_rate_assign rate user_evaluation %}
+						<div class="flex items-center justify-end flex-1 lg:justify-center">
+							{% for i in self.evaluation_max_rate|times %}
+								<input type="radio" {% if  disabled %} disabled {% endif %}  name="question-{{rate.pk}}" value="{{forloop.counter}}" {% if rate.rate == forloop.counter %}checked{% endif %} required class=" option-input radio"
+									style='
+									color: white;
+									font-family: "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+									'
+								>
+							{% endfor %}
+						</div>
+					</div>
+				{% endfor %}
+
 				<div>
 					<div class="flex flex-col px-4 py-2 text-white lg:flex-row " style="background-color: #2b4949;">
 						<h1>	
@@ -158,14 +155,102 @@
 					</div>
 					<textarea name='task-{{category.pk}}' rows="4" class="p-4" style="width: 100%; background-color: transparent;" placeholder='Please type here....' required>{% get_task user_evaluation category %}</textarea>
 				</div>
-				{% endfor %}
+			{% endfor %}
+			<div >
+				<div class="flex flex-col px-4 py-2 text-white lg:flex-row " style=" background-color: #2b4949;">
+					<div class="flex-1">
+						<label class="inline-block font-sans text-2xl font-bold">
+							ATTENDANCE 
+						</label>
+						<label class="inline-block font-sans text-lg font-semibold">
+							( Number of Late and Absences )
+						</label>
+					</div>
+				</div>
+
+				<div class="flex flex-col px-4 py-2 space-y-2 lg:flex-row lg:space-y-0" style="min-height: 50px;">
+					<div class="flex flex-1 px-2 space-x-4 border-r-2 border-gray-300">
+						<div class="flex-1">
+							<h1 class="font-sans text-xl font-bold text-gray">MONTH</h1>
+							<ul class="font-sans text-lg text-gray">
+								<li class="py-1">January</li>
+								<li class="py-1">February</li>
+								<li class="py-1">March</li>
+								<li class="py-1">April</li>
+								<li class="py-1">May</li>
+								<li class="py-1">June</li>
+							</ul>
+						</div>
+						<div >
+							<h1 class="font-sans text-xl font-bold text-gray">LATE</h1>
+							<ul class="font-sans text-lg text-gray">
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
+							</ul>
+						</div>
+						<div >
+							<h1 class="font-sans text-xl font-bold text-gray">ABSENCES</h1>
+							<ul class="font-sans text-lg text-gray">
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
+							</ul>
+						</div>
+
+					</div>
+					<div class="flex flex-1 px-4 space-x-4">
+						<div class="flex-1">
+							<h1 class="font-sans text-xl font-bold text-gray">MONTH</h1>
+							<ul class="font-sans text-lg text-gray">
+								<li class="py-1">July</li>
+								<li class="py-1">August</li>
+								<li class="py-1">September</li>
+								<li class="py-1">October</li>
+								<li class="py-1">November</li>
+								<li class="py-1">December</li>
+							</ul>
+						</div>
+						<div >
+							<h1 class="font-sans text-xl font-bold text-gray">LATE</h1>
+							<ul class="font-sans text-lg text-gray">
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of late/s"></li>
+							</ul>
+						</div>
+						<div >
+							<h1 class="font-sans text-xl font-bold text-gray">ABSENCES</h1>
+							<ul class="font-sans text-lg text-gray">
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
+								<li ><input class="px-1 py-1 bg-transparent" placeholder="# of absence/s"></li>
+							</ul>
+						</div>
+
+					</div>
+				</div>
 			</div>
 		</div>
+		
 	{% if disabled == None and user_evaluation.percentage == 0  %}
 	<div class="flex items-center justify-center py-10">
 		<input id='submit-evaluation' type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="px-4 py-2 font-sans text-lg font-semibold text-white">
 	</div>
 	{% endif %}
+	
 	</form>
 </section>
 {% endblock %}

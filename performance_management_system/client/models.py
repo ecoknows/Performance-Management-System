@@ -193,9 +193,7 @@ class Client(models.Model):
     
     @property
     def client_id(self):
-        id = str(IntegerResource.CLIENT_INDEX + self.pk)
-        year_now = str(timezone.now().year - 2000) 
-        return StringResource.COMPANY_PREFIX_TAG + '-' +  year_now + '-' + id;
+        return self.user.username;
     
     @property
     def display_image(self):
@@ -217,6 +215,7 @@ class Client(models.Model):
 
 class ClientIndexPage(BaseAbstractPage):
     max_count = 1
+    parent_page_types = ['base.BaseIndexPage']
     
     @route(r'^search/$')
     def pop_search(self, request):

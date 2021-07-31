@@ -23,7 +23,7 @@
 	
 <div id="dialog_id" class="dialog">
 	<div class="dialog-content">
-		<div class="px-2 pt-2">
+		<div class="px-2 pt-2 space-y-4">
 			<h1 class="font-sans text-lg italic font-semibold text-gray ">*client you will be assigning</h1>
 			<div >
 				<div class="flex flex-col items-center justify-center">
@@ -46,7 +46,7 @@
 			<h1 class="font-sans text-lg font-semibold text-gray">Project Assign: </h1>
 			<textarea id='dialog-text-area' placeholder="Kindly indicate here..." style="width: 100%;" class="p-4 bg-gray-50"></textarea>
 			<div class="flex items-center justify-around">
-				<div id="assign-dialog" onclick="return check_project_assign()">
+				<div id="assign-dialog" class="cursor-pointer" onclick="return check_project_assign()">
 					<h1 class="font-sans font-extrabold text-green">Assign</h1>
 				</div>
 				<button onclick="close_dialog()">

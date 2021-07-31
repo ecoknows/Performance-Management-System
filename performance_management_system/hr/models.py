@@ -492,6 +492,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
     def client_evaluation_details(self, request, id, user_evaluation_id):
         user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
         evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        legend_evaluation = EvaluationPage.objects.live().first().legend_evaluation
         menu_lists = [
             [HRIndexPage.objects.live().first().url, 'Dashboard'],
             ['../../', 'Details'],
@@ -507,7 +508,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
                 'menu_lists': menu_lists,
                 'user_model' : request.user.hradmin,
                 'employee_model': user_evaluation.client,
-                'self': {'evaluation_max_rate': evaluation_max_rate},
+                'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
                 'search_page': HRIndexPage.objects.live().first(),
             },
             template="base/evaluation_page.html",
@@ -689,9 +690,7 @@ class HrAdmin(models.Model):
     
     @property
     def hr_id(self):
-        id = str(IntegerResource.HR_INDEX + self.pk)
-        year_now = str(timezone.now().year - 2000) 
-        return StringResource.COMPANY_PREFIX_TAG + '-' +  year_now + '-' + id;
+        return self.user.username
     
     @property
     def hr_admin(self):

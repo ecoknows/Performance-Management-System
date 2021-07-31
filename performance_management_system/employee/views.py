@@ -6,6 +6,7 @@ from wagtail.contrib.modeladmin.views import CreateView
 
 from performance_management_system.users.models import User
 from performance_management_system import IntegerResource, StringResource
+import re
 
 class EmployeeCreateView(CreateView):
     
@@ -14,7 +15,11 @@ class EmployeeCreateView(CreateView):
 
         id = str(IntegerResource.EMPLOYEE_INDEX + instance.pk)
         year_now = str(timezone.now().year - 2000) 
-        username = StringResource.COMPANY_PREFIX_TAG + '-' +  year_now + '-' + id
+        
+        username = re.sub(r"[^\w\s]", '', instance.last_name)
+        username = re.sub(r"\s+", '-', username)
+         
+        username = username.upper() + '-' +  year_now + '-' + id
         
         user = User.objects.create_user(
             username=username,
@@ -25,7 +30,8 @@ class EmployeeCreateView(CreateView):
         )
 
         instance.user = user
-        user.set_password(instance.last_name.upper())
+        password = re.sub(r"\s+", '', instance.last_name)
+        user.set_password(password.upper())
         user.save()
         
         group = Group.objects.get(name=StringResource.EMPLOYEE)

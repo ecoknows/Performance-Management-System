@@ -204,9 +204,7 @@ class Employee(models.Model):
     
     @property
     def employee_id(self):
-        id = str(IntegerResource.EMPLOYEE_INDEX + self.pk)
-        year_now = str(timezone.now().year - 2000) 
-        return StringResource.COMPANY_PREFIX_TAG + '-' +  year_now + '-' + id;
+        return self.user.username
     
     @property
     def employee(self):
@@ -234,6 +232,7 @@ class Employee(models.Model):
 class EmployeeIndexPage(BaseAbstractPage):
     max_count = 1
     filter = None
+    parent_page_types = ['base.BaseIndexPage']
 
     @route(r'^search/$')
     def pop_search(self, request):

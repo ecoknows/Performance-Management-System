@@ -117,7 +117,7 @@ WSGI_APPLICATION = 'performance_management_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'employee_management_system',
+        'NAME': 'presentation_ems',
         'USER': 'postgres',
         'PASSWORD': '09084741500',
         'HOST': 'localhost',

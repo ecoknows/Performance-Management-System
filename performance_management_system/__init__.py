@@ -4,8 +4,8 @@ class IntegerResource:
     EMPLOYEE_INDEX = 6000
 
 class StringResource:
-    COMPANY_PREFIX_TAG = 'Globe'
-    COMPANTY_EMAIL_SUFFIX = '@globe.com'
+    COMPANY_PREFIX_TAG = 'Evaluation'
+    COMPANTY_EMAIL_SUFFIX = '@sample.com'
     
     CLIENT = 'Client'
     EMPLOYEE = 'Employee'

@@ -13,7 +13,7 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
-import math
+import math, re
 
 class HRAdminCreateView(CreateView):
     
@@ -22,7 +22,13 @@ class HRAdminCreateView(CreateView):
 
         id = str(IntegerResource.HR_INDEX + instance.pk)
         year_now = str(timezone.now().year - 2000) 
-        username = StringResource.COMPANY_PREFIX_TAG + '-' +  year_now + '-' + id
+        
+        username = re.sub(r"[^\w\s]", '', instance.last_name)
+        username = re.sub(r"\s+", '-', username)
+         
+        username = 'HR-'+username.upper() + '-' +  year_now + '-' + id
+        
+        
         
         user = User.objects.create_user(
             username=username,
@@ -33,7 +39,8 @@ class HRAdminCreateView(CreateView):
         )
 
         instance.user = user
-        user.set_password(instance.last_name.upper())
+        password = re.sub(r"\s+", '', instance.last_name)
+        user.set_password(password.upper())
         user.save()
         
         group = Group.objects.get(name=StringResource.HR_ADMIN)
