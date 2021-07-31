@@ -6,7 +6,7 @@
 
 		{% if employee.status == 'none' %}
 		
-		<a href='employee-details-page/{{employee.pk}}' class="flex flex-col items-center justify-center mb-10 mr-16 space-y-4 bg-white rounded-3xl" style="width: 28rem; height: 22rem; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+		<a href='employee-details-page/{{employee.pk}}' class="flex flex-col items-center justify-center mb-10 mr-16 space-y-4 bg-white rounded-3xl shadow-box height-22rem width-28rem hover-card" >
 			
 			<div class="flex justify-center space-x-4">
 				{% image employee.profile_pic fill-150x150 as profile_pic %}
@@ -29,7 +29,7 @@
 
 		{% elif employee.status == 'on-evaluation' %}
 
-		<div  class="relative mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 22rem; box-shadow: 0 4px 8px 0 rgb(255, 0, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+		<div  class="relative mb-10 mr-16 bg-white rounded-3xl shadow-box-red height-22rem width-28rem hover-card">
 			
 			
 			<a href='employee-details-page/{{employee.pk}}' class="flex flex-col items-center justify-center h-full ">
@@ -55,7 +55,7 @@
 
 		{% elif employee.status == 'evaluated' %}
 		
-		<div  class="relative mb-10 mr-16 bg-white rounded-3xl" style="width: 28rem; height: 22rem; box-shadow: 0 4px 8px 0 rgb(8, 162, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+		<div  class="relative mb-10 mr-16 bg-white rounded-3xl shadow-box-green height-22rem width-28rem hover-card">
 			
 			
 			<a href='employee-details-page/{{employee.pk}}' class="flex flex-col items-center justify-center h-full ">

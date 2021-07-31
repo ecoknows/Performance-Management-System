@@ -3,6 +3,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 
 from performance_management_system import GRADIENT_BG
+from performance_management_system.base.models import EvaluationTask
 
 register = template.Library()
 
@@ -22,6 +23,18 @@ def get_rate_assign(rate, user_evaluation):
             rate.rate = rate_assign.rate
             break
 
+    return ''
+
+@register.simple_tag
+def get_task(user_evaluation, category):
+    print('ECOPOGI' ,user_evaluation, user_evaluation.percentage,category)
+    try:
+        if user_evaluation.percentage > 0:
+            task = user_evaluation.evaluation_task.get(category=category)
+            return task.text
+    except EvaluationTask.DoesNotExist:
+        return ''
+    
     return ''
 
 

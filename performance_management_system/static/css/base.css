@@ -23,7 +23,7 @@
 .text-gray-tertiary-color{color:#BABABA}
 .text-gray-fourthary-color{color:#616161}
 
-.padding-top-120{padding-top: 120px;}
+.starting-padding-top{padding-top: 125px;}
 
 .padding-y-4{padding-top: 4px; padding-bottom: 4px;}
 
@@ -61,6 +61,7 @@
 .height-17rem{height: 17rem;}
 .height-100{height: 100px;}
 .height-60{height: 60px;}
+.height-22rem{height: 22rem;}
 
 .width-700{width: 700px;}
 .width-50vw{width: 50vw;}
@@ -76,9 +77,21 @@
 .max-width-1800{ max-width: 1800px; }
 .max-width-900{ max-width: 900px; }
 
+.hover-card {
+    transition: 0.3s;
+}
+
+.hover-card:hover {
+    transform: translateY(-20px);
+}
+
+
 .show-on-print{
     display: none
 }
+
+
+
 
 @media print{
     .show-on-print{

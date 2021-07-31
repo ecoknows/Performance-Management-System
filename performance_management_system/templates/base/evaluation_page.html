@@ -19,13 +19,13 @@
 
 {% block style %}
 <style>
-	ul{
+	#legend-evaluation ul{
 		list-style-type: disc;
 	}
-	ol, ul{
+	#legend-evaluation ol, ul{
 		padding-left: 50px;
 	}
-	hr{
+	#legend-evaluation hr{
 		border-top: 1px solid rgb(49, 49, 49);
 		margin-top: 5px;
 		margin-bottom: 5px;
@@ -37,7 +37,7 @@
 </style>
 {% endblock %}
 {% block content %}
-<section  class="container mx-auto padding-top-120" id='evaluation-page'>
+<section  class="container mx-auto starting-padding-top" id='evaluation-page'>
 
 	{% if disabled %}
 	<div class="flex flex-col items-center py-10">
@@ -58,6 +58,7 @@
 	</div>
 
 	{% endif %}
+
 	
 	<div class="pb-4 pl-8 show-on-print">
 		<h1 class="font-sans text-xl font-bold text-gray">Client</h1>
@@ -110,7 +111,6 @@
 	<form method="POST">
 		{% csrf_token %}
 		<div>
-			{% load forloop_tags %}
 			<div class="flex">
 				<div class="flex-1">
 			
@@ -156,12 +156,12 @@
 							Indicate specific tasks or critical incidences covered by the competency and your remarks on their outputs
 						</h1>
 					</div>
-					<textarea rows="4" class="p-4" style="width: 100%; background-color: transparent;" placeholder='Please type here....'></textarea>
+					<textarea name='task-{{category.pk}}' rows="4" class="p-4" style="width: 100%; background-color: transparent;" placeholder='Please type here....' required>{% get_task user_evaluation category %}</textarea>
 				</div>
 				{% endfor %}
 			</div>
 		</div>
-	{% if disabled == None  %}
+	{% if disabled == None and user_evaluation.percentage == 0  %}
 	<div class="flex items-center justify-center py-10">
 		<input id='submit-evaluation' type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="px-4 py-2 font-sans text-lg font-semibold text-white">
 	</div>

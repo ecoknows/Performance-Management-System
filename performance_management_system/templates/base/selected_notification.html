@@ -18,13 +18,12 @@
         <h2 class="font-sans text-xl text-gray-primary-color">Client</h2>
         <h1 class="font-sans text-3xl font-bold text-gray-primary-color">&ensp; {{notification.user_evaluation.client.company}}</h1>
     </div>
-    <div class="flex">
+    <div class="flex overflow-y-auto"  style="height: 300px;">
         <div class="flex-1">
             <h2 class="font-sans text-xl text-gray-primary-color">Categories</h2>
             {% for category in categories %}
             <h1 class="font-sans text-2xl font-bold text-gray-primary-color">&ensp; {{category}}</h1>
             {% endfor %}
-            
 
         </div>
         <div class="flex flex-col items-end flex-1">
@@ -41,6 +40,7 @@
             {% endif %}
             {% endfor %}
         </div>
+        
     </div>
 </div>
 {% elif  notification.notification_type == 'client-evaluated-employee'  %}
@@ -62,7 +62,7 @@
         <h2 class="font-sans text-xl text-gray-primary-color">Client</h2>
         <h1 class="font-sans text-3xl font-bold text-gray-primary-color">&ensp; {{notification.user_evaluation.client.company}}</h1>
     </div>
-    <div class="flex">
+    <div class="flex overflow-y-auto"  style="height: 300px;">
         <div class="flex-1">
             <h2 class="font-sans text-xl text-gray-primary-color">Categories</h2>
             {% for category in categories %}

@@ -65,7 +65,14 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 percentage = 0
                 for rate_assign in rate_assigns:
                     percentage = rate_assign.rate + percentage
-                percentage = (percentage / (len(rate_assigns) * max_rate)) * 100
+
+                rate_assign_len = len(rate_assigns) 
+
+                if rate_assign_len:
+                    percentage = (percentage / (rate_assign_len * max_rate)) * 100
+                else:
+                    percentage = 0
+                
                 category_percentages.append(percentage)
                 
 
@@ -149,7 +156,6 @@ class EvaluationRates(ClusterableModel):
     def __str__(self):
         return self.name
     
-# ABSTRACT
 class EvaluationCategories(ClusterableModel):
     
     evaluation_page = ParentalKey(
@@ -177,6 +183,27 @@ class EvaluationCategories(ClusterableModel):
         FieldPanel('category_name'),
         InlinePanel('evaluation_rates', label="Evaluation Rates"),
     ]
+
+class EvaluationTask(models.Model):
+    category = models.ForeignKey(
+        EvaluationCategories,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+
+    user_evaluation = models.ForeignKey(
+        'UserEvaluation',
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='evaluation_task',
+    )
+
+    text = models.CharField(
+        max_length=255,
+        null=True
+    )
+
+
 
 class EvaluationRateAssign(Orderable):
     
@@ -297,13 +324,20 @@ class EvaluationPage(RoutablePageMixin, Page):
                         evaluation_rate_assign.rate= question_rate
                         evaluation_sum = evaluation_sum + question_rate
                         evaluation_rate_assign.save()
+                task = request.POST['task-'+str(category.pk)]
+
+                EvaluationTask.objects.create(
+                    category=category,
+                    user_evaluation=user_evaluation,
+                    text=task
+                )
                         
-            update_user_evaluation = UserEvaluation.objects.get(pk=id)
+            # update_user_evaluation = UserEvaluation.objects.get(pk=id)
 
             perfect_rate = len(EvaluationRates.objects.all()) * self.evaluation_max_rate
-            update_user_evaluation.percentage = (evaluation_sum / perfect_rate) * 100
-            update_user_evaluation.submit_date = timezone.now()
-            update_user_evaluation.save()
+            user_evaluation.percentage = (evaluation_sum / perfect_rate) * 100
+            user_evaluation.submit_date = timezone.now()
+            user_evaluation.save()
 
             employee = user_evaluation.employee
             employee_not_evaluated = employee.user_evaluation.filter(percentage=0)
@@ -320,25 +354,25 @@ class EvaluationPage(RoutablePageMixin, Page):
                 client.save()
 
             Notification.objects.create(
-                reciever=update_user_evaluation.hr_admin,
-                message=update_user_evaluation.client.company+' has already evaluated',
-                user_evaluation=update_user_evaluation,
+                reciever=user_evaluation.hr_admin,
+                message=user_evaluation.client.company+' has already evaluated',
+                user_evaluation=user_evaluation,
                 notification_type='client-evaluated-hr',
             )
             
             Notification.objects.create(
-                reciever=update_user_evaluation.employee.user,
-                message=update_user_evaluation.client.company+' has already evaluated',
-                user_evaluation=update_user_evaluation,
+                reciever=user_evaluation.employee.user,
+                message=user_evaluation.client.company+' has already evaluated',
+                user_evaluation=user_evaluation,
                 notification_type='client-evaluated-employee',
             )
             
 
             Notification.objects.create(
-                reciever=update_user_evaluation.client.user,
-                message='Thank you for evaluating, I have send the result to ' + str(update_user_evaluation.employee),
-                user_evaluation=update_user_evaluation,
-                hr_admin=update_user_evaluation.hr_admin.hradmin,
+                reciever=user_evaluation.client.user,
+                message='Thank you for evaluating, I have send the result to ' + str(user_evaluation.employee),
+                user_evaluation=user_evaluation,
+                hr_admin=user_evaluation.hr_admin.hradmin,
                 notification_type='evaluated-form-is-send-to-employee',
             )
             
