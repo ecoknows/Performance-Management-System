@@ -2,18 +2,18 @@
 {% load wagtailimages_tags static %}
 
 {% for client in clients %}
-	<a href="add/{{client.pk}}" data-client_name='{{client}}'  onclick="return confirm( $(this).data('client_name') + ' will be the client of ' + $(this).data('employee_name')+ ' is this right?')" data-employee_name='{{employee}}' class="flex flex-col p-6 mb-10 mr-16 bg-white confirmation-client rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
+	<data data-client-pk="{{client.pk}}" data-client_name='{{client}}'  onclick="dialog_button_trigger(this)" data-employee_name='{{employee}}' class="flex flex-col p-6 mb-10 mr-16 bg-white cursor-pointer confirmation-client rounded-3xl" style="width: 28rem; height: 17rem; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
 			
 		<div class="flex justify-center flex-1 space-x-4">
 			{% image client.profile_pic original as profile_pic %}
-			<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 150px; '>
+			<img id='client-profile-pic' src='{{profile_pic.url}}' style= 'object-fit: contain; width: 90%; height: 150px; '>
 		</div>
 		
 		<div>
-			<h1 class="font-sans text-4xl text-center" style="color: #616161;">
+			<h1 id='client-name' class="font-sans text-4xl text-center" style="color: #616161;">
 				{{client.company}}
 			</h1>
 
 		</div>
-	</a>
+	</data>
 {% endfor %}

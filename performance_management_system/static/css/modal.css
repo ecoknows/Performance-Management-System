@@ -45,4 +45,11 @@ Content:"Evaluation has been sent! successfully thank you ";
 .failure:before{
 Content:"Message not sent check the input";
 }
+
+.assign-successfull:before{
+Content:"The employee has been assign successfully thank youu!";
+}
+.fill-project-assign:before{
+Content:"Assign fail please indicate project assign";
+}
   
