@@ -4,3 +4,4 @@
 /venv/
 /static/
 /media/
+.env
