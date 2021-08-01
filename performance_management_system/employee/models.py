@@ -319,7 +319,13 @@ class EmployeeIndexPage(BaseAbstractPage):
             percentage = 0
             for rate_assign in rate_assigns:
                 percentage = rate_assign.rate + percentage
-            percentage = (percentage / (len(rate_assigns) * max_rate)) * 100
+
+            rate_assign_len = len(rate_assigns) 
+            
+            if rate_assign_len:
+                percentage = (percentage / (rate_assign_len * max_rate)) * 100
+            else:
+                percentage = 0
             category_percentages.append(percentage)
                 
 

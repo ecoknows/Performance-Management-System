@@ -447,7 +447,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             elif filter_query  == 'evaluated':
                 filter_text = 'Evaluated'
             
-        latest_evaluation = UserEvaluation.objects.latest('assigned_date')
+        latest_evaluation = UserEvaluation.objects.filter(employee=employee).latest('assigned_date')
         categories = EvaluationCategories.objects.all()
         max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         category_percentages = []
@@ -615,8 +615,6 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
                 user_evaluations = user_evaluations.filter(percentage=0)
             elif filter_query == 'evaluated':
                 user_evaluations = user_evaluations.exclude(percentage=0)
-
-            
 
         return TemplateResponse(
                 request,

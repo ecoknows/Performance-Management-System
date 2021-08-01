@@ -53,7 +53,7 @@ class Evaluation(ModelAdmin):
     model = UserEvaluation
     menu_label = 'Evaluation'
     menu_icon = 'doc-full'
-    list_display = ('employee','client',)
+    list_display = ('employee','client','percentage')
     inspect_view_enabled = True
     inspect_template_name = 'modeladmin/inspect_evaluation.html'
     
