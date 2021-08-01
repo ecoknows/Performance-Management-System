@@ -18,6 +18,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # For Whitenoise 4 use 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+CLOUDINARY_STORAGE = { 'CLOUD_NAME': 'dqcryg2ci', 'API_KEY': '215839881588451', 'API_SECRET': 'mK53BxqU439IvdXAbZmn4tk7-40', }
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 COMPRESS_OFFLINE = True
 COMPRESS_CSS_FILTERS = [
