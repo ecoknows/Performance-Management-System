@@ -63,9 +63,9 @@ modeladmin_register(Evaluation)
 def hide_documents(request, menu_items):
     menu_items[:] = [item for item in menu_items if item.name != "documents"]
     
-@hooks.register("construct_main_menu")
-def hide_documents(request, menu_items):
-    menu_items[:] = [item for item in menu_items if item.name != "images"]
+# @hooks.register("construct_main_menu")
+# def hide_documents(request, menu_items):
+#     menu_items[:] = [item for item in menu_items if item.name != "images"]
 
 
 @hooks.register("construct_main_menu")
