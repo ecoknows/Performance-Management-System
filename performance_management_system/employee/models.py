@@ -306,27 +306,31 @@ class EmployeeIndexPage(BaseAbstractPage):
             ['?filter=on-evaluation','On Evaluation'],
         ]
 
-        latest_evaluation = UserEvaluation.objects.latest('assigned_date')
         categories = EvaluationCategories.objects.all()
         max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         category_percentages = []
 
-        for category in categories:
-            rate_assigns = EvaluationRateAssign.objects.filter(
-                evaluation_rate__evaluation_categories=category,
-                user_evaluation = latest_evaluation
-            )
-            percentage = 0
-            for rate_assign in rate_assigns:
-                percentage = rate_assign.rate + percentage
+        try:
+            latest_evaluation = UserEvaluation.objects.filter(employee=request.user.employee).latest('assigned_date')
 
-            rate_assign_len = len(rate_assigns) 
-            
-            if rate_assign_len:
-                percentage = (percentage / (rate_assign_len * max_rate)) * 100
-            else:
+            for category in categories:
+                rate_assigns = EvaluationRateAssign.objects.filter(
+                    evaluation_rate__evaluation_categories=category,
+                    user_evaluation = latest_evaluation
+                )
                 percentage = 0
-            category_percentages.append(percentage)
+                for rate_assign in rate_assigns:
+                    percentage = rate_assign.rate + percentage
+
+                rate_assign_len = len(rate_assigns) 
+                
+                if rate_assign_len:
+                    percentage = (percentage / (rate_assign_len * max_rate)) * 100
+                else:
+                    percentage = 0
+                category_percentages.append(percentage)
+        except UserEvaluation.DoesNotExist:
+            latest_evaluation = None
                 
 
 

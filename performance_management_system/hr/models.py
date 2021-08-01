@@ -418,25 +418,29 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
 
 
         if  user_evaluation_id:
-            user_evaluation  = UserEvaluation.objects.get(pk=user_evaluation_id)
+            try:
+                user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+                Notification.objects.create(
+                    reciever=user_evaluation.client.user,
+                    message='Please Evaluate '+ str(user_evaluation.employee),
+                    hr_admin=request.user.hradmin,
+                    user_evaluation= user_evaluation,
+                    notification_type='notify-evaluated-specific-client'
+                )
+                Notification.objects.create(
+                    reciever=user_evaluation.employee.user,
+                    message='Rest assured I have notify '+ user_evaluation.client.company + ' to evalaute',
+                    hr_admin=request.user.hradmin,
+                    user_evaluation= user_evaluation,
+                    notification_type='client-has-been-notify'
+                )
+                return JsonResponse(data={
+                    'message': 'The client has been successfully notified!'
+                })
+            except UserEvaluation.DoesNotExist:
+                user_evaluation
 
-            Notification.objects.create(
-                reciever=user_evaluation.client.user,
-                message='Please Evaluate '+ str(user_evaluation.employee),
-                hr_admin=request.user.hradmin,
-                user_evaluation= user_evaluation,
-                notification_type='notify-evaluated-specific-client'
-            )
-            Notification.objects.create(
-                reciever=user_evaluation.employee.user,
-                message='Rest assured I have notify '+ user_evaluation.client.company + ' to evalaute',
-                hr_admin=request.user.hradmin,
-                user_evaluation= user_evaluation,
-                notification_type='client-has-been-notify'
-            )
-            return JsonResponse(data={
-                'message': 'The client has been successfully notified!'
-            })
+                
         
         filter_query = request.GET.get('filter', None)
         filter_text = None
@@ -447,29 +451,34 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             elif filter_query  == 'evaluated':
                 filter_text = 'Evaluated'
             
-        latest_evaluation = UserEvaluation.objects.filter(employee=employee).latest('assigned_date')
+
         categories = EvaluationCategories.objects.all()
-        max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         category_percentages = []
+        max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        
+        try:
+            latest_evaluation = UserEvaluation.objects.filter(employee=employee).latest('assigned_date')
 
-        for category in categories:
-            rate_assigns = EvaluationRateAssign.objects.filter(
-                evaluation_rate__evaluation_categories=category,
-                user_evaluation = latest_evaluation
-            )
+            for category in categories:
+                rate_assigns = EvaluationRateAssign.objects.filter(
+                    evaluation_rate__evaluation_categories=category,
+                    user_evaluation = latest_evaluation
+                )
 
-            percentage = 0
-            for rate_assign in rate_assigns:
-                percentage = rate_assign.rate + percentage
-                
-            rate_assign_len = len(rate_assigns) 
-
-            if rate_assign_len:
-                percentage = (percentage / (rate_assign_len * max_rate)) * 100
-            else:
                 percentage = 0
-                
-            category_percentages.append(percentage)
+                for rate_assign in rate_assigns:
+                    percentage = rate_assign.rate + percentage
+                    
+                rate_assign_len = len(rate_assigns) 
+
+                if rate_assign_len:
+                    percentage = (percentage / (rate_assign_len * max_rate)) * 100
+                else:
+                    percentage = 0
+                    
+                category_percentages.append(percentage)
+        except UserEvaluation.DoesNotExist:
+            latest_evaluation = None
 
 
         return self.render(

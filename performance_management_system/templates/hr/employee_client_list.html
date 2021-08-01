@@ -9,6 +9,7 @@
 {% block content %}
 
 <section class="container flex-1 mx-auto space-y-10 starting-padding-top">
+	{% if latest_evaluation  %}
 	<div class="flex " style="height: 400px;">
 		{% if latest_evaluation.percentage > 0  %}
 		<div class="relative bg-white rounded-3xl shadow-box-green hover-card" style="width: 50%; height: 100%; ">
@@ -87,6 +88,9 @@
 			</div>
 		</div>
 	</div>
+	{% else %}
+	<h1 class="font-sans text-2xl font-bold text-gray">No Assign client for this employee</h1>
+	{% endif %}
 
 	<div id="client-list-container" class="px-2 py-6 space-x-7 whitespace-nowrap" style="height: 270px; width: 100%; overflow-x: scroll;">
 		
