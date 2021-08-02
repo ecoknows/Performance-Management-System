@@ -6,8 +6,13 @@
 	{% include 'includes/header.html' with employee_model=employee_model user_model=request.user.hradmin client=True menu_text='All' %}
 {% endblock %}
 
+{% block head_style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/loading_bar.css' %}">
+{% endblock %}
 {% block content %}
-<section id='client-list-container' class="container flex flex-wrap flex-1 mx-auto starting-padding-top"></section>
+<section id='client-list-container' class="container flex flex-wrap flex-1 mx-auto starting-padding-top">
+	{% include 'includes/loading_bar.html' %}
+</section>
 {% endblock %}
 
 {% block scripts %}

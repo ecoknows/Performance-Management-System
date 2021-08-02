@@ -1,9 +1,14 @@
 {% extends 'base.html'%}
-{% load static wagtailimages_tags %}
+{% load static wagtailimages_tags wagtailcore_tags %}
 
 
 {% block header %}
 	{% include 'includes/header.html' with user_model=request.user.hradmin employee_model=employee menu_text='Clients' %}
+{% endblock %}
+
+
+{% block head_style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/loading_bar.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -93,7 +98,7 @@
 	{% endif %}
 
 	<div id="client-list-container" class="px-2 py-6 space-x-7 whitespace-nowrap" style="height: 270px; width: 100%; overflow-x: scroll;">
-		
+		{% include 'includes/loading_bar.html' %}
 	</div>
 		
 </section>

@@ -12,10 +12,18 @@
 	{% include 'includes/header.html'  with user_model=user_model title=title menu_text='All' %}
 {% endblock %}
 
+
+{% block head_style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/loading_bar.css' %}">
+{% endblock %}
+
+
 {% block content %}
 
 
-<section id='employee-list-container' class="container flex flex-wrap flex-1 mx-auto starting-padding-top"></section>
+<section id='employee-list-container' class="container flex flex-wrap flex-1 mx-auto starting-padding-top">
+	{% include 'includes/loading_bar.html' %}
+</section>
 
 
 {% endblock %}

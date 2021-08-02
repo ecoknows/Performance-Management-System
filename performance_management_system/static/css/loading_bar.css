@@ -1,0 +1,37 @@
+.bar {
+    position: relative;
+    height: 2px;
+    width: 500px;
+    margin: 0 auto;
+    background: rgb(209, 101, 0);
+    margin-top: 150px;
+}
+
+.circle {
+    position: absolute;
+    top: -30px;
+    margin-left: -30px;
+    height: 60px;
+    width: 60px;
+    left: 0;
+    background: rgb(209, 101, 0);
+    border-radius: 30%;
+    -webkit-animation: move 5s infinite;
+}
+
+.loading-text {
+    position: absolute;
+    top: -25px;
+    right: -85px;
+    text-transform: uppercase;
+    color: #ffffff;
+    font-family: helvetica, sans-serif;
+    font-weight: bold;
+}
+
+@-webkit-keyframes move {
+    0% {left: 0;}
+    50% {left: 100%; -webkit-transform: rotate(450deg); width: 150px; height: 150px;}
+    75% {left: 100%; -webkit-transform: rotate(450deg); width: 150px; height: 150px;}
+    100% {right: 100%;}
+} 
