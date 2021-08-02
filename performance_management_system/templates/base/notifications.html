@@ -6,159 +6,170 @@
 	{% include 'includes/header.html' with title='NOTIFICATION' user_model=user_model %}
 {% endblock %}
 
+
 {% block content %}
-<section class="flex mx-auto space-x-6 default-section-padding min-height-800 max-width-1800">
-	<div class="flex-1 space-y-4 ">
-
-		{% for notification in notifications %}
-		{% if notification.notification_type == 'client-evaluated-hr' %}
-		<a data-notification-pk='{{notification.pk}}' 
-		class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
-				{% if notification.seen %} 
-					shadow-box
-				{% else %} 
-					shadow-box-yellow 
-				{% endif %}">
-			{% image notification.user_evaluation.employee.profile_pic original as notification_image %}
-			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
-			<div class="flex flex-col justify-center px-4">
-				<div class="flex items-end space-x-2">
-					<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.user_evaluation.employee}}</h2>
-					<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">{{notification.user_evaluation.employee.position}}</h2>
-				</div>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-			</div>
-
-		</a>
-		{% elif notification.notification_type == 'client-evaluated-employee'  %}
-		<a data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
-		{% if notification.seen %} 
-			shadow-box
-		{% else %} 
-			shadow-box-yellow 
-		{% endif %}">
-			{% image notification.user_evaluation.client.profile_pic original as notification_image %}
-			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
-			<div class="flex flex-col justify-center px-4">
-				<div class="flex items-end space-x-2">
-					<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.user_evaluation.client}}</h2>
-					<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">Client</h2>
-				</div>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-			</div>
-
-		</a>
+<section class="flex mx-auto space-x-6 default-section-padding min-height-800 max-width-1800" id="notification-section">
+	<div>
 		
-		{% elif notification.notification_type == 'notify-evaluated-all-client' or notification.notification_type == 'notify-evaluated-specific-client'%}
-
-		<a data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
-		{% if notification.seen %} 
-			shadow-box
-		{% else %} 
-			shadow-box-yellow 
-		{% endif %}">
-			{% image notification.hr_admin.profile_pic original as notification_image %}
-			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
-			<div class="flex flex-col justify-center px-4">
-				<div class="flex items-end space-x-2">
-					<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.hr_admin}}</h2>
-					<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">HR Admin</h2>
+		<div class="flex-1 space-y-4" id="user-notifications">
+			
+			{% for notification in notifications %}
+			{% if notification.notification_type == 'client-evaluated-hr' %}
+			<a data-notification-pk='{{notification.pk}}' 
+			onclick="anchor_clickable(this)"
+			class=" cursor-pointer flex w-full p-4 bg-white
+					{% if notification.seen %} 
+						shadow-box
+					{% else %} 
+						shadow-box-yellow 
+					{% endif %}">
+				{% image notification.user_evaluation.employee.profile_pic original as notification_image %}
+				<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
+				<div class="flex flex-col justify-center px-4">
+					<div class="flex items-end space-x-2">
+						<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.user_evaluation.employee}}</h2>
+						<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">{{notification.user_evaluation.employee.position}}</h2>
+					</div>
+					<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
+					<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
 				</div>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-			</div>
 
-		</a>
-		{% elif notification.notification_type == 'new-client-employee' %}
-
-		<a data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
-		{% if notification.seen %} 
-			shadow-box
-		{% else %} 
-			shadow-box-yellow 
-		{% endif %}">
-			{% image notification.user_evaluation.client.profile_pic original as notification_image %}
-			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
-			<div class="flex flex-col justify-center px-4">
-				<div class="flex items-end space-x-2">
-					<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.user_evaluation.client}}</h2>
-					<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">Client</h2>
+			</a>
+			{% elif notification.notification_type == 'client-evaluated-employee'  %}
+			<a data-notification-pk='{{notification.pk}}' 
+			onclick="anchor_clickable(this)"
+			class=" cursor-pointer flex w-full p-4 bg-white
+			{% if notification.seen %} 
+				shadow-box
+			{% else %} 
+				shadow-box-yellow 
+			{% endif %}">
+				{% image notification.user_evaluation.client.profile_pic original as notification_image %}
+				<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
+				<div class="flex flex-col justify-center px-4">
+					<div class="flex items-end space-x-2">
+						<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.user_evaluation.client}}</h2>
+						<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">Client</h2>
+					</div>
+					<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
+					<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
 				</div>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-			</div>
-		</a>
-		
-		{% elif notification.notification_type == 'new-employee-client' %}
-		
-		<a  data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
-		{% if notification.seen %} 
-			shadow-box
-		{% else %} 
-			shadow-box-yellow 
-		{% endif %}">
-			{% image notification.user_evaluation.employee.profile_pic original as notification_image %}
-			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
-			<div class="flex flex-col justify-center px-4">
-				<div class="flex items-end space-x-2">
-					<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.user_evaluation.employee}}</h2>
-					<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">{{notification.user_evaluation.employee.position}}</h2>
-				</div>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-			</div>
-		</a>
 
-		{% elif notification.notification_type == 'evaluated-form-is-send-to-employee' %}
-		
-		<a  data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
-		{% if notification.seen %} 
-			shadow-box
-		{% else %} 
-			shadow-box-yellow 
-		{% endif %}">
-			{% image notification.hr_admin.profile_pic original as notification_image %}
-			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
-			<div class="flex flex-col justify-center px-4">
-				<div class="flex items-end space-x-2">
-					<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.hr_admin}}</h2>
-					<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">HR Admin</h2>
-				</div>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-			</div>
-		</a>
+			</a>
 
-		{% elif notification.notification_type == 'client-has-been-notify' %}
-		<a  data-hr_admin_id='{{notification.hr_admin.pk}}' data-notification-pk='{{notification.pk}}' class="anchor-clickable cursor-pointer flex w-full p-4 bg-white
-		{% if notification.seen %} 
-			shadow-box
-		{% else %} 
-			shadow-box-yellow 
-		{% endif %}">
-			{% image notification.hr_admin.profile_pic original as notification_image %}
-			<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
-			<div class="flex flex-col justify-center px-4">
-				<div class="flex items-end space-x-2">
-					<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.hr_admin}}</h2>
-					<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">HR Admin</h2>
-				</div>
-				<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-				<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-			</div>
-		</a>
+			{% elif notification.notification_type == 'notify-evaluated-all-client' or notification.notification_type == 'notify-evaluated-specific-client'%}
 
-		{% endif %}
+			<a data-hr_admin_id='{{notification.hr_admin.pk}}' onclick="anchor_clickable(this)" data-notification-pk='{{notification.pk}}' class=" cursor-pointer flex w-full p-4 bg-white
+			{% if notification.seen %} 
+				shadow-box
+			{% else %} 
+				shadow-box-yellow 
+			{% endif %}">
+				{% image notification.hr_admin.profile_pic original as notification_image %}
+				<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
+				<div class="flex flex-col justify-center px-4">
+					<div class="flex items-end space-x-2">
+						<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.hr_admin}}</h2>
+						<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">HR Admin</h2>
+					</div>
+					<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
+					<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
+				</div>
+
+			</a>
+			{% elif notification.notification_type == 'new-client-employee' %}
+
+			<a data-hr_admin_id='{{notification.hr_admin.pk}}' onclick="anchor_clickable(this)" data-notification-pk='{{notification.pk}}' class=" cursor-pointer flex w-full p-4 bg-white
+			{% if notification.seen %} 
+				shadow-box
+			{% else %} 
+				shadow-box-yellow 
+			{% endif %}">
+				{% image notification.user_evaluation.client.profile_pic original as notification_image %}
+				<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
+				<div class="flex flex-col justify-center px-4">
+					<div class="flex items-end space-x-2">
+						<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.user_evaluation.client}}</h2>
+						<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">Client</h2>
+					</div>
+					<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
+					<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
+				</div>
+			</a>
+
+			{% elif notification.notification_type == 'new-employee-client' %}
+
+			<a  data-hr_admin_id='{{notification.hr_admin.pk}}' onclick="anchor_clickable(this)" data-notification-pk='{{notification.pk}}' class=" cursor-pointer flex w-full p-4 bg-white
+			{% if notification.seen %} 
+				shadow-box
+			{% else %} 
+				shadow-box-yellow 
+			{% endif %}">
+				{% image notification.user_evaluation.employee.profile_pic original as notification_image %}
+				<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
+				<div class="flex flex-col justify-center px-4">
+					<div class="flex items-end space-x-2">
+						<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.user_evaluation.employee}}</h2>
+						<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">{{notification.user_evaluation.employee.position}}</h2>
+					</div>
+					<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
+					<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
+				</div>
+			</a>
+
+			{% elif notification.notification_type == 'evaluated-form-is-send-to-employee' %}
+
+			<a  data-hr_admin_id='{{notification.hr_admin.pk}}' onclick="anchor_clickable(this)" data-notification-pk='{{notification.pk}}' class=" cursor-pointer flex w-full p-4 bg-white
+			{% if notification.seen %} 
+				shadow-box
+			{% else %} 
+				shadow-box-yellow 
+			{% endif %}">
+				{% image notification.hr_admin.profile_pic original as notification_image %}
+				<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
+				<div class="flex flex-col justify-center px-4">
+					<div class="flex items-end space-x-2">
+						<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.hr_admin}}</h2>
+						<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">HR Admin</h2>
+					</div>
+					<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
+					<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
+				</div>
+			</a>
+
+			{% elif notification.notification_type == 'client-has-been-notify' %}
+			<a  data-hr_admin_id='{{notification.hr_admin.pk}}' onclick="anchor_clickable(this)" data-notification-pk='{{notification.pk}}' class=" cursor-pointer flex w-full p-4 bg-white
+			{% if notification.seen %} 
+				shadow-box
+			{% else %} 
+				shadow-box-yellow 
+			{% endif %}">
+				{% image notification.hr_admin.profile_pic original as notification_image %}
+				<img src='{{notification_image.url}}' class="object-cover w-32 h-32 rounded-full" >
+				<div class="flex flex-col justify-center px-4">
+					<div class="flex items-end space-x-2">
+						<h2 class="font-sans text-xl font-semibold text-gray-primary-color">{{notification.hr_admin}}</h2>
+						<h2 class="font-sans font-semibold text-md text-gray-tertiary-color">HR Admin</h2>
+					</div>
+					<h1 class="font-sans text-4xl font-bold text-gray-primary-color">{{notification.message}}</h1>
+					<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
+				</div>
+			</a>
+
+			{% endif %}
+
+
+			{% endfor %}
+
+		</div>
 		
-		
-		{% endfor %}
-		
+		<div class="flex items-center justify-center p-4">
+			<button id='more-button' class="font-sans text-xl font-bold text-center text-blue">More</button>
+		</div>
 	</div>
+
 	<div class="flex flex-1 ">
 		<div  id='notification-selected' class="fixed px-8 py-8 bg-white shadow-box height-800 max-width-900 width-50vw">
-
 		</div>
 	</div>
 
@@ -174,4 +185,5 @@
 </script>
 <script src="{% static 'js/notifications.js' %}"></script>
 <script src="{% static 'js/header_search.js' %}"></script>
+<script src="{% static 'js/infinite_scroll_pagination.js' %}"></script>
 {% endblock %}

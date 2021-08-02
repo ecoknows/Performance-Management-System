@@ -1,10 +1,12 @@
 
 
+from django.template.response import TemplateResponse
 from performance_management_system import NOTIFICATION_TYPE
 from django.dispatch.dispatcher import receiver
 from django.http import HttpResponseRedirect
 from django.db import models
 from django.utils import timezone
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from wagtail.core.models import Page, Orderable
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
@@ -28,20 +30,52 @@ from performance_management_system.client.models import Client, ClientIndexPage
 from django.contrib.postgres.fields import ArrayField
 
 class BaseAbstractPage(RoutablePageMixin, Page):
+
+    def paginate_notification(self, notifications, current_page, max_page):
+        paginator = Paginator(notifications, max_page)
+
+        try:
+            notifications = paginator.page(current_page)
+        except PageNotAnInteger:
+            notifications = paginator.page(1)
+        except EmptyPage:
+            notifications = paginator.page(paginator.num_pages)
+        
+        return notifications
     
     @route(r'^notifications/$')
     def notification(self, request):
         from performance_management_system.hr.models import HRIndexPage
-
-        user_model = None
-        if request.user.is_employee:
-            user_model = request.user.employee
-        if request.user.is_client:
-            user_model = request.user.client
-        if request.user.is_hr:
-            user_model = request.user.hradmin
         
-        notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
+        
+        current_page = request.GET.get('current_page', None)
+
+
+        if current_page:
+            notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
+            starting_point = len(notifications)
+
+            if starting_point >= 10:
+                notifications = notifications[10:]
+            else:
+                notifications = notifications[starting_point:]
+
+            notifications =  self.paginate_notification(notifications, current_page, 3)
+
+            has_next = notifications.has_next()
+            next_number = None
+            if has_next:
+                next_number = notifications.next_page_number()
+
+            return JsonResponse(
+                data={
+                    'next_number': next_number,
+                    'has_next': has_next,
+                    'html': render_to_string('base/paginated_notification.html',{'notifications' : notifications}) 
+                }
+            )
+
+        
 
         notification_id = request.GET.get('notification_id', None)
         make_it_seen = request.GET.get('make_it_seen', False)
@@ -76,10 +110,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 
                 category_percentages.append(percentage)
                 
-
-
-
-
             return JsonResponse(
                 data={
                     'selected_html' : render_to_string(
@@ -101,12 +131,15 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 },
                
             )
+        
+        notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
+        print(len(notifications), ' MAX ')
 
         return self.render(
             request,
             context_overrides={
-                'user_model' : user_model,
-                'notifications' : notifications,
+                'user_model' : request.user.hradmin,
+                'notifications' : self.paginate_notification(notifications, current_page, 10),
                 'notification_url': self.url,
                 'search_page': HRIndexPage.objects.live().first(),
                 'notifications_count' : len(notifications),
