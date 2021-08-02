@@ -133,7 +133,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             )
         
         notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
-        print(len(notifications), ' MAX ')
 
         return self.render(
             request,

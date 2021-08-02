@@ -17,26 +17,57 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from performance_management_system import IntegerResource, StringResource, IS_EVALUATED
 from performance_management_system.users.models import User
 from performance_management_system.client.models import Client
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 import operator
 from functools import reduce
 
 
 class BaseAbstractPage(RoutablePageMixin, Page):
+
+    def paginate_notification(self, notifications, current_page, max_page):
+        paginator = Paginator(notifications, max_page)
+
+        try:
+            notifications = paginator.page(current_page)
+        except PageNotAnInteger:
+            notifications = paginator.page(1)
+        except EmptyPage:
+            notifications = paginator.page(paginator.num_pages)
+        
+        return notifications
     
     @route(r'^notifications/$')
     def notification(self, request):
         from performance_management_system.base.models import Notification, EvaluationCategories,EvaluationPage,EvaluationRateAssign
-
-        user_model = None
-        if request.user.is_employee:
-            user_model = request.user.employee
-        if request.user.is_client:
-            user_model = request.user.client
-        if request.user.is_hr:
-            user_model = request.user.hradmin
         
-        notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
+        current_page = request.GET.get('current_page', None)
+
+
+        if current_page:
+            notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
+            starting_point = len(notifications)
+
+            if starting_point >= 10:
+                notifications = notifications[10:]
+            else:
+                notifications = notifications[starting_point:]
+
+            notifications =  self.paginate_notification(notifications, current_page, 3)
+
+            has_next = notifications.has_next()
+            next_number = None
+            if has_next:
+                next_number = notifications.next_page_number()
+
+            return JsonResponse(
+                data={
+                    'next_number': next_number,
+                    'has_next': has_next,
+                    'html': render_to_string('base/paginated_notification.html',{'notifications' : notifications}) 
+                }
+            )
+        
 
         hr_admin_id = request.GET.get('hr_admin_id', None)
         notification_id = request.GET.get('notification_id', None)
@@ -111,10 +142,9 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 else:
                     percentage = 0
                 category_percentages.append(percentage)
+
+            
                 
-
-
-
 
             return JsonResponse(
                 data={
@@ -138,12 +168,13 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                
             )
         
+        notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
 
         return self.render(
             request,
             context_overrides={
-                'user_model' : user_model,
-                'notifications' : notifications,
+                'user_model' : request.user.employee,
+                'notifications' : self.paginate_notification(notifications, current_page, 10),
                 'notification_url': self.url,
                 'menu_lists': [
                     [EmployeeIndexPage.objects.live().first().url,'Dashboard'],
