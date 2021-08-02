@@ -8,6 +8,7 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 from performance_management_system.search import views as search_views
 from performance_management_system.hr import views as hr_views
+from performance_management_system.users import views as user_views
 
 urlpatterns = [
     path('django-admin/', admin.site.urls),
@@ -18,6 +19,7 @@ urlpatterns = [
     path('search/', search_views.search, name='search'),
     path('data_chart/<int:category_id>/<int:employee_id>/', hr_views.data_chart),
     path('get_recent/', hr_views.get_recent),
+    path('logout/', user_views.logout, name='wagtailadmin_logout'),
 
 ]
 
