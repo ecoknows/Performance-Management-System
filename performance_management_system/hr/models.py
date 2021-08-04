@@ -96,7 +96,7 @@ class ClientListPage(RoutablePageMixin,Page):
     @route(r'^(\d+)/$')
     def client_details(self, request, id):
         hr_index_url = HRIndexPage.objects.first().url
-        
+        notification_url = HRIndexPage.objects.live().first().url
         filter_query = request.GET.get('filter', None)
         filter_text = None
 
@@ -123,6 +123,7 @@ class ClientListPage(RoutablePageMixin,Page):
                 'filter_query': filter_query,
                 'client_id': id,
                 'search_page': ClientListPage.objects.live().first(),
+                'notification_url': notification_url,
             },
             template='client/client_index_page.html'
         )
@@ -132,6 +133,7 @@ class ClientListPage(RoutablePageMixin,Page):
         user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
         evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         hr_index_url = HRIndexPage.objects.first().url
+        notification_url = HRIndexPage.objects.live().first().url
 
         menu_lists = [
             (hr_index_url,'Dashboard'),
@@ -149,6 +151,7 @@ class ClientListPage(RoutablePageMixin,Page):
                 'employee_model': user_evaluation.client,
                 'self': {'evaluation_max_rate': evaluation_max_rate},
                 'search_page': HRIndexPage.objects.live().first(),
+                'notification_url': notification_url,
             },
             template="base/evaluation_page.html",
         )
