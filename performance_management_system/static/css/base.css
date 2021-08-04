@@ -1,5 +1,5 @@
 .default-section-padding{
-    padding-top: 100px;
+    padding-top: 120px;
 }
 
 .z-index-1k{
@@ -23,7 +23,8 @@
 .text-gray-tertiary-color{color:#BABABA}
 .text-gray-fourthary-color{color:#616161}
 
-.starting-padding-top{padding-top: 125px;}
+.starting-padding-top{padding-top: 140px;}
+.starting-padding-top-extra{padding-top: 145px;}
 
 .padding-y-4{padding-top: 4px; padding-bottom: 4px;}
 
