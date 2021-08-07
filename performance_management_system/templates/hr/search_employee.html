@@ -6,22 +6,22 @@
 
 		{% if employee.status == 'none' %}
 		
-		<a href='employee-details-page/{{employee.pk}}' class="flex flex-col items-center justify-center mb-10 mr-16 space-y-4 bg-white rounded-3xl shadow-box height-22rem width-28rem hover-card" >
+		<a href='employee-details-page/{{employee.pk}}' class="flex flex-col items-center justify-center mb-8 mr-8 space-y-4 bg-white rounded-3xl shadow-box height-15rem width-18rem hover-card" >
 			
 			<div class="flex justify-center space-x-4">
-				{% image employee.profile_pic fill-150x150 as profile_pic %}
-				<img src='{{profile_pic.url}}' class="rounded-full" width="200">
+				{% image employee.profile_pic fill-100x100 as profile_pic %}
+				<img src='{{profile_pic.url}}' class="rounded-full" width="100">
 				<!-- <div class="flex items-center flex-1 ">
 					<img src='{{profile_pic.url}}' width="100%" >
 				</div> -->
 			</div>
 			
 			<div>
-				<h1 class="font-sans text-5xl font-bold text-center" style="color: #616161;">
+				<h1 class="font-sans text-2xl font-bold text-center" style="color: #616161;">
 					{{employee.first_name}} {{employee.last_name}}
 				</h1>
 				
-				<h2 class="font-sans text-2xl font-semibold text-center" style="color: #979797;">
+				<h2 class="font-sans text-lg font-semibold text-center" style="color: #979797;">
 					{{employee.position}}
 				</h2>
 			</div>
@@ -29,24 +29,24 @@
 
 		{% elif employee.status == 'on-evaluation' %}
 
-		<div  class="relative mb-10 mr-16 bg-white rounded-3xl shadow-box-red height-22rem width-28rem hover-card">
+		<div  class="relative mb-8 mr-8 bg-white rounded-3xl shadow-box-red height-15rem width-18rem hover-card">
 			
 			
 			<a href='employee-details-page/{{employee.pk}}' class="flex flex-col items-center justify-center h-full ">
 				<div class="flex justify-center space-x-4">
-					{% image employee.profile_pic fill-150x150 as profile_pic %}
-					<img src='{{profile_pic.url}}' class="rounded-full" width="200">
+					{% image employee.profile_pic fill-100x100 as profile_pic %}
+					<img src='{{profile_pic.url}}' class="rounded-full" width="100">
 					<!-- <div class="flex items-center flex-1 ">
 						<img src='{{profile_pic.url}}' width="100%" >
 					</div> -->
 				</div>
 				
 				<div>
-					<h1 class="font-sans text-5xl font-bold text-center" style="color: #616161;">
+					<h1 class="font-sans text-2xl font-bold text-center" style="color: #616161;">
 						{{employee.first_name}} {{employee.last_name}}
 					</h1>
 					
-					<h2 class="font-sans text-2xl font-semibold text-center" style="color: #979797;">
+					<h2 class="font-sans text-lg font-semibold text-center" style="color: #979797;">
 						{{employee.position}}
 					</h2>
 				</div>
@@ -55,24 +55,24 @@
 
 		{% elif employee.status == 'evaluated' %}
 		
-		<div  class="relative mb-10 mr-16 bg-white rounded-3xl shadow-box-green height-22rem width-28rem hover-card">
+		<div  class="relative mb-8 mr-8 bg-white rounded-3xl shadow-box-green height-15rem width-18rem hover-card">
 			
 			
 			<a href='employee-details-page/{{employee.pk}}' class="flex flex-col items-center justify-center h-full ">
 				<div class="flex justify-center space-x-4">
-					{% image employee.profile_pic fill-150x150 as profile_pic %}
-					<img src='{{profile_pic.url}}' class="rounded-full" width="200">
+					{% image employee.profile_pic fill-100x100 as profile_pic %}
+					<img src='{{profile_pic.url}}' class="rounded-full" width="100">
 					<!-- <div class="flex items-center flex-1 ">
 						<img src='{{profile_pic.url}}' width="100%" >
 					</div> -->
 				</div>
 				
 				<div>
-					<h1 class="font-sans text-5xl font-bold text-center" style="color: #616161;">
+					<h1 class="font-sans text-2xl font-bold text-center" style="color: #616161;">
 						{{employee.first_name}} {{employee.last_name}}
 					</h1>
 					
-					<h2 class="font-sans text-2xl font-semibold text-center" style="color: #979797;">
+					<h2 class="font-sans text-lg font-semibold text-center" style="color: #979797;">
 						{{employee.position}}
 					</h2>
 				</div>

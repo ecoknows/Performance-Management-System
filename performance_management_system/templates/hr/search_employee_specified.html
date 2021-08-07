@@ -5,23 +5,20 @@
 {% for user_evaluation in user_evaluations %}
     {% if user_evaluation.percentage == 0 %}
 
-    <div  class="relative mb-10 mr-16 bg-white rounded-3xl shadow-box-red height-22rem width-28rem hover-card" >
+    <div  class="relative mb-8 mr-8 bg-white rounded-3xl shadow-box-red height-15rem width-18rem hover-card" >
         
         <a href='evaluated/{{user_evaluation.pk}}' class="flex flex-col items-center justify-center h-full ">
             <div class="flex justify-center space-x-4">
-                {% image user_evaluation.employee.profile_pic fill-150x150 as profile_pic %}
-                <img src='{{profile_pic.url}}' class="rounded-full" width="200">
-                <!-- <div class="flex items-center flex-1 ">
-                    <img src='{{profile_pic.url}}' width="100%" >
-                </div> -->
+                {% image user_evaluation.employee.profile_pic fill-100x100 as profile_pic %}
+                <img src='{{profile_pic.url}}' class="rounded-full" width="100">
             </div>
             
             <div>
-                <h1 class="font-sans text-5xl font-bold text-center" style="color: #616161;">
+                <h1 class="font-sans text-2xl font-bold text-center" style="color: #616161;">
                     {{user_evaluation.employee.first_name}} {{user_evaluation.employee.last_name}}
                 </h1>
                 
-                <h2 class="font-sans text-2xl font-semibold text-center" style="color: #979797;">
+                <h2 class="font-sans text-lg font-semibold text-center" style="color: #979797;">
                     {{user_evaluation.employee.position}}
                 </h2>
             </div>
@@ -30,23 +27,20 @@
 
     {% elif user_evaluation.percentage > 0 %}
     
-    <div  class="relative mb-10 mr-16 bg-white rounded-3xl shadow-box-green height-22rem width-28rem hover-card" >
+    <div  class="relative mb-8 mr-8 bg-white rounded-3xl shadow-box-green height-15rem width-18rem hover-card" >
         
         <a href='evaluated/{{user_evaluation.pk}}' class="flex flex-col items-center justify-center h-full ">
             <div class="flex justify-center space-x-4">
-                {% image user_evaluation.employee.profile_pic fill-150x150 as profile_pic %}
-                <img src='{{profile_pic.url}}' class="rounded-full" width="200">
-                <!-- <div class="flex items-center flex-1 ">
-                    <img src='{{profile_pic.url}}' width="100%" >
-                </div> -->
+                {% image user_evaluation.employee.profile_pic fill-100x100 as profile_pic %}
+                <img src='{{profile_pic.url}}' class="rounded-full" width="100">
             </div>
             
             <div>
-                <h1 class="font-sans text-5xl font-bold text-center" style="color: #616161;">
+                <h1 class="font-sans text-2xl font-bold text-center" style="color: #616161;">
                     {{user_evaluation.employee.first_name}} {{user_evaluation.employee.last_name}}
                 </h1>
                 
-                <h2 class="font-sans text-2xl font-semibold text-center" style="color: #979797;">
+                <h2 class="font-sans text-lg font-semibold text-center" style="color: #979797;">
                     {{user_evaluation.employee.position}}
                 </h2>
             </div>

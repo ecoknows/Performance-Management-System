@@ -89,7 +89,9 @@ class ClientListPage(RoutablePageMixin,Page):
                 'notification_url': notification_url,
                 'filter': filter_text,
                 'filter_query': filter_query,
-                'search_page': self
+                'search_page': self,
+                'client_list_index': self,
+                'employee_list_index': EmployeeListPage.objects.live().first(),
             }
         )
 
@@ -124,6 +126,8 @@ class ClientListPage(RoutablePageMixin,Page):
                 'client_id': id,
                 'search_page': ClientListPage.objects.live().first(),
                 'notification_url': notification_url,
+                'client_list_index': self,
+                'employee_list_index': EmployeeListPage.objects.live().first(),
             },
             template='client/client_index_page.html'
         )
@@ -131,7 +135,9 @@ class ClientListPage(RoutablePageMixin,Page):
     @route(r'^(\d+)/evaluated/(\d+)/$')
     def client_details_evaluated(self, request, id, user_evaluation_id):
         user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
-        evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        evaluation_page =  EvaluationPage.objects.live().first()
+        evaluation_max_rate = evaluation_page.evaluation_max_rate
+        legend_evaluation = evaluation_page.legend_evaluation
         hr_index_url = HRIndexPage.objects.first().url
         notification_url = HRIndexPage.objects.live().first().url
 
@@ -149,9 +155,11 @@ class ClientListPage(RoutablePageMixin,Page):
                 'disabled' : True,
                 'user_model' : request.user.hradmin,
                 'employee_model': user_evaluation.client,
-                'self': {'evaluation_max_rate': evaluation_max_rate},
+                'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
                 'search_page': HRIndexPage.objects.live().first(),
                 'notification_url': notification_url,
+                'client_list_index': self,
+                'employee_list_index': EmployeeListPage.objects.live().first(),
             },
             template="base/evaluation_page.html",
         )
@@ -287,6 +295,9 @@ class EmployeeListPage(RoutablePageMixin,Page):
         context['menu_lists'] = self.get_menu_list()
         context['notification_url'] = HRIndexPage.objects.live().first().url
         context['search_page'] = self
+        context['employee_list_index'] = self
+        context['client_list_index'] = ClientListPage.objects.live().first()
+
 
         return context
 

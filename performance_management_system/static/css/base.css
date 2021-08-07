@@ -55,21 +55,33 @@
 .border-box-blue{
     border:3px solid #0075b8;
 }
+.bg-orange-hover{
+    background-color: rgba(255, 166, 71, 0.234);
+}
 
+.height-100{height: 100px;}
 .height-150{height: 150px;}
 .height-800{height: 800px;}
+.height-490{height: 490px;}
 .height-600{height: 600px;}
 .height-17rem{height: 17rem;}
+.height-15rem{height: 15rem;}
 .height-100{height: 100px;}
 .height-60{height: 60px;}
 .height-22rem{height: 22rem;}
 
 .width-700{width: 700px;}
+.width-300{width: 300px;}
 .width-50vw{width: 50vw;}
+.width-40vw{width: 40vw;}
 .width-60{width: 60px;}
 .width-28rem{width: 28rem;}
+.width-26rem{width: 26rem;}
+.width-20rem{width: 20rem;}
+.width-18rem{width: 18rem;}
 .width-90cent{width: 90%;}
 
+.min-height-200{ min-height: 200px;}
 .min-height-800{ min-height: 800px;}
 .min-height-300{ min-height: 300px;}
 
@@ -90,8 +102,6 @@
 .show-on-print{
     display: none
 }
-
-
 
 
 @media print{

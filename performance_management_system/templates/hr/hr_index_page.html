@@ -5,14 +5,12 @@
 {% load static wagtailcore_tags wagtailimages_tags %}
 
 
-{% block header %}
-	{% include 'includes/header.html' with user_model=request.user.hradmin title='DASHBOARD' menu_text='Dashboard' %}
-{% endblock %}
-
 {% block head_style %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'css/loading_bar.css' %}">
 {% endblock %}
+
+
 {% block style %}
 
 <style>
@@ -40,59 +38,30 @@
 
 {% endblock %}
 
+{% block header %}
+{% include 'includes/header_latest.html' with user_model=request.user.hradmin title='Dashboard' %}
+{% endblock %}
+
+{% block side_bard %}
+  {% include 'includes/side_menu.html' with current_menu='dashboard' %}
+{% endblock %}
+
 {% block content %}
 
-<section class="container flex flex-col flex-1 pb-4 mx-auto space-y-4 starting-padding-top">
-	<div class="flex flex-col px-4 space-x-0 space-y-4 lg:px-0 lg:space-y-0 lg:space-x-4 lg:flex-row" >
+<section class="container p-6 mx-auto space-y-6 ">
+	<div class="flex flex-wrap justify-center p-4 space-x-10">
+		<div class="relative flex flex-col items-center justify-center bg-white rounded-3xl width-26rem height-17rem shadow-box">
+			<img src="{% static 'img/icons/clients-blue.png' %}" width="100">
+			<h2 class="font-sans font-semibold text-gray">Clients</h2>
+			<h1 class="font-sans text-3xl font-bold text-gray">23</h1>
 		
-		<div class="flex flex-col flex-1 bg-white" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-			<h1 class="mx-4 mt-2 font-sans text-xl font-bold lg:text-3xl" style="color: #ACACAC;">Evaluated</h1>
-			<div class="flex flex-col items-center lg:flex-row ">
-				<a class="flex flex-col items-center flex-1 h-full px-4 lg:flex-row hover:bg-gray-100" href="{% pageurl employee_list_index %}">
-					<img src="{% static 'img/icons/employee.png'%}" width="100" >
-					<div class="flex flex-col items-center justify-center lg:items-start" style="color: #BABABA;">
-						<h2 class="font-sans text-xl font-semibold">Employee</h2>
-						<h1 class="font-sans text-4xl font-bold">{{evaluated_employee}}</h1>
-					</div>
-
-				</a>
-				<a class="flex flex-col items-center flex-1 h-full lg:flex-row hover:bg-gray-100" href="{% pageurl client_list_index %}">
-					<img src="{% static 'img/icons/client.png'%}" width="160" >
-					<div class="flex flex-col items-center justify-center lg:items-start" style="color: #BABABA;">
-						<h2 class="font-sans text-xl font-semibold">Client</h2>
-						<h1 class="font-sans text-4xl font-bold">{{evaluated_client}}</h1>
-					</div>
-
-				</a>
-
-			</div>
-
 		</div>
-
-		<div class="flex flex-col flex-1 bg-white" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-			<h1 class="mx-4 mt-2 font-sans text-xl font-bold lg:text-3xl" style="color: #ACACAC;">On Evaluation</h1>
-			<div class="flex flex-col items-center flex-1 lg:flex-row">
-				<a class="flex flex-col items-center flex-1 h-full px-4 lg:flex-row hover:bg-gray-100" href="{% pageurl employee_list_index %}">
-					<img src="{% static 'img/icons/employee.png'%}" width="100" >
-					<div class="flex flex-col items-center justify-center lg:items-start" style="color: #BABABA;">
-						<h2 class="font-sans text-xl font-semibold">Employee</h2>
-						<h1 class="font-sans text-4xl font-bold">{{on_evaluation_employee}}</h1>
-					</div>
-
-				</a>
-				<a class="flex flex-col items-center flex-1 h-full lg:flex-row hover:bg-gray-100" href="{% pageurl client_list_index %}">
-					<img src="{% static 'img/icons/client.png'%}" width="160" >
-					<div class="flex flex-col items-center justify-center lg:items-start" style="color: #BABABA;">
-						<h2 class="font-sans text-xl font-semibold">Client</h2>
-						<h1 class="font-sans text-4xl font-bold">{{on_evaluation_client}}</h1>
-					</div>
-
-				</a>
-
-			</div>
-
+		<div class="relative flex flex-col items-center justify-center bg-white rounded-3xl width-26rem height-17rem shadow-box">
+			<img src="{% static 'img/icons/employees-green.png' %}" width="100">
+			<h2 class="font-sans font-semibold text-gray">Employees</h2>
+			<h1 class="font-sans text-3xl font-bold text-gray">23</h1>
+		
 		</div>
-
 	</div>
 
 </section>

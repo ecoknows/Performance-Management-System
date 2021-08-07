@@ -2,14 +2,12 @@
 
 {% load static wagtailcore_tags wagtailimages_tags %}
 
-{% block body_class %}
-	flex
-	flex-col
-	h-screen
+{% block header %}
+{% include 'includes/header_latest.html' with user_model=request.user.hradmin title='Clients'  search=True %}
 {% endblock %}
 
-{% block header %}
-	{% include 'includes/header.html'  with user_model=user_model title=title menu_text='All' %}
+{% block side_bard %}
+  {% include 'includes/side_menu.html' with current_menu='clients' %}
 {% endblock %}
 
 
@@ -21,8 +19,10 @@
 {% block content %}
 
 
-<section id='employee-list-container' class="container flex flex-wrap justify-center flex-1 mx-auto starting-padding-top">
-	{% include 'includes/loading_bar.html' %}
+<section class="container p-6 mx-auto space-y-6 ">
+	<div id='employee-list-container' class="flex flex-wrap p-4 ">
+		{% include 'includes/loading_bar.html' %}
+	</div>
 </section>
 
 

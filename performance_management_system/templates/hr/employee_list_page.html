@@ -1,21 +1,30 @@
 {% extends 'base.html'%}
 
-{% load static wagtailimages_tags %}
+{% load static wagtailimages_tags wagtailcore_tags %}
+
 
 
 {% block header %}
-	{% include 'includes/header.html' with user_model=request.user.hradmin employee=True menu_text='All' %}
-{% endblock header %}
+{% include 'includes/header_latest.html' with user_model=request.user.hradmin title='Employees' search=True %}
+{% endblock %}
+
+
+{% block side_bard %}
+  {% include 'includes/side_menu.html' with current_menu='employees' %}
+{% endblock %}
 
 {% block head_style %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/loading_bar.css' %}">
 {% endblock %}
 
 {% block content %}
-<section id='employee-list-container' class="container flex flex-wrap justify-center flex-1 mx-auto starting-padding-top-extra"> 
-	{% include 'includes/loading_bar.html' %}
-</section>
 
+<section class="container p-6 mx-auto space-y-6 ">
+	<div id='employee-list-container' class="flex flex-wrap p-4 ">
+		{% include 'includes/loading_bar.html' %}
+
+	</div>
+</section>
 {% endblock %}
 
 {% block scripts %}

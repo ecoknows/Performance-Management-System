@@ -1,0 +1,50 @@
+{% load static wagtailcore_tags notification_tags %}
+
+<nav class="py-4 space-y-4 width-300" style="box-shadow: 2px 0 8px 0px rgba(124, 124, 124, 0.316);">
+    
+    <div class="flex justify-center space-x-2">
+        <img src="{% static 'img/icons/human-resources.png' %}">
+        <h1 class="font-sans text-2xl font-semibold text-gray-600">EPE | System</h1>
+    </div>
+    <ul class="font-sans font-semibold text-gray">
+        <li class="cursor-pointer hover:bg-gray-200 {% if current_menu == 'dashboard'%}bg-orange-hover{% endif %}  ">
+            <a href='/' class="flex items-center p-4 space-x-2">
+                <img src="{% static 'img/icons/dashboard.png' %}" class="inline">
+                <h2>Dashboard</h2>
+            </a>
+        </li>
+        <li class="cursor-pointer hover:bg-gray-200 {% if current_menu == 'notifications'%}bg-orange-hover{% endif %} ">
+            <a href='{{notification_url}}notifications' class="flex items-center p-4 space-x-2">
+                <img src="{% static 'img/icons/notifications.png' %}" class="inline">
+                <h2 class="flex-1">Notifications</h2>
+                
+                <div id='notification-container'>
+                    {% notication_count request.user.pk as result_notif %}
+                    {% if result_notif  > 0 %}
+                    <div class="flex items-center justify-center w-6 h-6 text-xs text-center text-white bg-red-600 rounded-full ">{{result_notif}}</div>
+                    {% endif %}
+                </div>
+            </a>
+            
+        </li>
+        <li class="cursor-pointer hover:bg-gray-200 {% if current_menu == 'clients'%}bg-orange-hover{% endif %} ">
+            <a href='{% pageurl client_list_index %}' class="flex items-center p-4 space-x-2">
+                <img src="{% static 'img/icons/clients.png' %}" class="inline">
+                <h2>Clients</h2>
+            </a>
+        </li>
+        <li class="cursor-pointer hover:bg-gray-200 {% if current_menu == 'employees'%}bg-orange-hover{% endif %} ">
+            <a href='{% pageurl employee_list_index %}' class="flex items-center p-4 space-x-2">
+                <img src="{% static 'img/icons/employees.png' %}" class="inline">
+                <h2>Employees</h2>
+            </a>
+        </li>
+        <li class=" cu-pointer sor hover:bg-gray-200">
+            <a href='/logout' class="flex items-center p-4 space-x-2">
+                <img src="{% static 'img/icons/logout.png' %}" class="inline">
+                <h2>Logout</h2>
+            </a>
+        </li>
+
+    </ul>
+</nav>

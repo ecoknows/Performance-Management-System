@@ -4,9 +4,9 @@ $(function(){
     let current_page = 1
 
     let $notification_container = $('#user-notifications')
-
-    $(window).scroll(function () {
-        if ($(window).scrollTop() >= $(document).height() - $(window).height() - 10 && on_load_done) {
+    let $main_container = $('#main-container')
+    $($main_container).scroll(function () {
+        if ($($main_container).scrollTop() >= $($notification_container).height() - $($main_container).height() - 10 && on_load_done) {
             on_load_done = false
             if (has_next){
                 $.ajax({
@@ -27,6 +27,7 @@ $(function(){
             
         }
     }); 
+    
     
 $('#more-button').click(function(){
     if (current_page > 1)
