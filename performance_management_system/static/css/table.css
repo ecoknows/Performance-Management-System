@@ -1,0 +1,25 @@
+table {
+font-family: arial, sans-serif;
+border-collapse: collapse;
+width: 100%;
+}
+td, th {
+    text-align: left;
+    padding: 8px;
+}
+.table-bottom-border{
+    border-bottom: 1px solid rgba(208, 208, 208, 0.604);
+}
+
+td{
+    padding-left: 20px;
+}
+
+thead{
+    border-top: 1px solid rgba(187, 187, 187, 0.234);
+    box-shadow: 0 4px 3px 0 rgba(55, 55, 55, 0.056), 0 6px 20px 0 rgba(0, 0, 0, 0.044);
+}
+
+.fa-angle-left, .fa-angle-right{
+    color: rgb(67, 67, 67);
+}

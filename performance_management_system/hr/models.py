@@ -34,6 +34,18 @@ class ClientListPage(RoutablePageMixin,Page):
     max_count = 1
 
     parent_page_types = ['HRIndexPage']
+
+    def paginate_clients(self, clients, current_page):
+        paginator = Paginator(clients, 3)
+
+        try:
+            clients = paginator.page(current_page)
+        except PageNotAnInteger:
+            clients = paginator.page(1)
+        except EmptyPage:
+            clients = paginator.page(paginator.num_pages)
+        
+        return clients
     
     
     @route(r'^$') 
@@ -217,7 +229,11 @@ class ClientListPage(RoutablePageMixin,Page):
         search_query = request.GET.get('search_query', None).split()
         filter_query = request.GET.get('filter_query', None)
         user_filter_exclude = request.GET.get('user_filter_exclude', None)
+        page = request.GET.get('page', 1)
+
         employee = None
+
+
         if search_query:
             qset1 =  reduce(operator.__or__, [Q(company__icontains=query) for query in search_query])
             clients = Client.objects.filter(qset1).distinct()
@@ -253,14 +269,36 @@ class ClientListPage(RoutablePageMixin,Page):
             clients = clients.exclude(user_evaluation__employee_id=user_filter_exclude)
             employee = Employee.objects.get(pk=user_filter_exclude)
 
-        return TemplateResponse(
-                request,
-                'hr/search_client.html',
-                {
-                    'clients' : clients,
-                    'user_filter_exclude': user_filter_exclude,
-                    'employee': employee
-                }
+        clients = self.paginate_clients(clients, page)
+        max_pages = clients.paginator.num_pages
+        starting_point = clients.number
+        if max_pages > 3 :
+            max_pages = 4
+
+        if starting_point % 3 == 0:
+            starting_point = starting_point - 2
+        elif (starting_point - 1) % 3  != 0:
+            starting_point = starting_point - 1 
+
+
+        return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                        'hr/search_client.html',
+                        {
+                            'clients' : clients,
+                            'user_filter_exclude': user_filter_exclude,
+                            'employee': employee
+                        }
+                    ),
+                    'pages_indicator': render_to_string(
+                        'includes/page_indicator.html',
+                        {
+                            'clients': clients,
+                            'xrange': range(starting_point, starting_point + max_pages)
+                        }
+                    )
+                },
             )
         
     

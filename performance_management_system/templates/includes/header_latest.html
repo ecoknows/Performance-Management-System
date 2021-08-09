@@ -10,7 +10,7 @@
         </div>    
 
     </div>
-	<div class="flex items-end p-4 space-x-2 " style="background-color: rgba(0, 0, 0, 0.042);" >
+	<div class="flex items-end p-4 space-x-2 " >
         {% if title == 'Dashboard' %}
 		<img src="{% static 'img/icons/dashboard-orange.png' %}">
 		<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
@@ -40,10 +40,10 @@
 
 			{% if search %}
 			
-			<div class="flex items-center px-2 mr-4 space-x-2 bg-white rounded-full shadow-box padding-y-4" >
+			<!-- <div class="flex items-center px-2 mr-4 space-x-2 bg-white rounded-full shadow-box padding-y-4" >
 				<img src='{% static "img/icons/search.png" %}' width="18">
 				<input id='search-input' autocomplete="off" data-url='{% pageurl search_page %}search' class='focus:outline-none bg-color-transparent' placeholder="Search">
-			</div>
+			</div> -->
 
 			{% endif %}
 

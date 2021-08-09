@@ -12,13 +12,71 @@
 
 {% block head_style %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/loading_bar.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/table.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block content %}
-<section class="container p-6 mx-auto space-y-6 ">
-	<div id='client-list-container' class="flex flex-wrap p-4 ">
-		{% include 'includes/loading_bar.html' %}
-
+<section class="container mx-auto ">
+	<table>
+		<thead>
+			<td class="font-sans font-semibold text-gray">
+				<div>
+					Name/ID <i class="cursor-pointer fas fa-sort"></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded ">
+					<img src='{% static "img/icons/search.png" %}' width="18">
+					<input id='search-input' autocomplete="off" data-url='search' class='px-2 focus:outline-none bg-color-transparent '>
+				</div>
+			
+			</td>
+			<td class="font-sans font-semibold text-gray ">
+				<div>
+					Address <i class="cursor-pointer fas fa-sort"></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded ">
+					<img src='{% static "img/icons/search.png" %}' width="18">
+					<input autocomplete="off" data-url='search' class='px-2 focus:outline-none bg-color-transparent '>
+				</div>
+			
+			</td>
+			<td class="font-sans font-semibold text-gray">
+				<div>
+					Contact Number <i class="cursor-pointer fas fa-sort"></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded ">
+					<img src='{% static "img/icons/search.png" %}' width="18">
+					<input autocomplete="off" data-url='search' class='px-2 focus:outline-none bg-color-transparent '>
+				</div>
+			
+			</td>
+			<td class="font-sans font-semibold text-gray">
+				<div>
+					Notify <i class="cursor-pointer fas fa-sort"></i> 
+				</div>
+			
+			</td>
+			<td class="font-sans font-semibold text-gray">
+				<div>
+					Status <i class="cursor-pointer fas fa-sort"></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded " style="width: 120px;">
+					<select  class="w-full focus:outline-none">
+						<option value="evaluated">Evaluated</option>
+						<option value="not-evaluated">Not Evaluated</option>
+					</select>
+				</div>
+			
+			</td>
+		</thead>
+		<tbody id="client-list-container">
+		</tbody>
+	</table>
+	<div class="flex items-center justify-center">
+		<i class="px-2 py-1 cursor-pointer fas fa-angle-left hover:bg-gray-200"></i>
+		<div id='pages-indicator' class="flex items-center justify-center hidden py-4">
+		</div>
+		<i class="px-2 py-1 cursor-pointer fas fa-angle-right hover:bg-gray-200"></i>
 	</div>
 </section>
 {% endblock %}

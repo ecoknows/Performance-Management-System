@@ -2,64 +2,25 @@
 {% load static wagtailimages_tags %}
 
 {% for client in clients %}
-	
-	{% if client.status == 'none' %}
-	<div class="relative mb-8 mr-8 bg-white rounded-3xl width-18rem height-15rem shadow-box hover-card">
-		
-		<a href="{{client}}" class="flex flex-col h-full py-6">
-			<div class="flex justify-center py-2 space-x-4 ">
-				{% image client.profile_pic original as profile_pic %}
-				<img src='{{profile_pic.url}}' class="object-contain height-100 width-90cent">
-			</div>
-			
-			<div>
-				<h1 class="font-sans text-2xl text-center" style="color: #616161;">
-					{{client.company}}
-				</h1>
-			</div>
-		</a>
-	</div>
-	{% elif client.status == 'evaluated'  %}
-	
-	<div class="relative mb-8 mr-8 bg-white rounded-3xl width-18rem height-15rem shadow-box-green hover-card">
-		
-		<a data-client_id='{{client.user.pk}}' class="absolute right-0 p-2 cursor-pointer notify-button">
-			<img src='{% static "img/icons/notify.png" %}'>
-		</a>
-
-		<a href="{{client.pk}}" class="flex flex-col justify-center h-full py-6">
-			<div class="flex justify-center py-2 space-x-4 ">
-				{% image client.profile_pic original as profile_pic %}
-				<img src='{{profile_pic.url}}' class="object-contain height-100 width-90cent">
-			</div>
-			
-			<div>
-				<h1 class="font-sans text-2xl text-center text-gray-fourthary-color">
-					{{client.company}}
-				</h1>
-			</div>
-		</a>
-	</div>
-	{% else %}
-	<div class="relative mb-8 mr-8 bg-white rounded-3xl width-18rem height-15rem shadow-box-red hover-card">
-		
-		<a data-client_id='{{client.user.pk}}' class="absolute right-0 p-2 cursor-pointer notify-button">
-			<img src='{% static "img/icons/notify.png" %}'>
-		</a>
-
-		<a href="{{client.pk}}" class="flex flex-col justify-center h-full py-6">
-			<div class="flex justify-center py-2 space-x-4 ">
-				{% image client.profile_pic original as profile_pic %}
-				<img src='{{profile_pic.url}}' class="object-contain height-100 width-90cent">
-			</div>
-			
-			<div>
-				<h1 class="font-sans text-2xl text-center" style="color: #616161;">
-					{{client.company}}
-				</h1>
-			</div>
-		</a>
-	</div>
-	{% endif %}
-
+	<tr class="table-bottom-border">
+		<td class="font-sans font-semibold text-gray">
+			<h1 style='color:#E67E22'>{{client}}</h1>
+			<h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
+				{{client.user.username}}
+			</h2>
+		</td>
+		<td class="font-sans text-sm text-gray">{{client.address}}</td>
+		<td class="font-sans text-sm text-gray">+63{{client.contact_number}}</td>
+		<td class="font-sans text-sm text-gray">
+			<button class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full" style="background-color: #E67E22; padding-left: 10px; padding-right: 10px;">
+				<h1>Notify Me</h1>
+				<img src='{% static "img/icons/notifications-white.png"%}' >
+			</button>
+		</td>
+		{% if client.status == 'on-evaluation' %}
+		<td class="font-sans text-sm font-semibold text-red">On Evaluation</td>
+		{% else %}
+		<td class="font-sans text-sm font-semibold text-green">Done Evaluating</td>
+		{% endif %}
+	</tr>
 {% endfor %}

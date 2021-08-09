@@ -4,6 +4,8 @@ $(function(){
     let search_input = $('#search-input')
     let url = search_input.data('url')
     let container = $('#client-list-container')
+    let pages_indicator = $('#pages-indicator')
+    let page = 1
 
     $.ajax({
         url : url,
@@ -11,9 +13,12 @@ $(function(){
         data:{
             'search_query' : search_input.val(),
             'filter_query': filter_query,
+            'page': page,
         },
         success: function(data){
-            container.html(data)
+            pages_indicator.toggleClass('hidden')
+            container.html(data.html)
+            pages_indicator.html(data.pages_indicator)
         }
     })
    
@@ -29,7 +34,7 @@ $(function(){
                 'filter_query': filter_query,
             },
             success: function(data){
-                container.html(data)
+                container.html(data.html)
             }
         })
 
