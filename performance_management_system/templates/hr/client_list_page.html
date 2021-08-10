@@ -2,6 +2,10 @@
 {% load static wagtailimages_tags wagtailcore_tags %}
 
 
+{% block notify %}
+<div class="notify "style="z-index: 4000;"><span id="notifyType" class="" ></span></div>  
+{% endblock %}
+
 {% block header %}
 {% include 'includes/header_latest.html' with user_model=request.user.hradmin title='Clients' search=True %}
 {% endblock %}
@@ -13,6 +17,7 @@
 {% block head_style %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/loading_bar.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/table.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
@@ -22,48 +27,49 @@
 		<thead>
 			<td class="font-sans font-semibold text-gray">
 				<div>
-					Name/ID <i class="cursor-pointer fas fa-sort"></i> 
+					Name/ID <i class="cursor-pointer fas fa-sort" data-field-name='company'></i> 
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded ">
 					<img src='{% static "img/icons/search.png" %}' width="18">
-					<input id='search-input' autocomplete="off" data-url='search' class='px-2 focus:outline-none bg-color-transparent '>
+					<input id='search-input-name' autocomplete="off" class='px-2 focus:outline-none bg-color-transparent '>
 				</div>
 			
 			</td>
 			<td class="font-sans font-semibold text-gray ">
 				<div>
-					Address <i class="cursor-pointer fas fa-sort"></i> 
+					Address <i class="cursor-pointer fas fa-sort" data-field-name='address'></i> 
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded ">
 					<img src='{% static "img/icons/search.png" %}' width="18">
-					<input autocomplete="off" data-url='search' class='px-2 focus:outline-none bg-color-transparent '>
+					<input id='search-input-address' autocomplete="off" class='px-2 focus:outline-none bg-color-transparent '>
 				</div>
 			
 			</td>
 			<td class="font-sans font-semibold text-gray">
 				<div>
-					Contact Number <i class="cursor-pointer fas fa-sort"></i> 
+					Contact Number <i class="cursor-pointer fas fa-sort" data-field-name='contact_number'></i> 
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded ">
 					<img src='{% static "img/icons/search.png" %}' width="18">
-					<input autocomplete="off" data-url='search' class='px-2 focus:outline-none bg-color-transparent '>
+					<input id='search-input-contact-number' autocomplete="off" data-url='search' class='px-2 focus:outline-none bg-color-transparent '>
 				</div>
 			
 			</td>
 			<td class="font-sans font-semibold text-gray">
 				<div>
-					Notify <i class="cursor-pointer fas fa-sort"></i> 
+					Notify
 				</div>
 			
 			</td>
 			<td class="font-sans font-semibold text-gray">
 				<div>
-					Status <i class="cursor-pointer fas fa-sort"></i> 
+					Status <i class="cursor-pointer fas fa-sort" data-field-name='status'></i> 
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded " style="width: 120px;">
-					<select  class="w-full focus:outline-none">
-						<option value="evaluated">Evaluated</option>
-						<option value="not-evaluated">Not Evaluated</option>
+					<select id='search-input-status' class="w-full focus:outline-none">
+						<option value="">All</option>
+						<option value="evaluated">Done Evaluating</option>
+						<option value="on-evaluation">On Evaluation</option>
 					</select>
 				</div>
 			
@@ -72,11 +78,11 @@
 		<tbody id="client-list-container">
 		</tbody>
 	</table>
-	<div class="flex items-center justify-center">
-		<i class="px-2 py-1 cursor-pointer fas fa-angle-left hover:bg-gray-200"></i>
-		<div id='pages-indicator' class="flex items-center justify-center hidden py-4">
+	<div id='container-page-indicator' class="flex items-center justify-center hidden">
+		<i id='back-button' class="px-2 py-1 cursor-pointer select-none fas fa-angle-left hover:bg-gray-200"></i>
+		<div id='pages-indicator' class="flex items-center justify-center py-4">
 		</div>
-		<i class="px-2 py-1 cursor-pointer fas fa-angle-right hover:bg-gray-200"></i>
+		<i id='next-button' class="px-2 py-1 cursor-pointer select-none fas fa-angle-right hover:bg-gray-200"></i>
 	</div>
 </section>
 {% endblock %}
@@ -85,7 +91,12 @@
 <script>
 	let csrf_token = '{{csrf_token}}'
 	let filter_query = '{{filter_query}}'
+	let current_page = 1
+	let previous_page = null
+	let next_page = null
 </script>
 <script src="{% static 'js/client_list_page.js' %}"></script>
 <script src="{% static 'js/client_search.js' %}"></script>
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/dialog.js' %}"></script>
 {% endblock %}

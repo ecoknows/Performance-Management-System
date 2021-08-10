@@ -23,3 +23,7 @@ thead{
 .fa-angle-left, .fa-angle-right{
     color: rgb(67, 67, 67);
 }
+
+.sort-active {
+    color: #E67E22
+}

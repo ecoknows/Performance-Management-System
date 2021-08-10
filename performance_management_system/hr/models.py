@@ -36,7 +36,7 @@ class ClientListPage(RoutablePageMixin,Page):
     parent_page_types = ['HRIndexPage']
 
     def paginate_clients(self, clients, current_page):
-        paginator = Paginator(clients, 3)
+        paginator = Paginator(clients, 10)
 
         try:
             clients = paginator.page(current_page)
@@ -226,17 +226,24 @@ class ClientListPage(RoutablePageMixin,Page):
     @route(r'^search/$')
     def client_search(self, request):
 
-        search_query = request.GET.get('search_query', None).split()
         filter_query = request.GET.get('filter_query', None)
         user_filter_exclude = request.GET.get('user_filter_exclude', None)
         page = request.GET.get('page', 1)
 
+        name = request.GET.get('name', None)
+        address = request.GET.get('address', None)
+        contact_number = request.GET.get('contact_number', None)
+        status = request.GET.get('status', None)
+        sort = request.GET.get('sort', None)
+
         employee = None
 
 
-        if search_query:
-            qset1 =  reduce(operator.__or__, [Q(company__icontains=query) for query in search_query])
-            clients = Client.objects.filter(qset1).distinct()
+        if name or address or contact_number or status or sort:
+            if sort:
+                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number, status__icontains=status).order_by(sort)
+            else:
+                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number, status__icontains=status)
             
             if filter_query:
                 if filter_query == 'evaluated':
@@ -248,14 +255,17 @@ class ClientListPage(RoutablePageMixin,Page):
                 clients = clients.exclude(user_evaluation__employee_id=user_filter_exclude)
                 employee = Employee.objects.get(pk=user_filter_exclude)
 
-            return TemplateResponse(
-                request,
-                'hr/search_client.html',
-                {
-                    'clients' : clients,
-                    'user_filter_exclude': user_filter_exclude,
-                    'employee': employee
-                }
+            return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                         'hr/search_client.html',
+                        {
+                            'clients' : clients,
+                            'user_filter_exclude': user_filter_exclude,
+                            'employee': employee
+                        }
+                    ),
+                },
             )
 
         clients = Client.objects.all()
@@ -272,6 +282,15 @@ class ClientListPage(RoutablePageMixin,Page):
         clients = self.paginate_clients(clients, page)
         max_pages = clients.paginator.num_pages
         starting_point = clients.number
+        next_number = 1
+        previous_number = 1
+
+        if clients.has_next():
+            next_number = clients.next_page_number()
+        
+        if clients.has_previous():
+            previous_number = clients.previous_page_number()
+
         if max_pages > 3 :
             max_pages = 4
 
@@ -297,7 +316,10 @@ class ClientListPage(RoutablePageMixin,Page):
                             'clients': clients,
                             'xrange': range(starting_point, starting_point + max_pages)
                         }
-                    )
+                    ),
+                    'next_number': next_number,
+                    'previous_number': previous_number,
+                    'current_number': clients.number,
                 },
             )
         

@@ -2,25 +2,32 @@
 {% load static wagtailimages_tags %}
 
 {% for client in clients %}
-	<tr class="table-bottom-border">
-		<td class="font-sans font-semibold text-gray">
-			<h1 style='color:#E67E22'>{{client}}</h1>
-			<h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
-				{{client.user.username}}
-			</h2>
+	<tr class="table-bottom-border hover:bg-gray-100">
+		
+		<td class="p-0 font-sans font-semibold text-gray">
+			<a class='flex items-center justify-start block w-full h-12 px-4 space-x-4' href="{{client.pk}}">
+				{% image client.profile_pic fill-30x30 as client_pic %}
+				<img src="{{client_pic.url}}" width="30"  class="rounded-full" >
+				<div>
+					<h1 style='color:#E67E22'>{{client}}</h1>
+					<h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
+						{{client.user.username}}
+					</h2>
+				</div>
+			</a>
 		</td>
-		<td class="font-sans text-sm text-gray">{{client.address}}</td>
-		<td class="font-sans text-sm text-gray">+63{{client.contact_number}}</td>
-		<td class="font-sans text-sm text-gray">
-			<button class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full" style="background-color: #E67E22; padding-left: 10px; padding-right: 10px;">
+		<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href="{{client.pk}}">{{client.address}}</a></td>
+		<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{client.pk}}'>+63{{client.contact_number}}</a></td>
+		<td class="p-0 font-sans text-sm text-gray">
+			<button onclick="notify_client('{{client.user.pk}}')" class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full" style="background-color: #E67E22; padding-left: 10px; padding-right: 10px;">
 				<h1>Notify Me</h1>
 				<img src='{% static "img/icons/notifications-white.png"%}' >
 			</button>
 		</td>
 		{% if client.status == 'on-evaluation' %}
-		<td class="font-sans text-sm font-semibold text-red">On Evaluation</td>
+		<td class="p-0 font-sans text-sm font-semibold text-red"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{client.pk}}'>On Evaluation</a></td>
 		{% else %}
-		<td class="font-sans text-sm font-semibold text-green">Done Evaluating</td>
+		<td class="p-0 font-sans text-sm font-semibold text-green"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{client.pk}}'>Done Evaluating</a></td>
 		{% endif %}
 	</tr>
 {% endfor %}

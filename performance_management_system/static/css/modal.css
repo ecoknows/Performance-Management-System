@@ -53,3 +53,6 @@ Content:"The employee has been assign successfully thank youu!";
 Content:"Assign fail please indicate project assign";
 }
   
+.notify-successfull:before{
+  Content:"The client has been notify successfully.";
+}
