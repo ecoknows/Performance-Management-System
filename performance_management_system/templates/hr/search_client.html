@@ -5,7 +5,7 @@
 	<tr class="table-bottom-border hover:bg-gray-100">
 		
 		<td class="p-0 font-sans font-semibold text-gray">
-			<a class='flex items-center justify-start block w-full h-12 px-4 space-x-4' href="{{client.pk}}">
+			<a class='flex items-center justify-start block w-full px-4 space-x-4' href="{{client.pk}}"  style="min-height: 3rem;">
 				{% image client.profile_pic fill-30x30 as client_pic %}
 				<img src="{{client_pic.url}}" width="30"  class="rounded-full" >
 				<div>
@@ -20,7 +20,7 @@
 		<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{client.pk}}'>+63{{client.contact_number}}</a></td>
 		<td class="p-0 font-sans text-sm text-gray">
 			<button onclick="notify_client('{{client.user.pk}}')" class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full" style="background-color: #E67E22; padding-left: 10px; padding-right: 10px;">
-				<h1>Notify Me</h1>
+				<h1 class="font-sans text-xs">Notify Me</h1>
 				<img src='{% static "img/icons/notifications-white.png"%}' >
 			</button>
 		</td>

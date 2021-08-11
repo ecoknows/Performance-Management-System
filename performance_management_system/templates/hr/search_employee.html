@@ -3,83 +3,33 @@
 
 
 {% for employee in employees %}
-
-		{% if employee.status == 'none' %}
+<tr class="table-bottom-border hover:bg-gray-100">
 		
-		<a href='employee-details-page/{{employee.pk}}' class="flex flex-col items-center justify-center mb-8 mr-8 space-y-4 bg-white rounded-3xl shadow-box height-15rem width-18rem hover-card" >
-			
-			<div class="flex justify-center space-x-4">
-				{% image employee.profile_pic fill-100x100 as profile_pic %}
-				<img src='{{profile_pic.url}}' class="rounded-full" width="100">
-				<!-- <div class="flex items-center flex-1 ">
-					<img src='{{profile_pic.url}}' width="100%" >
-				</div> -->
-			</div>
-			
+	<td class="p-0 font-sans font-semibold text-gray">
+		<a class='flex items-center justify-start block w-full px-4 space-x-4' href="{{employee.pk}}" style="min-height: 3rem;">
+			{% image employee.profile_pic fill-30x30 as employee_pic %}
+			<img src="{{employee_pic.url}}" width="30"  class="rounded-full" >
 			<div>
-				<h1 class="font-sans text-2xl font-bold text-center" style="color: #616161;">
-					{{employee.first_name}} {{employee.last_name}}
-				</h1>
-				
-				<h2 class="font-sans text-lg font-semibold text-center" style="color: #979797;">
-					{{employee.position}}
+				<h1 style='color:#E67E22'>{{employee}}</h1>
+				<h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
+					{{employee.user.username}}
 				</h2>
 			</div>
 		</a>
-
-		{% elif employee.status == 'on-evaluation' %}
-
-		<div  class="relative mb-8 mr-8 bg-white rounded-3xl shadow-box-red height-15rem width-18rem hover-card">
-			
-			
-			<a href='employee-details-page/{{employee.pk}}' class="flex flex-col items-center justify-center h-full ">
-				<div class="flex justify-center space-x-4">
-					{% image employee.profile_pic fill-100x100 as profile_pic %}
-					<img src='{{profile_pic.url}}' class="rounded-full" width="100">
-					<!-- <div class="flex items-center flex-1 ">
-						<img src='{{profile_pic.url}}' width="100%" >
-					</div> -->
-				</div>
-				
-				<div>
-					<h1 class="font-sans text-2xl font-bold text-center" style="color: #616161;">
-						{{employee.first_name}} {{employee.last_name}}
-					</h1>
-					
-					<h2 class="font-sans text-lg font-semibold text-center" style="color: #979797;">
-						{{employee.position}}
-					</h2>
-				</div>
-			</a>
-		</div>
-
-		{% elif employee.status == 'evaluated' %}
-		
-		<div  class="relative mb-8 mr-8 bg-white rounded-3xl shadow-box-green height-15rem width-18rem hover-card">
-			
-			
-			<a href='employee-details-page/{{employee.pk}}' class="flex flex-col items-center justify-center h-full ">
-				<div class="flex justify-center space-x-4">
-					{% image employee.profile_pic fill-100x100 as profile_pic %}
-					<img src='{{profile_pic.url}}' class="rounded-full" width="100">
-					<!-- <div class="flex items-center flex-1 ">
-						<img src='{{profile_pic.url}}' width="100%" >
-					</div> -->
-				</div>
-				
-				<div>
-					<h1 class="font-sans text-2xl font-bold text-center" style="color: #616161;">
-						{{employee.first_name}} {{employee.last_name}}
-					</h1>
-					
-					<h2 class="font-sans text-lg font-semibold text-center" style="color: #979797;">
-						{{employee.position}}
-					</h2>
-				</div>
-			</a>
-		</div>
-
-		{% endif %}
-
-
-	{% endfor %}
+	</td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href="{{employee.pk}}">{{employee.address}}</a></td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href="{{employee.pk}}">{{employee.position}}</a></td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{employee.pk}}'>+63{{employee.contact_number}}</a></td>
+	<td class="p-0 font-sans text-sm text-gray">
+		<button onclick="notify_client('{{client.user.pk}}')" class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full" style="background-color: #E67E22; padding-left: 10px; padding-right: 10px;">
+			<h1 class="font-sans text-xs">Notitfy Me</h1>
+			<img src='{% static "img/icons/notifications-white.png"%}' >
+		</button>
+	</td>
+	{% if employee.status == 'on-evaluation' %}
+	<td class="p-0 font-sans text-sm font-semibold text-red"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{client.pk}}'>On Evaluation</a></td>
+	{% else %}
+	<td class="p-0 font-sans text-sm font-semibold text-green"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{client.pk}}'>Done Evaluating</a></td>
+	{% endif %}
+</tr>
+{% endfor %}

@@ -38,15 +38,6 @@
 				{% endif %}
 			</div>
 
-			{% if search %}
-			
-			<!-- <div class="flex items-center px-2 mr-4 space-x-2 bg-white rounded-full shadow-box padding-y-4" >
-				<img src='{% static "img/icons/search.png" %}' width="18">
-				<input id='search-input' autocomplete="off" data-url='{% pageurl search_page %}search' class='focus:outline-none bg-color-transparent' placeholder="Search">
-			</div> -->
-
-			{% endif %}
-
         {% elif title == 'Employees' %}
 		<div class="flex items-end flex-1 space-x-2">
 			<img src="{% static 'img/icons/employees-orange.png' %}">
@@ -54,11 +45,6 @@
 
 		</div>
 		
-		<div class="flex items-center px-2 mr-4 space-x-2 bg-white rounded-full shadow-box padding-y-4" >
-			<img src='{% static "img/icons/search.png" %}' width="18">
-			<input id='search-input' autocomplete="off" data-url='{% pageurl search_page %}search' class='focus:outline-none bg-color-transparent' placeholder="Search">
-		</div>
-
         {% elif title == 'Notifications' %}
 		<img src="{% static 'img/icons/notifications-orange.png' %}">
 		<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>

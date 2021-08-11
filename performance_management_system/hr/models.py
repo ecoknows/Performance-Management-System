@@ -35,17 +35,17 @@ class ClientListPage(RoutablePageMixin,Page):
 
     parent_page_types = ['HRIndexPage']
 
-    def paginate_clients(self, clients, current_page):
-        paginator = Paginator(clients, 10)
+    def paginate_data(self, data, current_page):
+        paginator = Paginator(data, 8)
 
         try:
-            clients = paginator.page(current_page)
+            data = paginator.page(current_page)
         except PageNotAnInteger:
-            clients = paginator.page(1)
+            data = paginator.page(1)
         except EmptyPage:
-            clients = paginator.page(paginator.num_pages)
+            data = paginator.page(paginator.num_pages)
         
-        return clients
+        return data
     
     
     @route(r'^$') 
@@ -111,14 +111,6 @@ class ClientListPage(RoutablePageMixin,Page):
     def client_details(self, request, id):
         hr_index_url = HRIndexPage.objects.first().url
         notification_url = HRIndexPage.objects.live().first().url
-        filter_query = request.GET.get('filter', None)
-        filter_text = None
-
-        if filter_query:
-            if filter_query == 'on-evaluation':
-                filter_text = 'On Evaluation'
-            elif filter_query  == 'evaluated':
-                filter_text = 'Evaluated'
         
         menu_lists = [
             (hr_index_url,'Dashboard'),
@@ -133,8 +125,6 @@ class ClientListPage(RoutablePageMixin,Page):
                 'user_model': request.user.hradmin,
                 'employee_model': Client.objects.get(pk=id),
                 'evaluation_index': 'evaluated/',
-                'filter': filter_text,
-                'filter_query': filter_query,
                 'client_id': id,
                 'search_page': ClientListPage.objects.live().first(),
                 'notification_url': notification_url,
@@ -177,109 +167,131 @@ class ClientListPage(RoutablePageMixin,Page):
         )
 
     
-    @route(r'^search/employee/$')
-    def employee_search(self, request):
+    @route(r'^(\d+)/search/$')
+    def employee_search(self, request, client_id):
 
-        search_query = request.GET.get('search_query', None).split()
-        filter_query = request.GET.get('filter_query', None)
-        client_id = request.GET.get('client_id', None)
+        page = request.GET.get('page', 1)
+
+        name = request.GET.get('name', '')
+        address = request.GET.get('address', '')
+        contact_number = request.GET.get('contact_number', '')
+        position = request.GET.get('position', '')
+        status = request.GET.get('status', '')
+        sort = request.GET.get('sort', '')
 
         user_evaluations = None
 
-        if search_query:
-            qset1 =  reduce(operator.__or__, [Q(employee__first_name__icontains=query) | Q(employee__last_name__icontains=query) | Q(employee__position__icontains=query)  for query in search_query])
+        if name or address or contact_number or status or sort or position:
 
-            user_evaluations = UserEvaluation.objects.filter(qset1, client_id=client_id).distinct()
-
-            if filter_query:
-                if filter_query == 'on-evaluation':
-                    user_evaluations = user_evaluations.filter(percentage=0)
-                elif filter_query == 'evaluated':
-                    user_evaluations = user_evaluations.exclude(percentage=0)
-            
-
-            return TemplateResponse(
-                request,
-                'hr/search_employee_specified.html',
-                {
-                    'user_evaluations' : user_evaluations,
-                }
-            )
-
-        user_evaluations = UserEvaluation.objects.filter(client_id=client_id)
-
-        if filter_query:
-            if filter_query == 'on-evaluation':
-                user_evaluations = user_evaluations.filter(percentage=0, client_id=client_id)
-            elif filter_query == 'evaluated':
-                user_evaluations = user_evaluations.exclude(percentage=0).filter(client_id=client_id)
-
-
-        return TemplateResponse(
-                request,
-                'hr/search_employee_specified.html',
-                {
-                    'user_evaluations' : user_evaluations,
-                }
-            )
-
-    @route(r'^search/$')
-    def client_search(self, request):
-
-        filter_query = request.GET.get('filter_query', None)
-        user_filter_exclude = request.GET.get('user_filter_exclude', None)
-        page = request.GET.get('page', 1)
-
-        name = request.GET.get('name', None)
-        address = request.GET.get('address', None)
-        contact_number = request.GET.get('contact_number', None)
-        status = request.GET.get('status', None)
-        sort = request.GET.get('sort', None)
-
-        employee = None
-
-
-        if name or address or contact_number or status or sort:
-            if sort:
-                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number, status__icontains=status).order_by(sort)
+            if name:
+                name = name.split()
+                qset1 =  reduce(operator.__or__, [Q(employee__first_name__icontains=query) | Q(employee__last_name__icontains=query) for query in name])
+                user_evaluations = UserEvaluation.objects.filter(qset1, client_id=client_id).distinct()
+                if sort:
+                    user_evaluations = user_evaluations.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position).order_by(sort)
+                else:
+                    user_evaluations = user_evaluations.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position)
             else:
-                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number, status__icontains=status)
+                if sort:
+                    user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position, client_id=client_id).order_by(sort)
+                else:
+                    user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position, client_id=client_id)
             
-            if filter_query:
-                if filter_query == 'evaluated':
-                    clients = clients.filter( status=filter_query)
-                elif filter_query == 'on-evaluation':
-                    clients = clients.filter( status=filter_query)
             
-            if user_filter_exclude:
-                clients = clients.exclude(user_evaluation__employee_id=user_filter_exclude)
-                employee = Employee.objects.get(pk=user_filter_exclude)
 
             return JsonResponse(
                 data={
                     'html' : render_to_string(
-                         'hr/search_client.html',
+                         'hr/search_employee_specified.html',
                         {
-                            'clients' : clients,
-                            'user_filter_exclude': user_filter_exclude,
-                            'employee': employee
+                            'user_evaluations' : self.paginate_data(user_evaluations, page),
                         }
                     ),
                 },
             )
 
-        clients = Client.objects.all()
+        user_evaluations = UserEvaluation.objects.filter(client_id=client_id)
 
-        if filter_query == 'evaluated':
-            clients = clients.filter( status=filter_query)
-        elif filter_query == 'on-evaluation':
-            clients = clients.filter( status=filter_query)
+        user_evaluations = self.paginate_data(user_evaluations, page)
+        max_pages = user_evaluations.paginator.num_pages
+        starting_point = user_evaluations.number
+        next_number = 1
+        previous_number = 1
+
+        if user_evaluations.has_next():
+            next_number = user_evaluations.next_page_number()
         
-        if user_filter_exclude:
-            clients = clients.exclude(user_evaluation__employee_id=user_filter_exclude)
-            employee = Employee.objects.get(pk=user_filter_exclude)
+        if user_evaluations.has_previous():
+            previous_number = user_evaluations.previous_page_number()
 
-        clients = self.paginate_clients(clients, page)
+        if max_pages > 3 :
+            max_pages = 4
+
+        if starting_point % 3 == 0:
+            starting_point = starting_point - 2
+        elif (starting_point - 1) % 3  != 0:
+            starting_point = starting_point - 1 
+
+
+        return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                        'hr/search_employee_specified.html',
+                        {
+                            'user_evaluations' : user_evaluations,
+                        }
+                    ),
+                    'pages_indicator': render_to_string(
+                        'includes/page_indicator.html',
+                        {
+                            'pages': user_evaluations,
+                            'xrange': range(starting_point, starting_point + max_pages)
+                        }
+                    ),
+                    'next_number': next_number,
+                    'previous_number': previous_number,
+                    'current_number': user_evaluations.number,
+                },
+            )
+
+
+    @route(r'^search/$')
+    def client_search(self, request):
+
+        page = request.GET.get('page', 1)
+
+        name = request.GET.get('name', '')
+        address = request.GET.get('address', '')
+        contact_number = request.GET.get('contact_number', '')
+        status = request.GET.get('status', '')
+        sort = request.GET.get('sort', '')
+
+        employee = None
+
+        if name or address or contact_number or status:
+            if sort:
+                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number, status__icontains=status).order_by(sort)
+            else:
+                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number, status__icontains=status)
+            
+            return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                         'hr/search_client.html',
+                        {
+                            'clients' : self.paginate_data(clients, page),
+                            'employee': employee
+                        }
+                    ),
+                },
+            )
+        print(sort, ' asdsadsa')
+        if sort:
+            clients = Client.objects.all().order_by(sort)
+        else:
+            clients = Client.objects.all()
+
+        clients = self.paginate_data(clients, page)
         max_pages = clients.paginator.num_pages
         starting_point = clients.number
         next_number = 1
@@ -306,14 +318,13 @@ class ClientListPage(RoutablePageMixin,Page):
                         'hr/search_client.html',
                         {
                             'clients' : clients,
-                            'user_filter_exclude': user_filter_exclude,
                             'employee': employee
                         }
                     ),
                     'pages_indicator': render_to_string(
                         'includes/page_indicator.html',
                         {
-                            'clients': clients,
+                            'pages': clients,
                             'xrange': range(starting_point, starting_point + max_pages)
                         }
                     ),
@@ -330,6 +341,19 @@ class ClientListPage(RoutablePageMixin,Page):
 class EmployeeListPage(RoutablePageMixin,Page):
     max_count = 1
     parent_page_types = ['HRIndexPage']
+    
+    def paginate_data(self, data, current_page):
+        paginator = Paginator(data, 7)
+
+        try:
+            data = paginator.page(current_page)
+        except PageNotAnInteger:
+            data = paginator.page(1)
+        except EmptyPage:
+            data = paginator.page(paginator.num_pages)
+        
+        return data
+    
 
     def get_menu_list(self):
         hr_index_url = HRIndexPage.objects.first().url
@@ -341,64 +365,109 @@ class EmployeeListPage(RoutablePageMixin,Page):
             ['?filter=on-evaluation','On Evaluation'],
         ]
 
-    def get_context(self, request):
-        context = super(EmployeeListPage, self).get_context(request)
-        filter_query = request.GET.get('filter', None)
+    @route(r'^$') 
+    def default_route(self, request):
 
-        if filter_query:
-            context['filter_query'] = filter_query
-            if filter_query == 'evaluated':
-                context['filter'] = 'Evaluated'
-            elif filter_query == 'on-evaluation':
-                context['filter'] = 'On Evaluation'
-            
-        context['menu_lists'] = self.get_menu_list()
-        context['notification_url'] = HRIndexPage.objects.live().first().url
-        context['search_page'] = self
-        context['employee_list_index'] = self
-        context['client_list_index'] = ClientListPage.objects.live().first()
-
-
-        return context
+        return self.render(
+            request,
+            context_overrides={
+                'menu_lists': self.get_menu_list(),
+                'notification_url': HRIndexPage.objects.live().first().url,
+                'search_page': self,
+                'employee_list_index': self,
+                'client_list_index':  ClientListPage.objects.live().first()
+            }
+        )
 
     
     @route(r'^search/$')
     def employee_search(self, request):
 
-        search_query = request.GET.get('search_query', None).split()
-        filter_query = request.GET.get('filter_query', None)
 
+        page = request.GET.get('page', 1)
 
-        if search_query:
-            qset1 =  reduce(operator.__or__, [Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(position__icontains=query) for query in search_query])
-            employees = Employee.objects.filter(qset1).distinct()
+        name = request.GET.get('name', '')
+        address = request.GET.get('address', '')
+        contact_number = request.GET.get('contact_number', '')
+        position = request.GET.get('position', '')
+        status = request.GET.get('status', '')
+        sort = request.GET.get('sort', '')
 
-            if filter_query == 'evaluated':
-                employees = employees.filter( status=filter_query)
-            elif filter_query == 'on-evaluation':
-                employees = employees.filter( status=filter_query)
+        if name or address or contact_number or status or sort or position:
+            employees = None
 
-            return TemplateResponse(
-                request,
-                'hr/search_employee.html',
-                {
-                    'employees' : employees,
-                }
+            if name:
+                name = name.split()
+                qset1 =  reduce(operator.__or__, [Q(first_name__icontains=query) | Q(last_name__icontains=query) for query in name])
+                employees = Employee.objects.filter(qset1).distinct()
+                if sort:
+                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position).order_by(sort)
+                else:
+                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position)
+            else:
+                if sort:
+                    
+                    print('PASOIK')
+                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position).order_by(sort)
+                else:
+                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position)
+            
+            
+
+            return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                         'hr/search_employee.html',
+                        {
+                            'employees' : self.paginate_data(employees, page),
+                        }
+                    ),
+                },
             )
+
+
         employees = Employee.objects.all()
 
-        if filter_query == 'evaluated':
-            employees = employees.filter( status=filter_query)
-        elif filter_query == 'on-evaluation':
-            employees = employees.filter( status=filter_query)
+        employees = self.paginate_data(employees, page)
+        max_pages = employees.paginator.num_pages
+        starting_point = employees.number
+        next_number = 1
+        previous_number = 1
+
+        if employees.has_next():
+            next_number = employees.next_page_number()
+        
+        if employees.has_previous():
+            previous_number = employees.previous_page_number()
+
+        if max_pages > 3 :
+            max_pages = 4
+
+        if starting_point % 3 == 0:
+            starting_point = starting_point - 2
+        elif (starting_point - 1) % 3  != 0:
+            starting_point = starting_point - 1 
 
 
-        return TemplateResponse(
-                request,
-                'hr/search_employee.html',
-                {
-                    'employees' : employees,
-                }
+        return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                        'hr/search_employee.html',
+                        {
+                            'employees' : employees,
+                        }
+                    ),
+                    'pages_indicator': render_to_string(
+                        'includes/page_indicator.html',
+                        {
+                            'pages': employees,
+                            'xrange': range(starting_point, starting_point + max_pages)
+                        }
+                    ),
+                    'next_number': next_number,
+                    'previous_number': previous_number,
+                    'current_number': employees.number,
+                },
             )
 
 

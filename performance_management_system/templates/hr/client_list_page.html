@@ -22,7 +22,7 @@
 {% endblock %}
 
 {% block content %}
-<section class="container mx-auto ">
+<section class="container flex flex-col h-full mx-auto">
 	<table>
 		<thead>
 			<td class="font-sans font-semibold text-gray">
@@ -31,7 +31,7 @@
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded ">
 					<img src='{% static "img/icons/search.png" %}' width="18">
-					<input id='search-input-name' autocomplete="off" class='px-2 focus:outline-none bg-color-transparent '>
+					<input id='search-input-name' autocomplete="off" class='w-full px-2 focus:outline-none bg-color-transparent '>
 				</div>
 			
 			</td>
@@ -41,7 +41,7 @@
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded ">
 					<img src='{% static "img/icons/search.png" %}' width="18">
-					<input id='search-input-address' autocomplete="off" class='px-2 focus:outline-none bg-color-transparent '>
+					<input id='search-input-address' autocomplete="off" class='w-full px-2 focus:outline-none bg-color-transparent '>
 				</div>
 			
 			</td>
@@ -51,7 +51,7 @@
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded ">
 					<img src='{% static "img/icons/search.png" %}' width="18">
-					<input id='search-input-contact-number' autocomplete="off" data-url='search' class='px-2 focus:outline-none bg-color-transparent '>
+					<input id='search-input-contact-number' autocomplete="off" data-url='search' class='w-full px-2 focus:outline-none bg-color-transparent '>
 				</div>
 			
 			</td>
@@ -78,11 +78,13 @@
 		<tbody id="client-list-container">
 		</tbody>
 	</table>
-	<div id='container-page-indicator' class="flex items-center justify-center hidden">
-		<i id='back-button' class="px-2 py-1 cursor-pointer select-none fas fa-angle-left hover:bg-gray-200"></i>
-		<div id='pages-indicator' class="flex items-center justify-center py-4">
+	<div id='container-page-indicator' class="flex items-end justify-center flex-1 hidden w-full py-4 ">
+		<div class="flex items-center justify-center">
+			<i id='back-button' class="px-2 py-1 cursor-pointer select-none fas fa-angle-left hover:bg-gray-200"></i>
+			<div id='pages-indicator' class="flex items-center justify-center ">
+			</div>
+			<i id='next-button' class="px-2 py-1 cursor-pointer select-none fas fa-angle-right hover:bg-gray-200"></i>
 		</div>
-		<i id='next-button' class="px-2 py-1 cursor-pointer select-none fas fa-angle-right hover:bg-gray-200"></i>
 	</div>
 </section>
 {% endblock %}
@@ -90,10 +92,11 @@
 {% block scripts %}
 <script>
 	let csrf_token = '{{csrf_token}}'
-	let filter_query = '{{filter_query}}'
 	let current_page = 1
+	let current_sort = null
 	let previous_page = null
 	let next_page = null
+    let container = $('#client-list-container')
 </script>
 <script src="{% static 'js/client_list_page.js' %}"></script>
 <script src="{% static 'js/client_search.js' %}"></script>

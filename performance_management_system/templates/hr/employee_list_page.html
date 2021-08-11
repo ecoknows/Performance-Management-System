@@ -15,23 +15,98 @@
 
 {% block head_style %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/loading_bar.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/table.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block content %}
 
-<section class="container p-6 mx-auto space-y-6 ">
-	<div id='employee-list-container' class="flex flex-wrap p-4 ">
-		{% include 'includes/loading_bar.html' %}
-
+<section class="container flex flex-col items-start justify-start h-full mx-auto" >
+	<table >
+		<thead>
+			<td class="font-sans font-semibold text-gray">
+				<div>
+					Name/ID <i class="cursor-pointer fas fa-sort" data-field-name='first_name'></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded ">
+					<img src='{% static "img/icons/search.png" %}' width="18">
+					<input id='search-input-name' autocomplete="off" class='w-full px-2 focus:outline-none bg-color-transparent '>
+				</div>
+			
+			</td>
+			<td class="font-sans font-semibold text-gray ">
+				<div>
+					Address <i class="cursor-pointer fas fa-sort" data-field-name='address'></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded ">
+					<img src='{% static "img/icons/search.png" %}' width="18">
+					<input id='search-input-address' autocomplete="off" class='w-full px-2 focus:outline-none bg-color-transparent '>
+				</div>
+			
+			</td>
+			<td class="font-sans font-semibold text-gray ">
+				<div>
+					Position <i class="cursor-pointer fas fa-sort" data-field-name='position'></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded ">
+					<img src='{% static "img/icons/search.png" %}' width="18">
+					<input id='search-input-position' autocomplete="off" class='w-full px-2 focus:outline-none bg-color-transparent '>
+				</div>
+			
+			</td>
+			<td class="font-sans font-semibold text-gray">
+				<div>
+					Contact Number <i class="cursor-pointer fas fa-sort" data-field-name='contact_number'></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded ">
+					<img src='{% static "img/icons/search.png" %}' width="18">
+					<input id='search-input-contact-number' autocomplete="off" data-url='search' class='w-full px-2 focus:outline-none bg-color-transparent '>
+				</div>
+			
+			</td>
+			<td class="font-sans font-semibold text-gray" style="width: 120px;">
+				<div>
+					Notify
+				</div>
+			
+			</td>
+			<td class="font-sans font-semibold text-gray">
+				<div>
+					Status <i class="cursor-pointer fas fa-sort" data-field-name='status'></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded " style="width: 120px;">
+					<select id='search-input-status' class="w-full focus:outline-none">
+						<option value="">All</option>
+						<option value="evaluated">Done Evaluating</option>
+						<option value="on-evaluation">On Evaluation</option>
+					</select>
+				</div>
+			
+			</td>
+		</thead>
+		<tbody id="employee-list-container" >
+		</tbody>
+	</table>
+	<div id='container-page-indicator' class="flex items-end justify-center flex-1 hidden w-full py-4">
+		<div class="flex items-center justify-center">
+			<i id='back-button' class="px-2 py-1 cursor-pointer select-none fas fa-angle-left hover:bg-gray-200"></i>
+			<div id='pages-indicator' class="flex items-center justify-center ">
+			</div>
+			<i id='next-button' class="px-2 py-1 cursor-pointer select-none fas fa-angle-right hover:bg-gray-200"></i>
+		</div>
 	</div>
 </section>
 {% endblock %}
 
 {% block scripts %}
 <script>
-	let filter_query = '{{filter_query}}'
-	let user_filter = '{{user_filter}}'
-	let user_filter_exclude = '{{user_filter_exclude}}'
+	let current_page = 1
+	let current_sort = null
+	let previous_page = null
+	let next_page = null
+    let container = $('#employee-list-container')
 </script>
 <script src="{% static 'js/employee_list_page.js' %}"></script>
+<script src="{% static 'js/employee_search.js' %}"></script>
+<script src="{% static 'js/table.js' %}"></script>
 {% endblock %}
