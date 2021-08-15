@@ -5,8 +5,8 @@ let current_client_pk = null
 
 function dialog_button_trigger(client){
     dialog.css('display','block')
-    let src = $(client).find('#client-profile-pic').attr('src')
-    let name = $(client).find('#client-name').html()
+    let src = $(client).parent().parent().find('#client-profile-pic').attr('src')
+    let name = $(client).parent().parent().find('#client-name').html()
 
     current_client_pk = $(client).data('client-pk')
 

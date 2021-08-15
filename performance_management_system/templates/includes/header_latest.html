@@ -4,20 +4,33 @@
     <div class="flex flex-row items-center px-8 py-2 space-x-2 "  style="box-shadow: 10px 2px 10px rgb(124, 124, 124, 0.316);">
         <div class="flex-1">
         </div>
+		{% if request.user.is_client %}
+        <div>
+			{% image user_model.profile_pic original as profile_pic %}
+            <img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 50px; height: 50px; ' > 
+        </div>
+		{% else %}
         <div>
 			{% image user_model.profile_pic fill-40x40 as profile_pic %}
             <img src='{{profile_pic.url}}' width="40" class="rounded-full "> 
-        </div>    
+        </div>
+		{% endif %} 
 
     </div>
-	<div class="flex items-end p-4 space-x-2 " >
+	<div >
         {% if title == 'Dashboard' %}
-		<img src="{% static 'img/icons/dashboard-orange.png' %}">
-		<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
-        {% elif title == 'Clients' %}
-		
+		<div class="flex items-end p-4 space-x-2 ">
+			<img src="{% static 'img/icons/dashboard-orange.png' %}">
+			<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
+		</div>
 
-			<div class="flex items-end flex-1 space-x-2">
+		{% elif title == 'Assign Employee' %}
+		<div class="flex items-end p-4 space-x-2 ">
+			<img src="{% static 'img/icons/assign-employee-orange.png' %}">
+			<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
+		</div>
+        {% elif title == 'Clients' %}
+			<div class="flex items-end flex-1 p-4 space-x-2">
 				{% if employee_model %}
 				<div class="flex space-x-2">
 					{% image employee_model.profile_pic fill-35x35 as employee_pic %}
@@ -40,14 +53,17 @@
 
         {% elif title == 'Employees' %}
 		<div class="flex items-end flex-1 space-x-2">
-			<img src="{% static 'img/icons/employees-orange.png' %}">
-			<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
-
+			<div class="flex items-end flex-1 p-4 space-x-2">
+				<img src="{% static 'img/icons/employees-orange.png' %}">
+				<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
+			</div>
 		</div>
 		
         {% elif title == 'Notifications' %}
-		<img src="{% static 'img/icons/notifications-orange.png' %}">
-		<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
+		<div class="flex items-end p-4 space-x-2 ">
+			<img src="{% static 'img/icons/notifications-orange.png' %}">
+			<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
+		</div>
         {% endif %}
 	</div>
 </header>

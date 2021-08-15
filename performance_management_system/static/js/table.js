@@ -1,7 +1,6 @@
 
 
 $(function(){
-    let url = 'search'
     let back_button = $('#back-button')
     let next_button = $('#next-button')
     let pages_indicator = $('#pages-indicator')
@@ -13,7 +12,7 @@ $(function(){
         }
         
         $.ajax({
-            url : url,
+            url : table_url,
             type: 'GET',
             data:{
                 'page': next_page == null ? current_page : next_page,
@@ -36,7 +35,7 @@ $(function(){
             sort = current_sort.data('field-name')
         }
         $.ajax({
-            url : url,
+            url : table_url,
             type: 'GET',
             data:{
                 'page': previous_page == null ? null : previous_page,
@@ -55,14 +54,13 @@ $(function(){
 
 
 function page_number_click(page_click){
-    let url = 'search'
     let pages_indicator = $('#pages-indicator')
     let sort = null
     if(current_sort){
         sort = current_sort.data('field-name')
     }
     $.ajax({
-        url : url,
+        url : table_url,
         type: 'GET',
         data:{
             'page': page_click,

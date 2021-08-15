@@ -1,6 +1,6 @@
 
 $(function(){
-    let url = 'search'
+    let url = 'search/employees/'
     let pages_indicator = $('#pages-indicator')
     let back_button = $('#back-button')
     let next_button = $('#next-button')
@@ -100,7 +100,7 @@ $(function(){
                     'position': position.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
 
     
                     'page': current_page,
@@ -119,7 +119,7 @@ $(function(){
                     'position': position.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
 
                     'status': status.val(),
     
@@ -148,7 +148,7 @@ $(function(){
                     'position': position.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
 
     
                     'page': current_page,
@@ -167,7 +167,7 @@ $(function(){
                     'position': position.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
 
                     'status': status.val(),
     
@@ -196,7 +196,7 @@ $(function(){
                     'position': position.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
                     
     
                     'page': current_page,
@@ -215,7 +215,7 @@ $(function(){
                     'position': position.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
                     
     
                 },
@@ -244,7 +244,7 @@ $(function(){
                     'position': position.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
 
     
                     'page': current_page,
@@ -263,7 +263,7 @@ $(function(){
                     'position': position.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
 
     
                 },
@@ -291,7 +291,7 @@ $(function(){
                     'position': position.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
 
     
                     'page': current_page,
@@ -310,7 +310,7 @@ $(function(){
                     'position': position.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
     
                 },
                 success: function(data){

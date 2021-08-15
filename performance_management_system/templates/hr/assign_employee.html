@@ -1,22 +1,50 @@
+
+
 {% extends 'base.html'%}
 
-{% load static wagtailimages_tags wagtailcore_tags %}
+{% load static wagtailcore_tags wagtailimages_tags %}
 
-
-
-{% block header %}
-{% include 'includes/header_latest.html' with user_model=request.user.hradmin title='Employees' search=True %}
-{% endblock %}
-
-
-{% block side_bard %}
-  {% include 'includes/side_menu.html' with current_menu='employees' %}
-{% endblock %}
 
 {% block head_style %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/loading_bar.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/table.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+
+
+{% block style %}
+
+<style>
+.employee-profile{
+	width: 40px; 
+	height: 40px;
+}
+.overview-text{
+	font-size: 0.60rem;
+	line-height: 1rem;
+}
+@media (min-width: 1024px) { 
+
+.employee-profile{
+	width: 80px; 
+	height: 80px;
+}
+.overview-text{
+	font-size: 1.125rem;
+	line-height: 1.75rem;
+}
+}
+
+</style>
+
+{% endblock %}
+
+{% block header %}
+{% include 'includes/header_latest.html' with user_model=request.user.hradmin title='Assign Employee' %}
+{% endblock %}
+
+{% block side_bard %}
+  {% include 'includes/side_menu.html' with current_menu='assign-employee' %}
 {% endblock %}
 
 {% block content %}
@@ -64,24 +92,7 @@
 				</div>
 			
 			</td>
-			<td class="font-sans font-semibold text-gray" style="width: 120px;">
-				<div>
-					Notify
-				</div>
-			
-			</td>
-			<td class="font-sans font-semibold text-gray">
-				<div>
-					Status <i class="cursor-pointer fas fa-sort" data-field-name='status'></i> 
-				</div>
-				<div class="flex items-center px-1 border border-gray-300 rounded " style="width: 120px;">
-					<select id='search-input-status' class="w-full focus:outline-none">
-						<option value="">All</option>
-						<option value="evaluated">Done Evaluating</option>
-						<option value="on-evaluation">On Evaluation</option>
-					</select>
-				</div>
-			
+			<td class='w-36'>
 			</td>
 		</thead>
 		<tbody id="employee-list-container" >
@@ -102,7 +113,6 @@
 <script>
 	let current_page = 1
 	let current_sort = null
-	let table_url = 'search/employees/'
 	let previous_page = null
 	let next_page = null
     let container = $('#employee-list-container')

@@ -104,24 +104,17 @@ class ClientListPage(RoutablePageMixin,Page):
                 'search_page': self,
                 'client_list_index': self,
                 'employee_list_index': EmployeeListPage.objects.live().first(),
+                'assign_employee_index': AssignEmployee.objects.live().first(),
             }
         )
 
     @route(r'^(\d+)/$')
     def client_details(self, request, id):
-        hr_index_url = HRIndexPage.objects.first().url
         notification_url = HRIndexPage.objects.live().first().url
         
-        menu_lists = [
-            (hr_index_url,'Dashboard'),
-            [self.url+id, 'All'],
-            ['?filter=evaluated','Evaluated'],
-            ['?filter=on-evaluation','On Evaluation'],
-        ]
         return self.render(
             request,
             context_overrides={
-                'menu_lists': menu_lists,
                 'user_model': request.user.hradmin,
                 'employee_model': Client.objects.get(pk=id),
                 'evaluation_index': 'evaluated/',
@@ -130,6 +123,8 @@ class ClientListPage(RoutablePageMixin,Page):
                 'notification_url': notification_url,
                 'client_list_index': self,
                 'employee_list_index': EmployeeListPage.objects.live().first(),
+                'assign_employee_index': AssignEmployee.objects.live().first(),
+                'current_menu' : 'clients'
             },
             template='client/client_index_page.html'
         )
@@ -161,13 +156,15 @@ class ClientListPage(RoutablePageMixin,Page):
                 'search_page': HRIndexPage.objects.live().first(),
                 'notification_url': notification_url,
                 'client_list_index': self,
+                'current_menu' : 'clients',
                 'employee_list_index': EmployeeListPage.objects.live().first(),
+                'assign_employee_index': AssignEmployee.objects.live().first(),
             },
             template="base/evaluation_page.html",
         )
 
     
-    @route(r'^(\d+)/search/$')
+    @route(r'^(\d+)/search/employees/$')
     def employee_search(self, request, client_id):
 
         page = request.GET.get('page', 1)
@@ -255,7 +252,7 @@ class ClientListPage(RoutablePageMixin,Page):
             )
 
 
-    @route(r'^search/$')
+    @route(r'^search/clients/$')
     def client_search(self, request):
 
         page = request.GET.get('page', 1)
@@ -285,7 +282,7 @@ class ClientListPage(RoutablePageMixin,Page):
                     ),
                 },
             )
-        print(sort, ' asdsadsa')
+
         if sort:
             clients = Client.objects.all().order_by(sort)
         else:
@@ -334,10 +331,6 @@ class ClientListPage(RoutablePageMixin,Page):
                 },
             )
         
-    
-    
-    
-
 class EmployeeListPage(RoutablePageMixin,Page):
     max_count = 1
     parent_page_types = ['HRIndexPage']
@@ -375,12 +368,13 @@ class EmployeeListPage(RoutablePageMixin,Page):
                 'notification_url': HRIndexPage.objects.live().first().url,
                 'search_page': self,
                 'employee_list_index': self,
-                'client_list_index':  ClientListPage.objects.live().first()
+                'client_list_index':  ClientListPage.objects.live().first(),
+                'assign_employee_index': AssignEmployee.objects.live().first(),
             }
         )
 
     
-    @route(r'^search/$')
+    @route(r'^search/employees/$')
     def employee_search(self, request):
 
 
@@ -406,8 +400,6 @@ class EmployeeListPage(RoutablePageMixin,Page):
                     employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position)
             else:
                 if sort:
-                    
-                    print('PASOIK')
                     employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position).order_by(sort)
                 else:
                     employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position)
@@ -419,14 +411,15 @@ class EmployeeListPage(RoutablePageMixin,Page):
                     'html' : render_to_string(
                          'hr/search_employee.html',
                         {
-                            'employees' : self.paginate_data(employees, page),
+                            'employee_details_index': EmployeeDetailsPage.objects.live().first().url,
+                            'employees' : self.paginate_data(employees.exclude(status='none'), page),
                         }
                     ),
                 },
             )
 
 
-        employees = Employee.objects.all()
+        employees = Employee.objects.exclude(status='none')
 
         employees = self.paginate_data(employees, page)
         max_pages = employees.paginator.num_pages
@@ -454,6 +447,7 @@ class EmployeeListPage(RoutablePageMixin,Page):
                     'html' : render_to_string(
                         'hr/search_employee.html',
                         {
+                            'employee_details_index': EmployeeDetailsPage.objects.live().first().url,
                             'employees' : employees,
                         }
                     ),
@@ -469,8 +463,6 @@ class EmployeeListPage(RoutablePageMixin,Page):
                     'current_number': employees.number,
                 },
             )
-
-
 
 class ClientDetailsPage( Page):
     max_count = 1
@@ -495,9 +487,6 @@ class ClientDetailsPage( Page):
     
     parent_page_types = ['ClientListPage']
 
-
-
-
 class EmployeeDetailsPage(RoutablePageMixin, Page):
     max_count = 1
     
@@ -515,32 +504,50 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
         context['menu_lists'] = [
             ('/'+HRIndexPage.objects.live().first().url, 'Dashboard')
         ]
+        
+        employee_list_index = EmployeeListPage.objects.live().first()
+        client_list_index = ClientListPage.objects.live().first()
+        assign_employee_index = AssignEmployee.objects.live().first()
+
+        context['assign_employee_index'] = assign_employee_index
+        context['employee_list_index'] = employee_list_index
+        context['client_list_index'] = client_list_index
 
         return context
     
 
     @route(r'^(\d+)/$', name='id')
     def details_user_route(self, request, id):
-        employee = Employee.objects.get(pk=id)
+        user_evaluation = UserEvaluation.objects.filter(employee_id=id).first()
         categories = EvaluationCategories.objects.all()
+        max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        category_percentages = []
+        for category in categories:
+            rate_assigns = EvaluationRateAssign.objects.filter(
+                evaluation_rate__evaluation_categories=category,
+                user_evaluation = user_evaluation
+            )
+            percentage = 0
+            for rate_assign in rate_assigns:
+                percentage = rate_assign.rate + percentage
+
+            rate_assign_len = len(rate_assigns) 
+
+            if rate_assign_len:
+                percentage = (percentage / (rate_assign_len * max_rate))
+            else:
+                percentage = 0
+            
+            category_percentages.append([category,percentage])
         
-        menu_lists = [
-            [HRIndexPage.objects.live().first().url, 'Dashboard'],
-            ['', 'Details'],
-            ['clients', 'Clients'],
-            ['pick-a-client','Pick a client'],
-        ]
 
         return self.render(
             request,
             context_overrides={
-            'categories': categories[:7],
-            'infinite_categories': categories[7:],
-            'employee_id': id+'/',
-            'employee': employee,
+            'user_evaluation': user_evaluation,
             'user_model': request.user.hradmin ,
-            'menu_lists': menu_lists,
-            'search_page': HRIndexPage.objects.live().first()
+            'category_percentages': category_percentages,
+            'current_menu':'employees'
             }
         )
     
@@ -640,7 +647,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             template="hr/employee_client_list.html",
         )
 
-    @route(r'^(\d+)/clients/(\d+)/$')
+    @route(r'^(\d+)/evaluation/(\d+)/$')
     def client_evaluation_details(self, request, id, user_evaluation_id):
         user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
         evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
@@ -662,6 +669,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
                 'employee_model': user_evaluation.client,
                 'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
                 'search_page': HRIndexPage.objects.live().first(),
+                'current_menu':'employees'
             },
             template="base/evaluation_page.html",
         )
@@ -809,6 +817,221 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
                 }
             )
 
+class AssignEmployee(RoutablePageMixin, Page):
+    max_count = 1
+    parent_page_types = ['HRIndexPage']
+
+    
+    def paginate_data(self, data, current_page):
+        paginator = Paginator(data, 7)
+
+        try:
+            data = paginator.page(current_page)
+        except PageNotAnInteger:
+            data = paginator.page(1)
+        except EmptyPage:
+            data = paginator.page(paginator.num_pages)
+        
+        return data
+    
+    @route(r'^$') 
+    def default_route(self, request):
+        
+        return self.render(
+            request,
+            context_overrides={
+                'notification_url' : HRIndexPage.objects.live().first().url ,
+                'employee_list_index' : EmployeeListPage.objects.live().first(),
+                'client_list_index' : ClientListPage.objects.live().first(),
+                'assign_employee_index': AssignEmployee.objects.live().first(),
+            }
+        )
+
+    @route(r'^(\d+)/$')
+    def client_list(self, request, employee_id):
+        return self.render(
+            request,
+            context_overrides={
+                'notification_url' : HRIndexPage.objects.live().first().url ,
+                'employee_list_index' : EmployeeListPage.objects.live().first(),
+                'client_list_index' : ClientListPage.objects.live().first(),
+                'assign_employee_index': AssignEmployee.objects.live().first(),
+                'employee': Employee.objects.get(pk=employee_id)
+            },
+            template='hr/assign_client.html'
+        )
+    
+    
+
+    @route(r'^(\d+)/search/clients/$')
+    def client_search(self, request, id):
+
+        page = request.GET.get('page', 1)
+
+        name = request.GET.get('name', '')
+        address = request.GET.get('address', '')
+        contact_number = request.GET.get('contact_number', '')
+        status = request.GET.get('status', '')
+        sort = request.GET.get('sort', '')
+
+        employee = Employee.objects.get(pk=id)
+
+        if name or address or contact_number or status:
+            if sort:
+                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number, status__icontains=status).order_by(sort)
+            else:
+                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number, status__icontains=status)
+            
+            return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                         'hr/assign_search_client.html',
+                        {
+                            'clients' : self.paginate_data(clients, page),
+                            'employee': employee
+                        }
+                    ),
+                },
+            )
+
+        if sort:
+            clients = Client.objects.all().order_by(sort)
+        else:
+            clients = Client.objects.all()
+
+        clients = self.paginate_data(clients, page)
+        max_pages = clients.paginator.num_pages
+        starting_point = clients.number
+        next_number = 1
+        previous_number = 1
+
+        if clients.has_next():
+            next_number = clients.next_page_number()
+        
+        if clients.has_previous():
+            previous_number = clients.previous_page_number()
+
+        if max_pages > 3 :
+            max_pages = 4
+
+        if starting_point % 3 == 0:
+            starting_point = starting_point - 2
+        elif (starting_point - 1) % 3  != 0:
+            starting_point = starting_point - 1 
+
+
+        return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                        'hr/assign_search_client.html',
+                        {
+                            'clients' : clients,
+                            'employee': employee
+                        }
+                    ),
+                    'pages_indicator': render_to_string(
+                        'includes/page_indicator.html',
+                        {
+                            'pages': clients,
+                            'xrange': range(starting_point, starting_point + max_pages)
+                        }
+                    ),
+                    'next_number': next_number,
+                    'previous_number': previous_number,
+                    'current_number': clients.number,
+                },
+            )
+
+    @route(r'^search/employees/$')
+    def employee_search(self, request):
+
+
+        page = request.GET.get('page', 1)
+
+        name = request.GET.get('name', '')
+        address = request.GET.get('address', '')
+        contact_number = request.GET.get('contact_number', '')
+        position = request.GET.get('position', '')
+        status = request.GET.get('status', '')
+        sort = request.GET.get('sort', '')
+
+        if name or address or contact_number or status or sort or position:
+            employees = None
+
+            if name:
+                name = name.split()
+                qset1 =  reduce(operator.__or__, [Q(first_name__icontains=query) | Q(last_name__icontains=query) for query in name])
+                employees = Employee.objects.filter(qset1).distinct()
+                if sort:
+                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position).order_by(sort)
+                else:
+                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position)
+            else:
+                if sort:
+                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position).order_by(sort)
+                else:
+                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position)
+            
+            
+
+            return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                         'hr/assign_search_employee.html',
+                        {
+                            'employee_details_index': EmployeeDetailsPage.objects.live().first().url,
+                            'employees' : self.paginate_data(employees.filter(status='none'), page),
+                        }
+                    ),
+                },
+            )
+
+
+        employees = Employee.objects.filter(status='none')
+
+        employees = self.paginate_data(employees, page)
+        max_pages = employees.paginator.num_pages
+        starting_point = employees.number
+        next_number = 1
+        previous_number = 1
+
+        if employees.has_next():
+            next_number = employees.next_page_number()
+        
+        if employees.has_previous():
+            previous_number = employees.previous_page_number()
+
+        if max_pages > 3 :
+            max_pages = 4
+
+        if starting_point % 3 == 0:
+            starting_point = starting_point - 2
+        elif (starting_point - 1) % 3  != 0:
+            starting_point = starting_point - 1 
+
+
+        return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                        'hr/assign_search_employee.html',
+                        {
+                            'employee_details_index': EmployeeDetailsPage.objects.live().first().url,
+                            'employees' : employees,
+                        }
+                    ),
+                    'pages_indicator': render_to_string(
+                        'includes/page_indicator.html',
+                        {
+                            'pages': employees,
+                            'xrange': range(starting_point, starting_point + max_pages)
+                        }
+                    ),
+                    'next_number': next_number,
+                    'previous_number': previous_number,
+                    'current_number': employees.number,
+                },
+            )
+
 
 class HrAdmin(models.Model):
     user = models.OneToOneField(
@@ -864,7 +1087,6 @@ class HrAdmin(models.Model):
             self.user.delete()
         super().delete()
 
-
 class HRIndexPage(BaseAbstractPage):
     max_count = 1
     parent_page_types = ['base.BaseIndexPage']
@@ -912,9 +1134,14 @@ class HRIndexPage(BaseAbstractPage):
 
         employee_list_index = EmployeeListPage.objects.live().first()
         client_list_index = ClientListPage.objects.live().first()
+        assign_employee_index = AssignEmployee.objects.live().first()
 
         context['employee_list_index'] = employee_list_index
         context['client_list_index'] = client_list_index
+        context['assign_employee_index'] = assign_employee_index
+
+        context['client_count'] = len(Client.objects.all())
+        context['employee_count'] = len(Employee.objects.all())
         context['menu_lists'] = [
             [employee_list_index.url, 'Employees'],
             [client_list_index.url, 'Clients']

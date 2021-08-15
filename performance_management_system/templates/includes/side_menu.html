@@ -27,6 +27,15 @@
             </a>
             
         </li>
+
+        {% if request.user.is_hr %}
+        <li class="cursor-pointer hover:bg-gray-200 {% if current_menu == 'assign-employee'%}bg-orange-hover{% endif %} ">
+            <a href='{% pageurl assign_employee_index %}' class="flex items-center p-4 space-x-2">
+                <img src="{% static 'img/icons/assign-employee.png' %}" class="inline">
+                <h2>Assign Employee</h2>
+            </a>
+        </li>
+
         <li class="cursor-pointer hover:bg-gray-200 {% if current_menu == 'clients'%}bg-orange-hover{% endif %} ">
             <a href='{% pageurl client_list_index %}' class="flex items-center p-4 space-x-2">
                 <img src="{% static 'img/icons/clients.png' %}" class="inline">
@@ -39,6 +48,9 @@
                 <h2>Employees</h2>
             </a>
         </li>
+        {% endif %}
+
+        
         <li class=" cu-pointer sor hover:bg-gray-200">
             <a href='/logout' class="flex items-center p-4 space-x-2">
                 <img src="{% static 'img/icons/logout.png' %}" class="inline">

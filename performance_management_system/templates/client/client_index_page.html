@@ -3,11 +3,11 @@
 {% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block header %}
-{% include 'includes/header_latest.html' with user_model=request.user.hradmin title='Clients'  search=True %}
+{% include 'includes/header_latest.html' %}
 {% endblock %}
 
 {% block side_bard %}
-  {% include 'includes/side_menu.html' with current_menu='clients' %}
+  {% include 'includes/side_menu.html'  %}
 {% endblock %}
 
 
@@ -63,12 +63,14 @@
 				</div>
 			
 			</td>
+			{% if request.user.is_hr %}
 			<td class="font-sans font-semibold text-gray" style="width: 120px;">
 				<div>
 					Notify
 				</div>
 			
 			</td>
+			{% endif %}
 			<td class="font-sans font-semibold text-gray">
 				<div>
 					Status <i class="cursor-pointer fas fa-sort" data-field-name='employee__status'></i> 
@@ -101,6 +103,7 @@
 {% block scripts %}
 <script>
 	let current_page = 1
+	let table_url = 'search/employees/'
 	let current_sort = null
 	let previous_page = null
 	let next_page = null

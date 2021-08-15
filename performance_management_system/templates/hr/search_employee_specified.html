@@ -6,7 +6,7 @@
 <tr class="table-bottom-border hover:bg-gray-100">
 		
 	<td class="p-0 font-sans font-semibold text-gray">
-		<a class='flex items-center justify-start block w-full px-4 space-x-4' href="{{user_evaluation.employee.pk}}" style="min-height: 3rem;">
+		<a class='flex items-center justify-start block w-full px-4 space-x-4' href="evaluated/{{user_evaluation.pk}}" style="min-height: 3rem;">
 			{% image user_evaluation.employee.profile_pic fill-30x30 as employee_pic %}
 			<img src="{{employee_pic.url}}" width="30"  class="rounded-full" >
 			<div>
@@ -17,9 +17,9 @@
 			</div>
 		</a>
 	</td>
-	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href="{{user_evaluation.employee.pk}}">{{user_evaluation.employee.address}}</a></td>
-	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href="{{user_evaluation.employee.pk}}">{{user_evaluation.employee.position}}</a></td>
-	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{user_evaluation.employee.pk}}'>+63{{user_evaluation.employee.contact_number}}</a></td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href="evaluated/{{user_evaluation.pk}}">{{user_evaluation.employee.address}}</a></td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href="evaluated/{{user_evaluation.pk}}">{{user_evaluation.employee.position}}</a></td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href='evaluated/{{user_evaluation.pk}}'>+63{{user_evaluation.employee.contact_number}}</a></td>
 	<td class="p-0 font-sans text-sm text-gray">
 		<button onclick="notify_client('{{client.user.pk}}')" class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full" style="background-color: #E67E22; padding-left: 10px; padding-right: 10px;">
 			<h1 class="font-sans text-xs">Notitfy Me</h1>
@@ -27,9 +27,9 @@
 		</button>
 	</td>
 	{% if user_evaluation.employee.status == 'on-evaluation' %}
-	<td class="p-0 font-sans text-sm font-semibold text-red"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{client.pk}}'>On Evaluation</a></td>
+	<td class="p-0 font-sans text-sm font-semibold text-red"><a class='flex flex-col justify-center block w-full h-12 px-4' href='evaluated/{{user_evaluation.pk}}'>On Evaluation</a></td>
 	{% else %}
-	<td class="p-0 font-sans text-sm font-semibold text-green"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{client.pk}}'>Done Evaluating</a></td>
+	<td class="p-0 font-sans text-sm font-semibold text-green"><a class='flex flex-col justify-center block w-full h-12 px-4' href='evaluated/{{user_evaluation.pk}}'>Done Evaluating</a></td>
 	{% endif %}
 </tr>
 {% endfor %}

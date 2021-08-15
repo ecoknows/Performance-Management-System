@@ -49,9 +49,9 @@
     {% image notification.user_evaluation.client.profile_pic original as profile_pic %}
     <img src='{{profile_pic.url}}' class="object-cover w-24 h-24 rounded-full" >
     <div class="text-center">
-        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{notification.user_evaluation.client}}</h1>
-        <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">Client</h1>
-        <a href="{{evaluation_index_page}}clients/{{notification.user_evaluation.pk}}" class="px-4 py-1 font-sans text-lg text-white rounded-full bg-eval-color font-base ">
+        <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{notification.user_evaluation.client}}</h1>
+        <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">Client</h1>
+        <a href="{{evaluation_index_page}}evaluation/{{notification.user_evaluation.pk}}" class="px-4 py-1 font-sans text-sm text-white rounded-full bg-eval-color font-base ">
             VIEW EVALUATION
         </a>
     </div>
@@ -60,13 +60,13 @@
 <div class="space-y-2">
     <div>
         <h2 class="font-sans text-xl text-gray-primary-color">Client</h2>
-        <h1 class="font-sans text-3xl font-bold text-gray-primary-color">&ensp; {{notification.user_evaluation.client.company}}</h1>
+        <h1 class="font-sans text-xl font-bold text-gray-primary-color">&ensp; {{notification.user_evaluation.client.company}}</h1>
     </div>
     <div class="flex overflow-y-auto"  style="height: 300px;">
         <div class="flex-1">
-            <h2 class="font-sans text-xl text-gray-primary-color">Categories</h2>
+            <h2 class="font-sans text-lg text-gray-primary-color">Categories</h2>
             {% for category in categories %}
-            <h1 class="font-sans text-2xl font-bold text-gray-primary-color">&ensp; {{category}}</h1>
+            <h1 class="font-sans font-bold text-gray-primary-color">&ensp; {{category}}</h1>
             {% endfor %}
             
 
@@ -75,13 +75,13 @@
             <h2 class="font-sans text-xl text-gray-primary-color">Percentage</h2>
             {% for category_percentage in category_percentages %}
             {% if category_percentage == 0 %}
-            <h1 class="font-sans text-2xl font-bold text-blue">WAITING FOR EVALUATION</h1>
+            <h1 class="font-sans font-bold text-blue">WAITING FOR EVALUATION</h1>
             {% elif category_percentage < 50 %}
-            <h1 class="font-sans text-2xl font-bold text-red">{{category_percentage | floatformat:1}}%</h1>
+            <h1 class="font-sans font-bold text-red">{{category_percentage | floatformat:1}}%</h1>
             {% elif category_percentage < 75 %}
-            <h1 class="font-sans text-2xl font-bold text-orange">{{category_percentage | floatformat:1}}%</h1>
+            <h1 class="font-sans font-bold text-orange">{{category_percentage | floatformat:1}}%</h1>
             {% else %}
-            <h1 class="font-sans text-2xl font-bold text-green">{{category_percentage | floatformat:1}}%</h1>
+            <h1 class="font-sans font-bold text-green">{{category_percentage | floatformat:1}}%</h1>
             {% endif %}
             {% endfor %}
         </div>
@@ -132,15 +132,15 @@
     {% image on_evaluation_employee.employee.profile_pic original as profile_pic %}
     <img src='{{profile_pic.url}}' class="object-cover w-24 h-24 rounded-full" >
     <div class="text-center">
-        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee}}</h1>
-        <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee.position}}</h1>
+        <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee}}</h1>
+        <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee.position}}</h1>
         <a href="{{evaluation_index_page}}{{on_evaluation_employee.pk}}" class="px-4 py-1 font-sans text-lg text-white rounded-full bg-eval-color font-base ">
             EVALUATE NOW
         </a>
     </div>
 </div>
 
-<div class="px-4 py-4 space-y-1 font-sans text-xl font-semibold text-gray-fourthary-color">
+<div class="px-4 py-4 space-y-1 font-sans font-semibold text-gray-fourthary-color">
     <h1>Dear {{notification.reciever.client.company}},</h1>
     
     <p>
@@ -191,15 +191,15 @@
     {% image on_evaluation_employee.employee.profile_pic original as profile_pic %}
     <img src='{{profile_pic.url}}' class="object-cover w-24 h-24 rounded-full" >
     <div class="text-center">
-        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee}}</h1>
-        <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee.position}}</h1>
-        <a href="{{evaluation_index_page}}{{on_evaluation_employee.pk}}" class="px-4 py-1 font-sans text-lg text-white rounded-full bg-eval-color font-base ">
+        <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee}}</h1>
+        <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee.position}}</h1>
+        <a href="{{evaluation_index_page}}{{on_evaluation_employee.pk}}" class="px-4 py-1 font-sans text-sm text-white rounded-full bg-eval-color font-base ">
             VIEW EVALUATION
         </a>
     </div>
 </div>
 
-<div class="px-4 py-4 space-y-1 font-sans text-xl font-semibold text-gray-fourthary-color">
+<div class="px-4 py-4 font-sans font-semibold text-gray-fourthary-color ">
     <h1>Dear {{notification.reciever.client.company}},</h1>
     <p>
         I want to inform you that a new client have been assign to you, it's company name is {{on_evaluation_employee.client.company}}
@@ -223,12 +223,12 @@
     {% image notification.hr_admin.profile_pic original as profile_pic %}
     <img src='{{profile_pic.url}}' class="object-cover w-24 h-24 rounded-full" >
     <div class="text-center">
-        <h1 class="font-sans text-2xl font-extrabold leading-tight text-gray-primary-color">{{notification.hr_admin}}</h1>
-        <h1 class="mb-2 font-sans text-2xl font-semibold leading-tight text-gray-primary-color">HR Admin</h1>
+        <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{notification.hr_admin}}</h1>
+        <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">HR Admin</h1>
     </div>
 </div>
 
-<div class="px-4 py-4 space-y-1 font-sans text-xl font-semibold text-gray-fourthary-color">
+<div class="px-4 py-4 font-sans font-semibold text-gray-fourthary-color">
     <h1>Dear {{notification.reciever.client.company}},</h1>
     <p>
         Thank you for evaluating, your evaluation for the performance of the employee has been send, 
@@ -237,18 +237,18 @@
     
     <br>
     <h1>Thank you again!</h1>
-    <h1 class="text-sm">{{notification.created_at}}</h1>    
+    <h1 >{{notification.created_at}}</h1>    
     <br>
     <h1 >Sincerely yours, </h1>
     <h1>{{notification.hr_admin}}</h1>
-    <h1 class="text-lg">HR Admin</h1>
+    <h1 >HR Admin</h1>
     
 </div>
 
 
 {% elif notification.notification_type == 'client-has-been-notify' %}
 
-<div class="px-4 space-y-1 font-sans text-xl font-semibold text-gray-fourthary-color">
+<div class="px-4 font-sans font-semibold text-gray-fourthary-color">
     <h1 >{{notification.created_at}}</h1>
     <br>
     <h1>{{notification.reciever.employee}}</h1>

@@ -2,11 +2,11 @@
 {% load wagtailcore_tags forloop_tags wagtailimages_tags static %}
 
 {% block header %}
-{% include 'includes/header_latest.html' with user_model=request.user.hradmin title='Clients' search=False %}
+{% include 'includes/header_latest.html'  %}
 {% endblock %}
 
 {% block side_bard %}
-  {% include 'includes/side_menu.html' with current_menu='clients' %}
+  {% include 'includes/side_menu.html' %}
 {% endblock %}
 
 {% block head_style %}

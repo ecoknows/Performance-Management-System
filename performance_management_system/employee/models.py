@@ -297,21 +297,38 @@ class EmployeeIndexPage(BaseAbstractPage):
 
     @route(r'^$')
     def dash_board(self, request):
-        from performance_management_system.base.models import EvaluationCategories
-        id = request.user.employee.pk
+        from performance_management_system.base.models import EvaluationCategories, UserEvaluation, EvaluationRateAssign, EvaluationPage
+        user_evaluation = UserEvaluation.objects.filter(employee=request.user.employee).first()
         categories = EvaluationCategories.objects.all()
+        max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        category_percentages = []
+
+        for category in categories:
+            rate_assigns = EvaluationRateAssign.objects.filter(
+                evaluation_rate__evaluation_categories=category,
+                user_evaluation = user_evaluation
+            )
+            percentage = 0
+            for rate_assign in rate_assigns:
+                percentage = rate_assign.rate + percentage
+
+            rate_assign_len = len(rate_assigns) 
+
+            if rate_assign_len:
+                percentage = (percentage / (rate_assign_len * max_rate))
+            else:
+                percentage = 0
+            
+            category_percentages.append([category,percentage])
         
-        menu_lists = self.get_menu_list()
+
         return self.render(
             request,
             context_overrides={
-            'categories': categories[:7],
-            'infinite_categories': categories[7:],
-            'employee_id': id,
-            'menu_lists': menu_lists,
-            'user_model': request.user.employee,
-            'notification_url' : self.url,
-            'search_page' : self,
+            'user_evaluation': user_evaluation,
+            'user_model': request.user.employee ,
+            'category_percentages': category_percentages,
+            'current_menu':'dashboard'
             },
             template='hr/employee_details_page.html'
         )
@@ -381,13 +398,14 @@ class EmployeeIndexPage(BaseAbstractPage):
             template='employee/client_list.html'
         )
     
-    @route(r'client/(\d+)/$')
+    @route(r'evaluation/(\d+)/$')
     def client_evaluation_details(self, request, user_evaluation_id):
         from performance_management_system.base.models import UserEvaluation, EvaluationPage, EvaluationCategories
 
         user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
         evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
-        
+        legend_evaluation = EvaluationPage.objects.live().first().legend_evaluation
+
         return self.render(
             request,
             context_overrides={
@@ -397,8 +415,9 @@ class EmployeeIndexPage(BaseAbstractPage):
                 'user_model' : request.user.employee,
                 'employee_model': user_evaluation.client,
                 'notification_url' : self.url,
-                'self': {'evaluation_max_rate': evaluation_max_rate},
+                'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
                 'search_page' : self,
+                'current_menu':'dashboard'
             },
             template="base/evaluation_page.html",
         )

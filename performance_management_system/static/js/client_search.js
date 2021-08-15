@@ -1,7 +1,7 @@
 
 $(function(){
 
-    let url = 'search'
+    let url = 'search/clients/'
     let pages_indicator = $('#pages-indicator')
     let back_button = $('#back-button')
     let next_button = $('#next-button')

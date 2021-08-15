@@ -2,354 +2,82 @@
 {% load wagtailimages_tags static forloop_tags wagtailcore_tags  %}
 
 
-{% block header %}
-	{% include 'includes/header.html' with user_model=user_model employee_model=employee menu_text='Details' %}
+{% block head_style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/circular_percentage.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-circle-progress/1.2.2/circle-progress.min.js"></script>
 {% endblock %}
 
-{% block style %} 
+{% block header %}
+{% include 'includes/header_latest.html' with user_model=user_model %}
+{% endblock %}
 
-<style>
-	.passion-for-excelence{
-		height: 1060px;
-	}
-	.passion-for-excelence__body{
-		height: 60%;
-	}
-	.bottom_container{
-		height: 40%;
-	}
-	@media (min-width: 1024px) { 
-		
-	.passion-for-excelence{
-		height: 690px;
-	}
-	.passion-for-excelence__body{
-		height: 60%;
-	}
-	.bottom_container{
-		height: 40%;
-	}
-
-	}
-</style>
-
-
+{% block side_bard %}
+  {% include 'includes/side_menu.html'  %}
 {% endblock %}
 
 {% block content %}
 
-<section class="container flex-col items-center flex-1 mx-auto lg:h-screen lg:flex lg:items-start lg:space-x-4 lg:flex-row starting-padding-top">
-	<div class='flex flex-col px-4 space-y-4 lg:px-0 lg:py-4 lg:w-3/5 passion-for-excelence'>
-		<div class="w-full bg-white lg:flex passion-for-excelence__body" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
-			<div class="flex items-center px-4 py-4 lg:w-3/5" >
-				<canvas id="bar-chart" height="220" data-url='/data_chart/{{categories.0.pk}}/{{employee_id}}' ></canvas>
-			</div>
-			<div class='flex flex-col justify-center px-4 py-6 space-y-4 lg:w-2/5'>
-				<h1 class="font-sans text-xl font-bold text-center lg:text-4xl" style="color: #939393;">{{categories.0}}</h1>
-				
-				<div class="flex-1 space-y-4">
-					<table class="w-full">
-						<tr class="font-sans text-lg " style="color: #AEAEAE;">
-							<th class="pb-2 text-left">
-								Client
-							</th>
-							<th class="pb-2 text-left">
-								Performance
-							</th>
-						</tr>
-	
-						<tbody id="bar-chart-tbody">
-							
-						</tbody>
-						
-	
-					</table>
-	
-					<div class="flex flex-row items-center justify-center space-x-8 " style="color: #5785DE;">
-						<div class="flex-1 text-center">
-							<button id='back-btn-bar' class="hidden">
-								<h1 class="font-bold text-md">Back</h1>
-							</button>	
-						</div>
-						<div id='page-number-bar' class="font-bold text-md"></div>
-						<div class="flex-1 text-center">
-							<button id='next-btn-bar' class="hidden">
-								<h1 class="font-bold text-md">Next</h1>
-							</button>
-						</div>
-	
-					</div>
-
-				</div>
-				
-			</div>
-		</div>
-
-		<div class="flex py-2 space-y-4 lg:py-0 lg:space-y-0 lg:space-x-4 lg:flex-row bottom_container" >
-			
-			<div class="flex flex-col flex-1 px-4 py-4 bg-white " style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
-				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">{{categories.2}}</h1>
-				<div class='flex flex-col items-center justify-center h-full'>
-					<div style="position: relative; height: 100px; width: 90%"  class="py-6" >
-						<canvas id="line-chart-quality-of-work" data-url='/data_chart/{{categories.2.pk}}/{{employee_id}}'></canvas>
-					</div>
-					
-
-					<div class="flex flex-row items-center justify-center space-x-8 " style="color: #5785DE;">
-						<div class="flex-1 text-center">
-							<button id='back-btn-quality-of-work' class="hidden">
-								<h1 class="font-bold text-md">Back</h1>
-							</button>	
-						</div>
-						<div id='page-number-quality-of-work' class="font-bold text-md"></div>
-						<div class="flex-1 text-center">
-							<button id='next-btn-quality-of-work' class="hidden">
-								<h1 class="font-bold text-md">Next</h1>
-							</button>
-						</div>
-
-					</div>
-
-				</div>
-
-				
-			</div>
-
-
-			<div class="flex flex-col flex-1 px-4 py-4 bg-white" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);"> 
-				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">{{categories.4}}</h1>
-
-				<div class='flex flex-col items-center justify-center h-full '>
-					<div style="position: relative; height: 100px; width: 90%" class="py-6" >
-						<canvas id="line-chart-initiative" data-url='/data_chart/{{categories.4.pk}}/{{employee_id}}' ></canvas>
-					</div>
-					
-					<div class="flex flex-row items-center justify-center space-x-8 " style="color: #5785DE;">
-						<div class="flex-1 text-center">
-							<button id='back-btn-initiative' class="hidden">
-								<h1 class="font-bold text-md">Back</h1>
-							</button>	
-						</div>
-						<div id='page-number-initiative' class="font-bold text-md"></div>
-						<div class="flex-1 text-center">
-							<button id='next-btn-initiative' class="hidden">
-								<h1 class="font-bold text-md">Next</h1>
-							</button>
-						</div>
-
-					</div>
-				</div>
-				
-
-			</div>
-
-		</div>
-
-	</div>	
-
-	
-	<div class="flex-col px-4 py-4 space-y-4 lg:flex lg:space-x-6 lg:flex-row lg:w-2/5 lg:px-0 lg:space-y-0" style="height: 690px;">
-		<div class="flex flex-col flex-1 w-full h-full space-y-4 " > 
-
-			
-			<div class='px-4 py-2 space-y-2 bg-white' style="height: 60%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">{{categories.6}}</h1>
-					<div style="height: 170px; position: relative;">
-						<canvas id="polar-area-chart" style="width: 100%;" data-url='/data_chart/{{categories.6.pk}}/{{employee_id}}' ></canvas>
-					</div>
-				
-				<table class="w-full ">
-					
-					<tbody id="polar-chart-tbody">
-							
-					</tbody>
-
-				</table>
-				
-				<div class="flex flex-row items-center justify-center space-x-8 " style="color: #5785DE;">
-					<div class="flex-1 text-center">
-						<button id='back-btn-polar' class="hidden">
-							<h1 class="font-bold text-md">Back</h1>
-						</button>	
-					</div>
-					<div id='page-number-polar' class="font-bold text-md"></div>
-					<div class="flex-1 text-center">
-						<button id='next-btn-polar' class="hidden">
-							<h1 class="font-bold text-md">Next</h1>
-						</button>
-					</div>
-
-				</div>
-
-			</div>
-
-			<div class='px-2 py-2 space-y-2 bg-white' style="height: 40%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">{{categories.1}}</h1>
-				<div style="height: 100px; position: relative;">
-					<canvas id="pie-chart" style="width: 100%;" data-url='/data_chart/{{categories.1.pk}}/{{employee_id}}'></canvas>
-				</div>
-
-				<div class="space-x-2 ">
-					<table class="w-full">
-
-						<tbody id="pie-chart-tbody" class="flex flex-wrap w-full ">
-	
-							<tr class="flex flex-1 font-sans text-lg" style="color: #626262;">
-								<td class="flex items-center space-x-2">
-									<div class="w-4 h-4" style="{{0 | gradient_bg}}"></div>
-									<h3 class="font-normal">Glo…</h3>
-								</td> 
-	
-								<td class='font-sans font-bold text-center' style='color: #079E1F;'>
-									90%
-								</td>
-							
-							</tr>
-	
-							
-						</tbody>	
-
-					</table>
-
-
-				</div>
-				
-				
-
-				<div class="flex flex-row items-center justify-center space-x-8 " style="color: #5785DE;">
-					<div class="flex-1 text-center">
-						<button id='back-btn-pie' class="hidden">
-							<h1 class="font-bold text-md">Back</h1>
-						</button>	
-					</div>
-					<div id='page-number-pie' class="font-bold text-md"></div>
-					<div class="flex-1 text-center">
-						<button id='next-btn-pie' class="hidden">
-							<h1 class="font-bold text-md">Next</h1>
-						</button>
-					</div>
-
-				</div>
-			</div>
-
-		</div>
-
-		<div class="flex flex-col flex-1 h-full space-y-4 overflow-y-auto" > 
-
-			
-			<div class='flex-1 p-4 bg-white' style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">{{categories.3}}</h1>
-				
-				<div style="position: relative; height: 230px;">
-					<canvas id="radar-chart" style="width: 100%;" data-url='/data_chart/{{categories.3.pk}}/{{employee_id}}'></canvas>
-				</div>
-				
-				
-				<div class="flex flex-row items-center justify-center space-x-8 " style="color: #5785DE;">
-					<div class="flex-1 text-center">
-						<button id='back-btn-radar' class="hidden">
-							<h1 class="font-bold text-md">Back</h1>
-						</button>	
-					</div>
-					<div id='page-number-radar' class="font-bold text-md"></div>
-					<div class="flex-1 text-center">
-						<button id='next-btn-radar' class="hidden">
-							<h1 class="font-bold text-md">Next</h1>
-						</button>
-					</div>
-
-				</div>
-
-			</div>
-
-			
-			
-			<div class='flex flex-col justify-center flex-1 px-4 py-2 space-y-2 bg-white' style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">{{categories.5}}</h1>
-				
-				<div style="height: 100px; position: relative; width: 100%;">
-					<canvas id="doughnut-chart" style="width: 100%;"  data-url='/data_chart/{{categories.5.pk}}/{{employee_id}}'></canvas>
-				</div>
-				<table>
-					
-					<tbody id="doughnut-chart-tbody">
-							
-					</tbody>
-
-				</table>
-				
-
-
-
-				<div class="flex flex-row items-center justify-center space-x-8 " style="color: #5785DE;">
-					<div class="flex-1 text-center">
-						<button id='back-btn-doughnut' class="hidden">
-							<h1 class="font-bold text-md">Back</h1>
-						</button>	
-					</div>
-					<div id='page-number-doughnut' class="font-bold text-md"></div>
-					<div class="flex-1 text-center">
-						<button id='next-btn-doughnut' class="hidden">
-							<h1 class="font-bold text-md">Next</h1>
-						</button>
-					</div>
-
-				</div>
-			</div>
-
-			{% for infinite_category in infinite_categories %}
-			<div  class='flex flex-col justify-center flex-1 px-4 py-2 space-y-2 bg-white infinite-chart' style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.064), 0 6px 20px 0 rgba(0, 0, 0, 0.044);">
-				<h1 class="font-sans text-xl font-bold text-center lg:text-3xl" style="color: #939393;">{{infinite_category}}</h1>
-				
-				<div style="height: 100px; position: relative; width: 100%;">
-					<canvas id='chart' style="width: 100%;"  data-url='/data_chart/{{infinite_category.pk}}/{{employee_id}}'></canvas>
-				</div>
-				<table>
-					
-					<tbody id="chart-tbody">
-							
-					</tbody>
-
-				</table>
-				
-
-
-
-				<div class="flex flex-row items-center justify-center space-x-8 " style="color: #5785DE;">
-					<div class="flex-1 text-center">
-						<button id='back-btn' class="hidden">
-							<h1 class="font-bold text-md">Back</h1>
-						</button>	
-					</div>
-					<div id='page-number' class="font-bold text-md"></div>
-					<div class="flex-1 text-center">
-						<button id='next-btn' class="hidden">
-							<h1 class="font-bold text-md">Next</h1>
-						</button>
-					</div>
-
-				</div>
-			</div>
-			{% endfor %}
-
-
-
-		</div>
-
-	</div>
-
+<section class="container flex flex-col items-center pt-6 mx-auto space-y-4">
+  <div style="width: 800px;" class="px-6 py-2 bg-white shadow-box">
+    <div class="flex items-center justify-center flex-1 space-x-2">
+      {% image user_evaluation.employee.profile_pic fill-60x60 as employee_pic %}
+      
+      <img src="{{employee_pic.url}}" class="rounded-full" width="60">
+      <div class="flex flex-col justify-center">
+        <h1 class="font-sans text-sm font-bold lg:text-xl text-gray" >
+          {{user_evaluation.employee}}
+        </h1>
+        <h2 class="font-sans text-sm font-semibold text-gray-1">
+          {{user_evaluation.employee.position}}
+        </h2>
+        <a href='evaluation/{{user_evaluation.pk}}' class="font-sans text-xs font-semibold text-blue">
+          View Evaluation
+        </a>
+      </div>
+    </div>
+    
+    <div class="flex justify-between py-4">
+      <div class="flex-1" >
+        <div class="flex space-x-2">
+          <span class="font-sans font-semibold text-gray">Client Name : </span>
+          <span class="font-sans text-gray">{{user_evaluation.client}}</span>
+        </div>
+        <div >
+          <span class="font-sans font-semibold text-gray">Project Assign : </span>
+          <span class="font-sans text-gray">{{user_evaluation.project_assign}}</span>
+        </div>  
+      </div>
+      <div class="flex-1" >
+        <div class="flex space-x-2">
+          <span class="font-sans font-semibold text-gray">Position : </span>
+          <span class="font-sans text-gray">{{user_evaluation.employee.position}}</span>
+        </div>
+        <div class="flex space-x-2">
+          <span class="font-sans font-semibold text-gray">Hiring Date : </span>
+          <span class="font-sans text-gray">{{user_evaluation.assigned_date}}</span>
+        </div>  
+      </div>
+    </div>
+    
+  </div>
+  <div class="wrapper">
+    {% for category in category_percentages %}
+      <div class="mb-8 mr-4 card">
+        <div class="circle" >
+          <div class="bar" data-value="{{category.1}}"></div>
+          <div class="box"><span></span></div>
+        </div>
+        <div class="text">{{category.0}}</div>
+      </div>
+    {% endfor  %}
+  </div>
 
 </section>
 
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/bar_chart.js' %}"></script>
-<script src="{% static 'js/radar_chart.js' %}"></script>
-<script src="{% static 'js/polar_area_chart.js' %}"></script>
-<script src="{% static 'js/pie_chart.js' %}"></script>
-<script src="{% static 'js/doughnut_chart.js' %}"></script>
-<script src="{% static 'js/line_chart.js' %}"></script>
-<script src="{% static 'js/chart_infinite.js' %}"></script>
-<script src="{% static 'js/header_search.js' %}"></script>
+
+<script src="{% static 'js/circular_percentage.js' %}"></script>
 {% endblock %}
+

@@ -248,108 +248,127 @@ class ClientIndexPage(BaseAbstractPage):
     max_count = 1
     parent_page_types = ['base.BaseIndexPage']
     
-    @route(r'^search/$')
-    def pop_search(self, request):
-        from performance_management_system.base.models import UserEvaluation, EvaluationPage
+    def paginate_data(self, data, current_page):
+        paginator = Paginator(data, 8)
 
-        search_query = request.GET.get('search_query', None).split()
-
-        if search_query :        
-            qset1 =  reduce(operator.__or__, [Q(employee__first_name__icontains=query) | Q(employee__last_name__icontains=query) | Q(employee__position__icontains=query) for query in search_query])
-
-            user_evaluations = UserEvaluation.objects.filter(qset1, client=request.user.client).distinct()
-
-            if len(user_evaluations) == 0:
-                return JsonResponse(data={
-                    'empty': True
-                })
-
-            return TemplateResponse(request, 'client/pop_search.html', {
-                'results' : user_evaluations,
-                'user_evaluation_details_index' : EvaluationPage.objects.live().first(),
-            })
-        return JsonResponse(data={
-            'empty': True
-        })
-
-    def get_menu_list(self):
-        return [
-            [self.url,'All'],
-            ['?filter=evaluated','Evaluated'],
-            ['?filter=on-evaluation','On Evaluation'],
-        ]
+        try:
+            data = paginator.page(current_page)
+        except PageNotAnInteger:
+            data = paginator.page(1)
+        except EmptyPage:
+            data = paginator.page(paginator.num_pages)
+        
+        return data
+    
+    
 
         
     @route(r'^$') 
     def default_route(self, request):
         from performance_management_system.base.models import EvaluationPage
+        notification_url = self.url
         
-        filter_query = request.GET.get('filter', None)
-        filter_text = None
-        
-        if filter_query:
-            if filter_query == 'on-evaluation':
-                filter_text = 'On Evaluation'
-            elif filter_query  == 'evaluated':
-                filter_text = 'Evaluated'
 
         return self.render(
             request,
             context_overrides={
-                'menu_lists': self.get_menu_list(),
                 'user_model': request.user.client,
+                'current_menu': 'dashboard',
                 'title': 'EMPLOYEES',
                 'evaluation_index': EvaluationPage.objects.live().first().url,
                 'search_page': self,
-                'filter': filter_text,
-                'filter_query': filter_query,
+                'notification_url': notification_url,
             }
         )
     
-    @route(r'^search/employee/$')
+    
+    
+    @route(r'^search/employees/$')
     def employee_search(self, request):
-        from performance_management_system.base.models import UserEvaluation,EvaluationPage
+        from performance_management_system.base.models import UserEvaluation, EvaluationPage
 
-        search_query = request.GET.get('search_query', None).split()
-        filter_query = request.GET.get('filter_query', None)
+        page = request.GET.get('page', 1)
+
+        name = request.GET.get('name', '')
+        address = request.GET.get('address', '')
+        contact_number = request.GET.get('contact_number', '')
+        position = request.GET.get('position', '')
+        status = request.GET.get('status', '')
+        sort = request.GET.get('sort', '')
 
         user_evaluations = None
 
-        if search_query:
-            qset1 =  reduce(operator.__or__, [Q(employee__first_name__icontains=query) | Q(employee__last_name__icontains=query) | Q(employee__position__icontains=query)  for query in search_query])
+        if name or address or contact_number or status or sort or position:
 
-            user_evaluations = UserEvaluation.objects.filter(qset1, client=request.user.client).distinct()
-
-            if filter_query:
-                if filter_query == 'on-evaluation':
-                    user_evaluations = user_evaluations.filter(percentage=0)
-                elif filter_query == 'evaluated':
-                    user_evaluations = user_evaluations.exclude(percentage=0)
+            if name:
+                name = name.split()
+                qset1 =  reduce(operator.__or__, [Q(employee__first_name__icontains=query) | Q(employee__last_name__icontains=query) for query in name])
+                user_evaluations = UserEvaluation.objects.filter(qset1, client=request.user.client).distinct()
+                if sort:
+                    user_evaluations = user_evaluations.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position).order_by(sort)
+                else:
+                    user_evaluations = user_evaluations.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position)
+            else:
+                if sort:
+                    user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position, client_id=client_id).order_by(sort)
+                else:
+                    user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position, client_id=client_id)
+            
             
 
-            return TemplateResponse(
-                request,
-                'client/search_employee_specified.html',
-                {
-                    'user_evaluations' : user_evaluations,
-                    'evaluation_page_index' : EvaluationPage.objects.live().first()
-                }
+            return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                         'client/search_employee_specified.html',
+                        {
+                            'user_evaluations' : self.paginate_data(user_evaluations, page),
+                            'evaluation_page_index': EvaluationPage.objects.live().first()
+                        }
+                    ),
+                },
             )
 
         user_evaluations = UserEvaluation.objects.filter(client=request.user.client)
 
-        if filter_query:
-            if filter_query == 'on-evaluation':
-                user_evaluations = user_evaluations.filter(percentage=0, client=request.user.client)
-            elif filter_query == 'evaluated':
-                user_evaluations = user_evaluations.exclude(percentage=0).filter(client=request.user.client)
+        user_evaluations = self.paginate_data(user_evaluations, page)
+        max_pages = user_evaluations.paginator.num_pages
+        starting_point = user_evaluations.number
+        next_number = 1
+        previous_number = 1
+
+        if user_evaluations.has_next():
+            next_number = user_evaluations.next_page_number()
+        
+        if user_evaluations.has_previous():
+            previous_number = user_evaluations.previous_page_number()
+
+        if max_pages > 3 :
+            max_pages = 4
+
+        if starting_point % 3 == 0:
+            starting_point = starting_point - 2
+        elif (starting_point - 1) % 3  != 0:
+            starting_point = starting_point - 1 
 
 
-        return TemplateResponse(
-                request,
-                'client/search_employee_specified.html',
-                {
-                    'user_evaluations' : user_evaluations,
-                    'evaluation_page_index' : EvaluationPage.objects.live().first()
-                }
+        return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                        'client/search_employee_specified.html',
+                        {
+                            'user_evaluations' : user_evaluations,
+                            'evaluation_page_index': EvaluationPage.objects.live().first()
+                        }
+                    ),
+                    'pages_indicator': render_to_string(
+                        'includes/page_indicator.html',
+                        {
+                            'pages': user_evaluations,
+                            'xrange': range(starting_point, starting_point + max_pages)
+                        }
+                    ),
+                    'next_number': next_number,
+                    'previous_number': previous_number,
+                    'current_number': user_evaluations.number,
+                },
             )
