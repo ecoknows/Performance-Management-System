@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from django.db import models
 from django.utils import timezone
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import Q
 
 from wagtail.core.models import Page, Orderable
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
@@ -28,125 +29,144 @@ from performance_management_system.users.models import User
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client, ClientIndexPage
 from django.contrib.postgres.fields import ArrayField
+from itertools import chain
+import operator
+from functools import reduce
 
 class BaseAbstractPage(RoutablePageMixin, Page):
 
-    def paginate_notification(self, notifications, current_page, max_page):
-        paginator = Paginator(notifications, max_page)
+    def paginate_data(self, data, current_page):
+        paginator = Paginator(data, 8)
 
         try:
-            notifications = paginator.page(current_page)
+            data = paginator.page(current_page)
         except PageNotAnInteger:
-            notifications = paginator.page(1)
+            data = paginator.page(1)
         except EmptyPage:
-            notifications = paginator.page(paginator.num_pages)
+            data = paginator.page(paginator.num_pages)
         
-        return notifications
+        return data
+    
     
     @route(r'^notifications/$')
     def notification(self, request):
-        from performance_management_system.hr.models import HRIndexPage
-        
-        
-        current_page = request.GET.get('current_page', None)
-
-
-        if current_page:
-            notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
-            starting_point = len(notifications)
-
-            if starting_point >= 10:
-                notifications = notifications[10:]
-            else:
-                notifications = notifications[starting_point:]
-
-            notifications =  self.paginate_notification(notifications, current_page, 3)
-
-            has_next = notifications.has_next()
-            next_number = None
-            if has_next:
-                next_number = notifications.next_page_number()
-
-            return JsonResponse(
-                data={
-                    'next_number': next_number,
-                    'has_next': has_next,
-                    'html': render_to_string('base/paginated_notification.html',{'notifications' : notifications}) 
-                }
-            )
-
-        
-
-        notification_id = request.GET.get('notification_id', None)
-        make_it_seen = request.GET.get('make_it_seen', False)
-
-        if notification_id:
-            from performance_management_system.hr.models import EmployeeDetailsPage
-            notification = Notification.objects.get(pk=notification_id)
-            if make_it_seen: 
-                notification.seen = True
-                notification.save()
-            
-            selected_user_evaluation = notification.user_evaluation
-
-            categories = EvaluationCategories.objects.all()
-            max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
-            category_percentages = []
-            for category in categories:
-                rate_assigns = EvaluationRateAssign.objects.filter(
-                    evaluation_rate__evaluation_categories=category,
-                    user_evaluation = selected_user_evaluation
-                )
-                percentage = 0
-                for rate_assign in rate_assigns:
-                    percentage = rate_assign.rate + percentage
-
-                rate_assign_len = len(rate_assigns) 
-
-                if rate_assign_len:
-                    percentage = (percentage / (rate_assign_len * max_rate)) * 100
-                else:
-                    percentage = 0
-                
-                category_percentages.append(percentage)
-                
-            return JsonResponse(
-                data={
-                    'selected_html' : render_to_string(
-                        'base/selected_notification.html', 
-                        {
-                            'notification' : notification,
-                            'categories': categories,
-                            'category_percentages': category_percentages,
-                            'evaluation_index_page': EmployeeDetailsPage.objects.live().first().url + str(selected_user_evaluation.employee.pk) +'/clients/' + str(selected_user_evaluation.pk)
-                        }
-                    ),
-                    'notification_html' :  render_to_string(
-                        'hr/counter_notification.html',
-                        {
-                            'notifications_count' : 4,
-                            'id': request.user.id
-                        }
-                    )
-                },
-               
-            )
-        
-        notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
+        from performance_management_system.hr.models import EmployeeListPage, AssignEmployee, ClientListPage
 
         return self.render(
             request,
             context_overrides={
                 'user_model' : request.user.hradmin,
-                'notifications' : self.paginate_notification(notifications, current_page, 10),
                 'notification_url': self.url,
-                'search_page': HRIndexPage.objects.live().first(),
-                'notifications_count' : len(notifications),
+                'client_list_index':  ClientListPage.objects.live().first(),
+                'employee_list_index': EmployeeListPage.objects.live().first(),
+                'assign_employee_index': AssignEmployee.objects.live().first(),
             },
             template="base/notifications.html",
         )
 
-    
+    @route(r'^notifications/(\d+)/$')
+    def notification_view(self, request, notification_id):
+        from performance_management_system.hr.models import EmployeeListPage, AssignEmployee, ClientListPage
+
+        return self.render(
+            request,
+            context_overrides={
+                'user_model' : request.user.hradmin,
+                'notification_url': self.url,
+                'client_list_index':  ClientListPage.objects.live().first(),
+                'employee_list_index': EmployeeListPage.objects.live().first(),
+                'assign_employee_index': AssignEmployee.objects.live().first(),
+            },
+            template="base/notifications_view.html",
+        )
+
+
+    @route(r'^notifications/search/$')
+    def notifications_search(self, request):
+
+        page = request.GET.get('page', 1)
+
+        name = request.GET.get('name', '')
+        message = request.GET.get('message', '')
+        time = request.GET.get('time', '')
+        position = request.GET.get('position', '')
+        status = request.GET.get('status', '')
+        sort = request.GET.get('sort', '')
+
+        notifications = None
+
+        if name or message or time or status or sort or position:
+
+            if name:
+                name = name.split()
+                qset1 =  reduce(operator.__or__, [Q(user_evaluation__employee__first_name=query) | Q(user_evaluation__employee__last_name=query) for query in name])
+                notifications = Notification.objects.filter(qset1, reciever=request.user).distinct()
+                if sort:
+                    notifications = notifications.filter( message__icontains=message, created_at__icontains=time, seen__icontains=status).order_by(sort)
+                else:
+                    notifications = notifications.filter( message__icontains=message, created_at__icontains=time, seen__icontains=status)
+            else:
+                if sort:
+                    notifications = Notification.objects.filter( message__icontains=message, created_at__icontains=time, seen__icontains=status, reciever=request.user).order_by(sort)
+                else:
+                    notifications = Notification.objects.filter( message__icontains=message, created_at__icontains=time, seen__icontains=status, reciever=request.user)
+            
+            
+
+            return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                         'base/search_notifications.html',
+                        {
+                            'notifications' : self.paginate_data(notifications.order_by('created_at'), page),
+                        }
+                    ),
+                },
+            )
+
+        notifications = Notification.objects.filter(reciever=request.user)
+
+        notifications = self.paginate_data(notifications.order_by('-created_at'), page)
+        max_pages = notifications.paginator.num_pages
+        starting_point = notifications.number
+        next_number = 1
+        previous_number = 1
+
+        if notifications.has_next():
+            next_number = notifications.next_page_number()
+        
+        if notifications.has_previous():
+            previous_number = notifications.previous_page_number()
+
+        if max_pages > 3 :
+            max_pages = 4
+
+        if starting_point % 3 == 0:
+            starting_point = starting_point - 2
+        elif (starting_point - 1) % 3  != 0:
+            starting_point = starting_point - 1 
+
+
+        return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                        'base/search_notifications.html',
+                        {
+                            'notifications' : notifications,
+                        }
+                    ),
+                    'pages_indicator': render_to_string(
+                        'includes/page_indicator.html',
+                        {
+                            'pages': notifications,
+                            'xrange': range(starting_point, starting_point + max_pages)
+                        }
+                    ),
+                    'next_number': next_number,
+                    'previous_number': previous_number,
+                    'current_number': notifications.number,
+                },
+            )
     class Meta:
         abstract = True
 

@@ -1,0 +1,60 @@
+
+
+{% extends 'base.html'%}
+
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+
+{% block head_style %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/loading_bar.css' %}">
+{% endblock %}
+
+
+{% block style %}
+
+<style>
+.employee-profile{
+	width: 40px; 
+	height: 40px;
+}
+.overview-text{
+	font-size: 0.60rem;
+	line-height: 1rem;
+}
+@media (min-width: 1024px) { 
+
+.employee-profile{
+	width: 80px; 
+	height: 80px;
+}
+.overview-text{
+	font-size: 1.125rem;
+	line-height: 1.75rem;
+}
+}
+
+</style>
+
+{% endblock %}
+
+{% block header %}
+{% include 'includes/header_latest.html' with user_model=request.user.hradmin  %}
+{% endblock %}
+
+{% block side_menu %}
+  {% include 'includes/side_menu.html' with current_menu='notifications' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="container p-6 mx-auto space-y-6 ">
+
+
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/header_search.js' %}"></script>
+{% endblock %}

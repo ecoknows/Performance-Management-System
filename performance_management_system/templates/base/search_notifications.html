@@ -1,0 +1,22 @@
+
+{% load static wagtailcore_tags wagtailimages_tags humanize %}
+
+
+{% for notification in notifications %}
+<tr class="table-bottom-border hover:bg-gray-100">
+		
+	<td class="p-0 font-sans font-semibold text-gray">
+		<a class='flex items-center justify-start block w-full px-4 space-x-4' href="{{notification.pk}}" style="min-height: 3rem;">
+            {% include 'includes/notifications_profile_pic.html' with type=notification.notification_type %}
+		</a>
+	</td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href="{{notification.pk}}">{{notification.message}}</a></td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{notification.pk}}'>{{notification.created_at|naturaltime}}</a></td>
+
+	{% if notification.seen %}
+	<td class="p-0 font-sans text-sm font-semibold text-green"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{notification.pk}}'>Seen</a></td>
+	{% else %}
+	<td class="p-0 font-sans text-sm font-semibold text-red"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{notification.pk}}'>Not Seen</a></td>
+	{% endif %}
+</tr>
+{% endfor %}

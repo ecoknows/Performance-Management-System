@@ -1,0 +1,78 @@
+
+{% load wagtailimages_tags %}
+
+{% if type == 'client-evaluated-hr' %}
+{% image notification.user_evaluation.employee.profile_pic fill-30x30 as employee_pic %}
+<img src="{{employee_pic.url}}" width="30"  class="rounded-full" >
+<div>
+    <h1 style='color:#E67E22'>{{notification.user_evaluation.employee}}</h1>
+    <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
+        {{notification.user_evaluation.employee.user.username}}
+    </h2>
+</div>
+
+{% elif type == 'client-evaluated-employee' %}
+{% image notification.user_evaluation.client.profile_pic fill-30x30 as client_pic %}
+<img src="{{client_pic.url}}" width="30"  class="rounded-full" >
+<div>
+    <h1 style='color:#E67E22'>{{notification.user_evaluation.client}}</h1>
+    <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
+        {{notification.user_evaluation.client.user.username}}
+    </h2>
+</div>
+
+{% elif notification.notification_type == 'notify-evaluated-all-client' or notification.notification_type == 'notify-evaluated-specific-client'%}
+{% image notification.user_evaluation.hr_admin.profile_pic fill-30x30 as hr_admin_pic %}
+<img src="{{hr_admin_pic.url}}" width="30"  class="rounded-full" >
+<div>
+    <h1 style='color:#E67E22'>{{notification.user_evaluation.hr_admin}}</h1>
+    <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
+        {{notification.user_evaluation.hr_admin.user.username}}
+    </h2>
+</div>
+
+
+{% elif notification.notification_type == 'new-client-employee' %}
+{% image notification.user_evaluation.client.profile_pic fill-30x30 as client_pic %}
+<img src="{{client_pic.url}}" width="30"  class="rounded-full" >
+<div>
+    <h1 style='color:#E67E22'>{{notification.user_evaluation.client}}</h1>
+    <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
+        {{notification.user_evaluation.client.user.username}}
+    </h2>
+</div>
+
+
+{% elif notification.notification_type == 'new-employee-client' %}
+{% image notification.user_evaluation.employee.profile_pic fill-30x30 as employee_pic %}
+<img src="{{employee_pic.url}}" width="30"  class="rounded-full" >
+<div>
+    <h1 style='color:#E67E22'>{{notification.user_evaluation.employee}}</h1>
+    <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
+        {{notification.user_evaluation.employee.user.username}}
+    </h2>
+</div>
+
+
+{% elif notification.notification_type == 'evaluated-form-is-send-to-employee' %}
+{% image notification.user_evaluation.hr_admin.profile_pic fill-30x30 as hr_admin_pic %}
+<img src="{{hr_admin_pic.url}}" width="30"  class="rounded-full" >
+<div>
+    <h1 style='color:#E67E22'>{{notification.user_evaluation.hr_admin}}</h1>
+    <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
+        {{notification.user_evaluation.hr_admin.user.username}}
+    </h2>
+</div>
+
+
+{% elif notification.notification_type == 'client-has-been-notify' %}
+{% image notification.user_evaluation.hr_admin.profile_pic fill-30x30 as hr_admin_pic %}
+<img src="{{hr_admin_pic.url}}" width="30"  class="rounded-full" >
+<div>
+    <h1 style='color:#E67E22'>{{notification.user_evaluation.hr_admin}}</h1>
+    <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
+        {{notification.user_evaluation.hr_admin.user.username}}
+    </h2>
+</div>
+
+{% endif %}

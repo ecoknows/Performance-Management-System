@@ -1,193 +1,97 @@
 {% extends 'base.html'%}
-{% load wagtailcore_tags wagtailimages_tags static humanize %}
+{% load static wagtailimages_tags wagtailcore_tags %}
 
-{% block header %}
-{% include 'includes/header_latest.html' with user_model=request.user.hradmin title='Notifications' %}
+
+{% block notify %}
+<div class="notify "style="z-index: 4000;"><span id="notifyType" class="" ></span></div>  
 {% endblock %}
 
-{% block side_bard %}
+{% block header %}
+{% include 'includes/header_latest.html' with user_model=request.user.hradmin title='Notifications' search=True %}
+{% endblock %}
+
+{% block side_menu %}
   {% include 'includes/side_menu.html' with current_menu='notifications' %}
 {% endblock %}
 
+{% block head_style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/loading_bar.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/table.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
 
 {% block content %}
-<section class="container px-4 mx-auto">
-	<div class="flex space-x-6 min-height-400 max-width-900" >
-		<div class="flex-1">
-			<div class="flex-1 space-y-4" id="user-notifications">
-				{% for notification in notifications %}
-				{% if notification.notification_type == 'client-evaluated-hr' %}
-				<a data-notification-pk='{{notification.pk}}' 
-				onclick="anchor_clickable(this)"
-				class=" cursor-pointer flex w-full p-4 bg-white
-						{% if notification.seen %} 
-							shadow-box
-						{% else %} 
-							shadow-box-yellow 
-						{% endif %}">
-					{% image notification.user_evaluation.employee.profile_pic original as notification_image %}
-					<img src='{{notification_image.url}}' class="object-cover w-16 h-16 rounded-full" >
-					<div class="flex flex-col justify-center px-4 ">
-						<div class="flex items-end space-x-2">
-							<h2 class="font-sans text-sm font-semibold text-gray-primary-color">{{notification.user_evaluation.employee}}</h2>
-							<h2 class="font-sans text-sm font-semibold text-gray-tertiary-color">{{notification.user_evaluation.employee.position}}</h2>
-						</div>
-						<h1 class="font-sans text-2xl font-bold leading-6 text-gray-primary-color">{{notification.message}}</h1>
-						<h2 class="font-sans text-sm leading-6 text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-					</div>
-	
-				</a>
-				{% elif notification.notification_type == 'client-evaluated-employee'  %}
-				<a data-notification-pk='{{notification.pk}}' 
-				onclick="anchor_clickable(this)"
-				class=" cursor-pointer flex w-full p-4 bg-white
-				{% if notification.seen %} 
-					shadow-box
-				{% else %} 
-					shadow-box-yellow 
-				{% endif %}">
-					{% image notification.user_evaluation.client.profile_pic original as notification_image %}
-					<img src='{{notification_image.url}}' class="object-cover w-16 h-16 rounded-full" >
-					<div class="flex flex-col justify-center px-4">
-						<div class="flex items-end space-x-2">
-							<h2 class="font-sans text-sm font-semibold text-gray-primary-color">{{notification.user_evaluation.client}}</h2>
-							<h2 class="font-sans text-sm font-semibold text-md text-gray-tertiary-color">Client</h2>
-						</div>
-						<h1 class="font-sans text-2xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-						<h2 class="font-sans text-sm text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-					</div>
-	
-				</a>
-	
-				{% elif notification.notification_type == 'notify-evaluated-all-client' or notification.notification_type == 'notify-evaluated-specific-client'%}
-	
-				<a data-hr_admin_id='{{notification.hr_admin.pk}}' onclick="anchor_clickable(this)" data-notification-pk='{{notification.pk}}' class=" cursor-pointer flex w-full p-4 bg-white
-				{% if notification.seen %}
-					shadow-box
-				{% else %} 
-					shadow-box-yellow 
-				{% endif %}">
-					{% image notification.hr_admin.profile_pic original as notification_image %}
-					<img src='{{notification_image.url}}' class="object-cover w-16 h-16 rounded-full" >
-					<div class="flex flex-col justify-center px-4">
-						<div class="flex items-end space-x-2">
-							<h2 class="font-sans text-sm font-semibold text-gray-primary-color">{{notification.hr_admin}}</h2>
-							<h2 class="font-sans text-sm font-semibold text-gray-tertiary-color">HR Admin</h2>
-						</div>
-						<h1 class="font-sans text-2xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-						<h2 class="font-sans text-sm text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-					</div>
-	
-				</a>
-				{% elif notification.notification_type == 'new-client-employee' %}
-	
-				<a data-hr_admin_id='{{notification.hr_admin.pk}}' onclick="anchor_clickable(this)" data-notification-pk='{{notification.pk}}' class=" cursor-pointer flex w-full p-4 bg-white
-				{% if notification.seen %} 
-					shadow-box
-				{% else %} 
-					shadow-box-yellow 
-				{% endif %}">
-					{% image notification.user_evaluation.client.profile_pic original as notification_image %}
-					<img src='{{notification_image.url}}' class="object-cover w-16 h-16 rounded-full" >
-					<div class="flex flex-col justify-center px-4">
-						<div class="flex items-end space-x-2">
-							<h2 class="font-sans text-sm font-semibold text-gray-primary-color">{{notification.user_evaluation.client}}</h2>
-							<h2 class="font-sans text-sm font-semibold text-gray-tertiary-color">Client</h2>
-						</div>
-						<h1 class="font-sans text-2xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-						<h2 class="font-sans text-sm text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-					</div>
-				</a>
-	
-				{% elif notification.notification_type == 'new-employee-client' %}
-	
-				<a  data-hr_admin_id='{{notification.hr_admin.pk}}' onclick="anchor_clickable(this)" data-notification-pk='{{notification.pk}}' class=" cursor-pointer flex w-full p-4 bg-white
-				{% if notification.seen %} 
-					shadow-box
-				{% else %} 
-					shadow-box-yellow 
-				{% endif %}">
-					{% image notification.user_evaluation.employee.profile_pic original as notification_image %}
-					<img src='{{notification_image.url}}' class="object-cover w-16 h-16 rounded-full" >
-					<div class="flex flex-col justify-center px-4">
-						<div class="flex items-end space-x-2">
-							<h2 class="font-sans text-sm font-semibold text-gray-primary-color">{{notification.user_evaluation.employee}}</h2>
-							<h2 class="font-sans text-sm font-semibold text-gray-tertiary-color">{{notification.user_evaluation.employee.position}}</h2>
-						</div>
-						<h1 class="font-sans text-2xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-						<h2 class="font-sans text-lg text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-					</div>
-				</a>
-	
-				{% elif notification.notification_type == 'evaluated-form-is-send-to-employee' %}
-	
-				<a data-hr_admin_id='{{notification.hr_admin.pk}}' onclick="anchor_clickable(this)" data-notification-pk='{{notification.pk}}' class=" cursor-pointer flex p-4 bg-white
-				{% if notification.seen %} 
-					shadow-box
-				{% else %} 
-					shadow-box-yellow 
-				{% endif %}">
-					{% image notification.hr_admin.profile_pic original as notification_image %}
-					<img src='{{notification_image.url}}' class="object-cover w-16 h-16 rounded-full" >
-					<div class="flex flex-col justify-center px-4">
-						<div class="flex items-end space-x-2">
-							<h2 class="font-sans text-sm font-semibold text-gray-primary-color">{{notification.hr_admin}}</h2>
-							<h2 class="font-sans text-sm font-semibold text-gray-tertiary-color">HR Admin</h2>
-						</div>
-						<h1 class="font-sans text-2xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-						<h2 class="font-sans text-sm text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-					</div>
-				</a>
-	
-				{% elif notification.notification_type == 'client-has-been-notify' %}
-				<a  data-hr_admin_id='{{notification.hr_admin.pk}}' onclick="anchor_clickable(this)" data-notification-pk='{{notification.pk}}' class=" cursor-pointer flex w-full p-4 bg-white
-				{% if notification.seen %} 
-					shadow-box
-				{% else %} 
-					shadow-box-yellow 
-				{% endif %}">
-					{% image notification.hr_admin.profile_pic original as notification_image %}
-					<img src='{{notification_image.url}}' class="object-cover w-16 h-16 rounded-full" >
-					<div class="flex flex-col justify-center px-4">
-						<div class="flex items-end space-x-2">
-							<h2 class="font-sans text-sm font-semibold text-gray-primary-color">{{notification.hr_admin}}</h2>
-							<h2 class="font-sans text-sm font-semibold text-gray-tertiary-color">HR Admidn</h2>
-						</div>
-						<h1 class="font-sans text-2xl font-bold text-gray-primary-color">{{notification.message}}</h1>
-						<h2 class="font-sans text-sm text-gray-primary-color">{{notification.created_at|naturaltime}}</h2>
-					</div>
-				</a>
-	
-				{% endif %}
-	
-	
-				{% endfor %}
-	
-			</div>
+<section class="container flex flex-col h-full mx-auto">
+	<table>
+		<thead>
+			<td class="font-sans font-semibold text-gray">
+				<div>
+					Name/ID <i class="cursor-pointer fas fa-sort" data-field-name='company'></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded ">
+					<img src='{% static "img/icons/search.png" %}' width="18">
+					<input id='search-input-name' autocomplete="off" class='w-full px-2 focus:outline-none bg-color-transparent '>
+				</div>
 			
-			<div class="flex items-center justify-center p-4">
-				<button id='more-button' class="font-sans text-xl font-bold text-center text-blue">More</button>
+			</td>
+			<td class="font-sans font-semibold text-gray ">
+				<div>
+					Message <i class="cursor-pointer fas fa-sort" data-field-name='message'></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded ">
+					<img src='{% static "img/icons/search.png" %}' width="18">
+					<input id='search-input-message' autocomplete="off" class='w-full px-2 focus:outline-none bg-color-transparent '>
+				</div>
+			
+			</td>
+			<td class="font-sans font-semibold text-gray">
+				<div>
+					Time <i class="cursor-pointer fas fa-sort" data-field-name='time'></i> 
+				</div>
+			
+			
+			</td>
+			<td class="font-sans font-semibold text-gray">
+				<div>
+					Status <i class="cursor-pointer fas fa-sort" data-field-name='status'></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded " style="width: 120px;">
+					<select id='search-input-status' class="w-full focus:outline-none">
+						<option value="">All</option>
+						<option value="true">Read</option>
+						<option value="false">Not read</option>
+					</select>
+				</div>
+			
+			</td>
+		</thead>
+		<tbody id="notfications-list-container">
+		</tbody>
+	</table>
+	<div id='container-page-indicator' class="flex items-end justify-center flex-1 hidden w-full py-4 ">
+		<div class="flex items-center justify-center">
+			<i id='back-button' class="px-2 py-1 cursor-pointer select-none fas fa-angle-left hover:bg-gray-200"></i>
+			<div id='pages-indicator' class="flex items-center justify-center ">
 			</div>
+			<i id='next-button' class="px-2 py-1 cursor-pointer select-none fas fa-angle-right hover:bg-gray-200"></i>
 		</div>
-	
-		<div class="flex flex-1 ">
-			<div  id='notification-selected' class="fixed px-8 py-8 bg-white shadow-box max-width-900 width-40vw height-490">
-			</div>
-		</div>	
-		
 	</div>
-
 </section>
 {% endblock %}
 
 {% block scripts %}
 <script>
-	let notification_first_id = '{{notifications.0.pk}}'
-
-	let user_evaluation_first_id = '{{notifications.0.user_evaluation.pk}}'
-	let hr_admin_first_id = '{{notifications.0.hr_admin.pk}}'
+	let csrf_token = '{{csrf_token}}'
+	let table_url = 'search/'
+	let current_page = 1
+	let current_sort = null
+	let previous_page = null
+	let next_page = null
+    let container = $('#notfications-list-container')
 </script>
-<script src="{% static 'js/notifications.js' %}"></script>
-<script src="{% static 'js/header_search.js' %}"></script>
-<script src="{% static 'js/infinite_scroll_pagination.js' %}"></script>
+
+<script src="{% static 'js/notifications_search.js' %}"></script>
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/dialog.js' %}"></script>
 {% endblock %}
