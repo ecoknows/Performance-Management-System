@@ -71,7 +71,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
 
             if name:
                 name = name.split()
-                qset1 =  reduce(operator.__or__, [Q(user_evaluation__employee__first_name=query) | Q(user_evaluation__employee__last_name=query) for query in name])
+                qset1 =  reduce(operator.__or__, [Q(user_evaluation__employee__first_name__icontains=query) | Q(user_evaluation__employee__last_name__icontains=query) for query in name])
                 notifications = Notification.objects.filter(qset1, reciever=request.user).distinct()
                 if sort:
                     notifications = notifications.filter( message__icontains=message, created_at__icontains=time, seen__icontains=status).order_by(sort)
