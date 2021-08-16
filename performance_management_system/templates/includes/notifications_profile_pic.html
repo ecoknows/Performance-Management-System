@@ -6,9 +6,11 @@
 <img src="{{employee_pic.url}}" width="30"  class="rounded-full" >
 <div>
     <h1 style='color:#E67E22'>{{notification.user_evaluation.employee}}</h1>
+    {% if is_hr %}
     <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
         {{notification.user_evaluation.employee.user.username}}
     </h2>
+    {% endif %}
 </div>
 
 {% elif type == 'client-evaluated-employee' %}
@@ -16,9 +18,11 @@
 <img src="{{client_pic.url}}" width="30"  class="rounded-full" >
 <div>
     <h1 style='color:#E67E22'>{{notification.user_evaluation.client}}</h1>
+    {% if is_hr %}
     <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
         {{notification.user_evaluation.client.user.username}}
     </h2>
+    {% endif %}
 </div>
 
 {% elif notification.notification_type == 'notify-evaluated-all-client' or notification.notification_type == 'notify-evaluated-specific-client'%}
@@ -26,9 +30,11 @@
 <img src="{{hr_admin_pic.url}}" width="30"  class="rounded-full" >
 <div>
     <h1 style='color:#E67E22'>{{notification.hr_admin}}</h1>
+    {% if is_hr %}
     <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
         {{notification.hr_admin.user.username}}
     </h2>
+    {% endif %}
 </div>
 
 
@@ -37,9 +43,11 @@
 <img src="{{client_pic.url}}" width="30"  class="rounded-full" >
 <div>
     <h1 style='color:#E67E22'>{{notification.user_evaluation.client}}</h1>
+    {% if is_hr %}
     <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
         {{notification.user_evaluation.client.user.username}}
     </h2>
+    {% endif %}
 </div>
 
 
@@ -48,9 +56,11 @@
 <img src="{{employee_pic.url}}" width="30"  class="rounded-full" >
 <div>
     <h1 style='color:#E67E22'>{{notification.user_evaluation.employee}}</h1>
+    {% if is_hr %}
     <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
         {{notification.user_evaluation.employee.user.username}}
     </h2>
+    {% endif %}
 </div>
 
 
@@ -59,9 +69,11 @@
 <img src="{{hr_admin_pic.url}}" width="30"  class="rounded-full" >
 <div>
     <h1 style='color:#E67E22'>{{notification.hr_admin}}</h1>
+    {% if is_hr %}
     <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
         {{notification.hr_admin.user.username}}
     </h2>
+    {% endif %}
 </div>
 
 
@@ -70,9 +82,11 @@
 <img src="{{hr_admin_pic.url}}" width="30"  class="rounded-full" >
 <div>
     <h1 style='color:#E67E22'>{{notification.hr_admin}}</h1>
+    {% if is_hr %}
     <h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">
         {{notification.hr_admin.user.username}}
     </h2>
+    {% endif %}
 </div>
 
 {% endif %}

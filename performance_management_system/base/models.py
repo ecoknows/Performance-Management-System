@@ -147,6 +147,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                          'base/search_notifications.html',
                         {
                             'notifications' : self.paginate_data(notifications.order_by('created_at'), page),
+                            'is_hr': request.user.is_hr
                         }
                     ),
                 },
@@ -180,12 +181,14 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             starting_point = starting_point - 1 
 
 
+
         return JsonResponse(
                 data={
                     'html' : render_to_string(
                         'base/search_notifications.html',
                         {
                             'notifications' : notifications,
+                            'is_hr': request.user.is_hr
                         }
                     ),
                     'pages_indicator': render_to_string(
