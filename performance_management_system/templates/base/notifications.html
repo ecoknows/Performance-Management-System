@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block header %}
-{% include 'includes/header_latest.html' with user_model=request.user.hradmin title='Notifications' search=True %}
+{% include 'includes/header_latest.html' with title='Notifications' %}
 {% endblock %}
 
 {% block side_menu %}
@@ -27,7 +27,7 @@
 		<thead>
 			<td class="font-sans font-semibold text-gray">
 				<div>
-					Name/ID <i class="cursor-pointer fas fa-sort" data-field-name='company'></i> 
+					Name/ID <i class="cursor-pointer fas fa-sort" data-field-name='user_evaluation__client__company'></i> 
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded ">
 					<img src='{% static "img/icons/search.png" %}' width="18">
@@ -47,20 +47,20 @@
 			</td>
 			<td class="font-sans font-semibold text-gray">
 				<div>
-					Time <i class="cursor-pointer fas fa-sort" data-field-name='time'></i> 
+					Time <i class="cursor-pointer fas fa-sort" data-field-name='created_at'></i> 
 				</div>
 			
 			
 			</td>
 			<td class="font-sans font-semibold text-gray">
 				<div>
-					Status <i class="cursor-pointer fas fa-sort" data-field-name='status'></i> 
+					Status <i class="cursor-pointer fas fa-sort" data-field-name='seen'></i> 
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded " style="width: 120px;">
 					<select id='search-input-status' class="w-full focus:outline-none">
 						<option value="">All</option>
-						<option value="true">Read</option>
-						<option value="false">Not read</option>
+						<option value="true">Seen</option>
+						<option value="false">Not Seen</option>
 					</select>
 				</div>
 			

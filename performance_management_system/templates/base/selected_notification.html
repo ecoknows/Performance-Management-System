@@ -7,7 +7,7 @@
     <div class="text-center">
         <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee}}</h1>
         <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee.position}}</h1>
-        <a href="{{evaluation_index_page}}" class="px-4 py-1 font-sans text-sm text-white rounded-full bg-eval-color font-base ">
+        <a href="evaluation" class="px-4 py-1 font-sans text-sm text-white rounded-full bg-eval-color font-base ">
             VIEW EVALUATION
         </a>
     </div>
@@ -51,7 +51,7 @@
     <div class="text-center">
         <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{notification.user_evaluation.client}}</h1>
         <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">Client</h1>
-        <a href="{{evaluation_index_page}}evaluation/{{notification.user_evaluation.pk}}" class="px-4 py-1 font-sans text-sm text-white rounded-full bg-eval-color font-base ">
+        <a href="evaluation" class="px-4 py-1 font-sans text-sm text-white rounded-full bg-eval-color font-base ">
             VIEW EVALUATION
         </a>
     </div>
@@ -104,7 +104,7 @@
         <div class="px-4 space-y-4">
             <h1 class="font-sans text-3xl font-bold text-gray-primary-color">Please kindly evaluate the following employee as soon as possible</h1>
             <div class="px-4 py-2">
-                {% for user_evaluation in on_evaluation_employee%}
+                {% for user_evaluation in notification.user_evaluation%}
                 <div class="flex items-center">
                     
                     {% image user_evaluation.employee.profile_pic original as profile_pic %}
@@ -116,7 +116,7 @@
                         <h1 class="mb-2 font-sans font-semibold leading-tight text-md text-gray-primary-color">{{user_evaluation.employee.position}}</h1>
                     </div>
                     <div>
-                        <a href="{{evaluation_index_page}}{{user_evaluation.pk}}"  class="flex-1 px-4 py-1 font-sans text-lg text-white rounded-full bg-eval-color font-base ">EVALUATE</a>
+                        <a href="evaluation{{user_evaluation.pk}}"  class="flex-1 px-4 py-1 font-sans text-lg text-white rounded-full bg-eval-color font-base ">EVALUATE</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -129,12 +129,12 @@
 
 
 <div class="flex flex-col items-center" >
-    {% image on_evaluation_employee.employee.profile_pic original as profile_pic %}
+    {% image notification.user_evaluation.employee.profile_pic original as profile_pic %}
     <img src='{{profile_pic.url}}' class="object-cover w-24 h-24 rounded-full" >
     <div class="text-center">
-        <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee}}</h1>
-        <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee.position}}</h1>
-        <a href="{{evaluation_index_page}}{{on_evaluation_employee.pk}}" class="px-4 py-1 font-sans text-lg text-white rounded-full bg-eval-color font-base ">
+        <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee}}</h1>
+        <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee.position}}</h1>
+        <a href="evaluation{{notification.user_evaluation.pk}}" class="px-4 py-1 font-sans text-lg text-white rounded-full bg-eval-color font-base ">
             EVALUATE NOW
         </a>
     </div>
@@ -144,9 +144,9 @@
     <h1>Dear {{notification.reciever.client.company}},</h1>
     
     <p>
-        Please kindly evaluate  your employe {{on_evaluation_employee.employee}} I understand 
+        Please kindly evaluate  your employe {{notification.user_evaluation.employee}} I understand 
         that you have a lot of work to do on your company, but incase that you forgot to evaluate your employee
-        please evaluate it as soon as possible, don't worry I will notify {{on_evaluation_employee.employee}} as
+        please evaluate it as soon as possible, don't worry I will notify {{notification.user_evaluation.employee}} as
         soon as the evaluation is finish.
     </p>
 
@@ -172,7 +172,7 @@
     
     <h1>Dear {{notification.reciever.employee.first_name}},</h1>
     <p>
-        I want to inform you that a new client have been assign to you, it's company name is {{on_evaluation_employee.client.company}}
+        I want to inform you that a new client have been assign to you, it's company name is {{notification.user_evaluation.client.company}}
         kindly wait for it to evaluate you, if the result of your performance doesn't come within days, contact me to notify it to evaluate
     </p>
     
@@ -188,12 +188,12 @@
 {% elif notification.notification_type == 'new-employee-client'  %}
 
 <div class="flex flex-col items-center" >
-    {% image on_evaluation_employee.employee.profile_pic original as profile_pic %}
+    {% image notification.user_evaluation.employee.profile_pic original as profile_pic %}
     <img src='{{profile_pic.url}}' class="object-cover w-24 h-24 rounded-full" >
     <div class="text-center">
-        <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee}}</h1>
-        <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">{{on_evaluation_employee.employee.position}}</h1>
-        <a href="{{evaluation_index_page}}{{on_evaluation_employee.pk}}" class="px-4 py-1 font-sans text-sm text-white rounded-full bg-eval-color font-base ">
+        <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee}}</h1>
+        <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee.position}}</h1>
+        <a href="evaluation" class="px-4 py-1 font-sans text-sm text-white rounded-full bg-eval-color font-base ">
             VIEW EVALUATION
         </a>
     </div>
@@ -202,7 +202,7 @@
 <div class="px-4 py-4 font-sans font-semibold text-gray-fourthary-color ">
     <h1>Dear {{notification.reciever.client.company}},</h1>
     <p>
-        I want to inform you that a new client have been assign to you, it's company name is {{on_evaluation_employee.client.company}}
+        I want to inform you that a new client have been assign to you, it's company name is {{notification.user_evaluation.client.company}}
         kindly wait for it to evaluate you, if the result of your performance doesn't come within days, contact me to notify it to evaluate
     </p>
     
@@ -258,7 +258,7 @@
     
     <h1>Dear {{notification.reciever.employee.first_name}},</h1>
     <p>
-        I have notify {{on_evaluation_employee.client.company}} to evaluate your performance, just kindly wait them to finish it,
+        I have notify {{notification.user_evaluation.client.company}} to evaluate your performance, just kindly wait them to finish it,
         it might take sometime to evaluate you depending on how many employee that your client needs to evaluate, but rest assured
         we will notify you as soon your performance is evaluated, if the result of your performance doesn't come within days,
         you can contact me again, to do the honor of notifying your client again, sorry for the inconvenience. 

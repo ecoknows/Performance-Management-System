@@ -29,7 +29,6 @@ $(function(){
                         'message': message.val(),
                         'time': time.val(),
                         'status': status.val(),
-                        
                     },
                     success: function(data){
                         container.html(data.html)

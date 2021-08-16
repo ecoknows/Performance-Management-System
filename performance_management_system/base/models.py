@@ -47,7 +47,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         
         return data
     
-    
     @route(r'^notifications/$')
     def notification(self, request):
         from performance_management_system.hr.models import EmployeeListPage, AssignEmployee, ClientListPage
@@ -66,20 +65,49 @@ class BaseAbstractPage(RoutablePageMixin, Page):
 
     @route(r'^notifications/(\d+)/$')
     def notification_view(self, request, notification_id):
-        from performance_management_system.hr.models import EmployeeListPage, AssignEmployee, ClientListPage
+        from performance_management_system.hr.models import EmployeeListPage, AssignEmployee, ClientListPage, EmployeeDetailsPage
+        notification = Notification.objects.get(pk=notification_id)
+
+        if notification.seen == False:
+            notification.seen = True
+            notification.save()
+
+        categories = EvaluationCategories.objects.all()
+        max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        category_percentages = []
+        selected_user_evaluation = notification.user_evaluation
+        for category in categories:
+            rate_assigns = EvaluationRateAssign.objects.filter(
+                evaluation_rate__evaluation_categories=category,
+                user_evaluation = selected_user_evaluation
+            )
+            percentage = 0
+            for rate_assign in rate_assigns:
+                percentage = rate_assign.rate + percentage
+
+            rate_assign_len = len(rate_assigns) 
+
+            if rate_assign_len:
+                percentage = (percentage / (rate_assign_len * max_rate)) * 100
+            else:
+                percentage = 0
+            
+            category_percentages.append(percentage)
 
         return self.render(
             request,
             context_overrides={
                 'user_model' : request.user.hradmin,
                 'notification_url': self.url,
+                'notification': notification,
                 'client_list_index':  ClientListPage.objects.live().first(),
                 'employee_list_index': EmployeeListPage.objects.live().first(),
                 'assign_employee_index': AssignEmployee.objects.live().first(),
+                'categories' : categories,
+                'category_percentages': category_percentages,
             },
             template="base/notifications_view.html",
         )
-
 
     @route(r'^notifications/search/$')
     def notifications_search(self, request):
@@ -95,7 +123,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
 
         notifications = None
 
-        if name or message or time or status or sort or position:
+        if name or message or time or status or position:
 
             if name:
                 name = name.split()
@@ -124,9 +152,14 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 },
             )
 
-        notifications = Notification.objects.filter(reciever=request.user)
 
-        notifications = self.paginate_data(notifications.order_by('-created_at'), page)
+        if sort:
+            notifications = Notification.objects.filter(reciever=request.user).order_by(sort)
+        else:
+            notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
+
+
+        notifications = self.paginate_data(notifications, page)
         max_pages = notifications.paginator.num_pages
         starting_point = notifications.number
         next_number = 1
@@ -167,6 +200,30 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                     'current_number': notifications.number,
                 },
             )
+    
+    @route(r'^notifications/(\d+)/evaluation/$')
+    def notification_evaluation(self, request, notification_id):
+        
+        notification = Notification.objects.get(pk=notification_id)
+        user_evaluation = notification.user_evaluation
+        evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        legend_evaluation = EvaluationPage.objects.live().first().legend_evaluation
+
+        return self.render(
+            request,
+            context_overrides={
+                'user_evaluation': user_evaluation,
+                'evaluation_categories': EvaluationCategories.objects.all(),
+                'disabled' : True,
+                'user_model' : request.user.hradmin,
+                'employee_model': user_evaluation.client,
+                'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
+                'current_menu':'notifications',
+                'notification_url': self.url,
+            },
+            template="base/evaluation_page.html",
+        )
+    
     class Meta:
         abstract = True
 
@@ -256,8 +313,6 @@ class EvaluationTask(models.Model):
         null=True
     )
 
-
-
 class EvaluationRateAssign(Orderable):
     
     user_evaluation = ParentalKey(
@@ -279,7 +334,6 @@ class EvaluationRateAssign(Orderable):
         FieldPanel('evaluation_rates'),
     ]
     
-
 class UserEvaluation(ClusterableModel, models.Model):
     employee = models.ForeignKey(
         Employee,
@@ -311,7 +365,6 @@ class UserEvaluation(ClusterableModel, models.Model):
         FieldPanel('client'),
     ]
             
-
 class EvaluationPage(RoutablePageMixin, Page):
     evaluation_max_rate = models.IntegerField(default=0)
     legend_evaluation = RichTextField(null=True)

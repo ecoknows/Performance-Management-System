@@ -26,166 +26,194 @@ from functools import reduce
 
 class BaseAbstractPage(RoutablePageMixin, Page):
 
-    def paginate_notification(self, notifications, current_page, max_page):
-        paginator = Paginator(notifications, max_page)
+    def paginate_data(self, data, current_page):
+        paginator = Paginator(data, 8)
 
         try:
-            notifications = paginator.page(current_page)
+            data = paginator.page(current_page)
         except PageNotAnInteger:
-            notifications = paginator.page(1)
+            data = paginator.page(1)
         except EmptyPage:
-            notifications = paginator.page(paginator.num_pages)
+            data = paginator.page(paginator.num_pages)
         
-        return notifications
+        return data
+    
     
     @route(r'^notifications/$')
     def notification(self, request):
-        from performance_management_system.base.models import Notification, EvaluationCategories,EvaluationPage,EvaluationRateAssign
-
-        current_page = request.GET.get('current_page', None)
-
-
-        if current_page:
-            notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
-            starting_point = len(notifications)
-
-            if starting_point >= 10:
-                notifications = notifications[10:]
-            else:
-                notifications = notifications[starting_point:]
-
-            notifications =  self.paginate_notification(notifications, current_page, 3)
-
-            has_next = notifications.has_next()
-            next_number = None
-            if has_next:
-                next_number = notifications.next_page_number()
-
-            return JsonResponse(
-                data={
-                    'next_number': next_number,
-                    'has_next': has_next,
-                    'html': render_to_string('base/paginated_notification.html',{'notifications' : notifications}) 
-                }
-            )
-
-        hr_admin_id = request.GET.get('hr_admin_id', None)
-        notification_id = request.GET.get('notification_id', None)
-        make_it_seen = request.GET.get('make_it_seen', False)
-
-        if hr_admin_id:
-            from performance_management_system.hr.models import HrAdmin
-            notification = Notification.objects.get(pk=notification_id)
-
-            if make_it_seen: 
-                notification.seen = True
-                notification.save()
-
-
-            selected_hr_admin = HrAdmin.objects.get(pk = hr_admin_id)
-            on_evaluation_employee = None
-
-            if notification.notification_type == 'notify-evaluated-all-client':
-                on_evaluation_employee = request.user.client.user_evaluation.filter(percentage=0)
-            elif notification.notification_type == 'notify-evaluated-specific-client' or notification.notification_type == 'new-employee-client' or notification.notification_type == 'evaluated-form-is-send-to-employee':
-                on_evaluation_employee = notification.user_evaluation
-
-            return JsonResponse(
-                data={
-                    'selected_html' : render_to_string(
-                        'base/selected_notification.html', 
-                        {
-                            'notification': notification,
-                            'selected_hr_admin': selected_hr_admin,
-                            'on_evaluation_employee': on_evaluation_employee,
-                            'evaluation_index_page': EvaluationPage.objects.live().first().url
-                        }
-                    ),
-                    'notification_html' :  render_to_string(
-                        'hr/counter_notification.html',
-                        {
-                            'notifications_count' : 4,
-                            'id': request.user.id
-                        }
-                    )
-                },
-               
-            )
-        
-
-        if notification_id:
-            from performance_management_system.hr.models import EmployeeDetailsPage
-            notification = Notification.objects.get(pk=notification_id)
-
-            if make_it_seen: 
-                notification.seen = True
-                notification.save()
-            
-            selected_user_evaluation = notification.user_evaluation
-
-            categories = EvaluationCategories.objects.all()
-            max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
-            category_percentages = []
-            for category in categories:
-                rate_assigns = EvaluationRateAssign.objects.filter(
-                    evaluation_rate__evaluation_categories=category,
-                    user_evaluation = selected_user_evaluation
-                )
-                percentage = 0
-                for rate_assign in rate_assigns:
-                    percentage = rate_assign.rate + percentage
-                rate_assign_len = len(rate_assigns) 
-                
-                if rate_assign_len:
-                    percentage = (percentage / (rate_assign_len * max_rate)) * 100
-                else:
-                    percentage = 0
-                category_percentages.append(percentage)
-                
-
-
-
-
-            return JsonResponse(
-                data={
-                    'selected_html' : render_to_string(
-                        'base/selected_notification.html', 
-                        {
-                            'notification' : notification,
-                            'categories': categories,
-                            'category_percentages': category_percentages,
-                            'evaluation_index_page': EvaluationPage.objects.live().first().url+str(selected_user_evaluation.pk)
-                        }
-                    ),
-                    'notification_html' :  render_to_string(
-                        'hr/counter_notification.html',
-                        {
-                            'notifications_count' : 4,
-                            'id': request.user.id
-                        }
-                    )
-                },
-               
-            )
-        
-        notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
 
         return self.render(
             request,
             context_overrides={
                 'user_model' : request.user.client,
-                'notifications' : self.paginate_notification(notifications, current_page, 10),
                 'notification_url': self.url,
-                'menu_lists': [
-                    [ClientIndexPage.objects.live().first().url,'Employees']
-                ],
-                'notifications_count' : len(notifications),
-                'search_page': ClientIndexPage.objects.live().first()
             },
             template="base/notifications.html",
         )
 
     
+    @route(r'^notifications/search/$')
+    def notifications_search(self, request):
+        from performance_management_system.hr.models import Notification
+
+        page = request.GET.get('page', 1)
+
+        name = request.GET.get('name', '')
+        message = request.GET.get('message', '')
+        time = request.GET.get('time', '')
+        position = request.GET.get('position', '')
+        status = request.GET.get('status', '')
+        sort = request.GET.get('sort', '')
+
+        notifications = None
+
+        if name or message or time or status or position:
+
+            if name:
+                name = name.split()
+                qset1 =  reduce(operator.__or__, [Q(user_evaluation__employee__first_name=query) | Q(user_evaluation__employee__last_name=query) for query in name])
+                notifications = Notification.objects.filter(qset1, reciever=request.user).distinct()
+                if sort:
+                    notifications = notifications.filter( message__icontains=message, created_at__icontains=time, seen__icontains=status).order_by(sort)
+                else:
+                    notifications = notifications.filter( message__icontains=message, created_at__icontains=time, seen__icontains=status)
+            else:
+                if sort:
+                    notifications = Notification.objects.filter( message__icontains=message, created_at__icontains=time, seen__icontains=status, reciever=request.user).order_by(sort)
+                else:
+                    notifications = Notification.objects.filter( message__icontains=message, created_at__icontains=time, seen__icontains=status, reciever=request.user)
+            
+            
+
+            return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                         'base/search_notifications.html',
+                        {
+                            'notifications' : self.paginate_data(notifications.order_by('created_at'), page),
+                        }
+                    ),
+                },
+            )
+
+        if sort:
+            notifications = Notification.objects.filter(reciever=request.user).order_by(sort)
+        else:
+            notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
+
+        notifications = self.paginate_data(notifications, page)
+        max_pages = notifications.paginator.num_pages
+        starting_point = notifications.number
+        next_number = 1
+        previous_number = 1
+
+        if notifications.has_next():
+            next_number = notifications.next_page_number()
+        
+        if notifications.has_previous():
+            previous_number = notifications.previous_page_number()
+
+        if max_pages > 3 :
+            max_pages = 4
+
+        if starting_point % 3 == 0:
+            starting_point = starting_point - 2
+        elif (starting_point - 1) % 3  != 0:
+            starting_point = starting_point - 1 
+
+
+        return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                        'base/search_notifications.html',
+                        {
+                            'notifications' : notifications,
+                        }
+                    ),
+                    'pages_indicator': render_to_string(
+                        'includes/page_indicator.html',
+                        {
+                            'pages': notifications,
+                            'xrange': range(starting_point, starting_point + max_pages)
+                        }
+                    ),
+                    'next_number': next_number,
+                    'previous_number': previous_number,
+                    'current_number': notifications.number,
+                },
+            )
+    
+    
+    @route(r'^notifications/(\d+)/$')
+    def notification_view(self, request, notification_id):
+        from performance_management_system.hr.models import EvaluationCategories, EvaluationPage, EvaluationRateAssign
+        from performance_management_system.base.models import Notification
+
+        notification = Notification.objects.get(pk=notification_id)
+        
+        if notification.seen == False:
+            notification.seen = True
+            notification.save()
+
+        categories = EvaluationCategories.objects.all()
+        max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        category_percentages = []
+        selected_user_evaluation = notification.user_evaluation
+        for category in categories:
+            rate_assigns = EvaluationRateAssign.objects.filter(
+                evaluation_rate__evaluation_categories=category,
+                user_evaluation = selected_user_evaluation
+            )
+            percentage = 0
+            for rate_assign in rate_assigns:
+                percentage = rate_assign.rate + percentage
+
+            rate_assign_len = len(rate_assigns) 
+
+            if rate_assign_len:
+                percentage = (percentage / (rate_assign_len * max_rate)) * 100
+            else:
+                percentage = 0
+            
+            category_percentages.append(percentage)
+
+        return self.render(
+            request,
+            context_overrides={
+                'user_model' : request.user.client,
+                'notification_url': self.url,
+                'notification': notification,
+                'categories' : categories,
+                'category_percentages': category_percentages,
+            },
+            template="base/notifications_view.html",
+        )
+
+
+    @route(r'^notifications/(\d+)/evaluation/$')
+    def notification_evaluation(self, request, notification_id):
+        from performance_management_system.base.models import Notification, EvaluationPage, EvaluationCategories
+
+        notification = Notification.objects.get(pk=notification_id)
+        user_evaluation = notification.user_evaluation
+        evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        legend_evaluation = EvaluationPage.objects.live().first().legend_evaluation
+
+        return self.render(
+            request,
+            context_overrides={
+                'user_evaluation': user_evaluation,
+                'evaluation_categories': EvaluationCategories.objects.all(),
+                'user_model' : request.user.client,
+                'employee_model': user_evaluation.client,
+                'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
+                'current_menu':'notifications',
+                'notification_url': self.url,
+            },
+            template="base/evaluation_page.html",
+        )
+    
+
     class Meta:
         abstract = True
         
