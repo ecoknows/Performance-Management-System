@@ -1,10 +1,7 @@
 
 from django.db import models
-from django.utils import timezone
 from django.http import JsonResponse
 from django.template.loader import render_to_string
-from django.template.response import TemplateResponse
-from django.db.models import Q
 
 from wagtail.core.models import Page
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
@@ -14,14 +11,9 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.images.edit_handlers import ImageChooserPanel
 
-from performance_management_system import IntegerResource, StringResource, IS_EVALUATED
+from performance_management_system import IS_EVALUATED
 from performance_management_system.users.models import User
-from performance_management_system.client.models import Client
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-
-import operator
-from functools import reduce
-
 
 class BaseAbstractPage(RoutablePageMixin, Page):
 
@@ -175,7 +167,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             template="base/notifications_view.html",
         )
 
-
     @route(r'^notifications/(\d+)/evaluation/$')
     def notification_evaluation(self, request, notification_id):
         from performance_management_system.base.models import Notification, EvaluationPage, EvaluationCategories
@@ -270,42 +261,10 @@ class Employee(models.Model):
         if self.user:
             self.user.delete()
         super().delete()
-            
-    
+               
 class EmployeeIndexPage(BaseAbstractPage):
     max_count = 1
-    filter = None
     parent_page_types = ['base.BaseIndexPage']
-
-    @route(r'^search/$')
-    def pop_search(self, request):
-        from performance_management_system.base.models import UserEvaluation
-
-        search_query = request.GET.get('search_query', None).split()
-
-        if search_query :        
-            qset2 =  reduce(operator.__or__, [Q(client__company__icontains=query) for query in search_query])
-
-            user_evaluations = UserEvaluation.objects.filter(qset2, employee=request.user.employee).distinct()
-
-            if len(user_evaluations) == 0:
-                return JsonResponse(data={
-                    'empty': True
-                })
-
-            return TemplateResponse(request, 'employee/pop_search.html', {
-                'results' : user_evaluations,
-                'user_evaluation_details_index' : self,
-            })
-        return JsonResponse(data={
-            'empty': True
-        })
-
-    def get_menu_list(self):
-        return [
-                  ['client', 'Client'],
-               ]
-
 
     @route(r'^$')
     def dash_board(self, request):
@@ -345,71 +304,6 @@ class EmployeeIndexPage(BaseAbstractPage):
             template='hr/employee_details_page.html'
         )
     
-    @route(r'^client/$')
-    def current_client(self, request):
-        from performance_management_system.base.models import UserEvaluation, EvaluationCategories, EvaluationPage, EvaluationRateAssign
-        
-        filter_query = request.GET.get('filter', None)
-        filter_text = None
-        
-        if filter_query:
-            if filter_query == 'on-evaluation':
-                filter_text = 'On Evaluation'
-            elif filter_query  == 'evaluated':
-                filter_text = 'Evaluated'
-
-
-        menu_lists = [
-            (self.url,'Dashboard'),
-            [self.url +'client', 'All'],
-            ['?filter=evaluated','Evaluated'],
-            ['?filter=on-evaluation','On Evaluation'],
-        ]
-
-        categories = EvaluationCategories.objects.all()
-        max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
-        category_percentages = []
-
-        try:
-            latest_evaluation = UserEvaluation.objects.filter(employee=request.user.employee).latest('assigned_date')
-
-            for category in categories:
-                rate_assigns = EvaluationRateAssign.objects.filter(
-                    evaluation_rate__evaluation_categories=category,
-                    user_evaluation = latest_evaluation
-                )
-                percentage = 0
-                for rate_assign in rate_assigns:
-                    percentage = rate_assign.rate + percentage
-
-                rate_assign_len = len(rate_assigns) 
-                
-                if rate_assign_len:
-                    percentage = (percentage / (rate_assign_len * max_rate)) * 100
-                else:
-                    percentage = 0
-                category_percentages.append(percentage)
-        except UserEvaluation.DoesNotExist:
-            latest_evaluation = None
-                
-
-
-        return self.render(
-            request,
-            context_overrides={
-                'filter': self.filter,
-                'menu_lists': menu_lists,
-                'notification_url' : self.url,
-                'latest_evaluation': latest_evaluation,
-                'search_page' : self,
-                'filter_query': filter_query,
-                'filter_text': filter_text,
-                'categories': categories,
-                'category_percentages': category_percentages,
-            },
-            template='employee/client_list.html'
-        )
-    
     @route(r'evaluation/(\d+)/$')
     def client_evaluation_details(self, request, user_evaluation_id):
         from performance_management_system.base.models import UserEvaluation, EvaluationPage, EvaluationCategories
@@ -433,51 +327,3 @@ class EmployeeIndexPage(BaseAbstractPage):
             },
             template="base/evaluation_page.html",
         )
-
-    @route(r'^search/client/$')
-    def client_search_specified(self, request):
-        from performance_management_system.base.models import UserEvaluation
-
-        search_query = request.GET.get('search_query', None).split()
-        filter_query = request.GET.get('filter_query', None)
-
-
-        if search_query:
-            qset2 =  reduce(operator.__or__, [Q(client__company__icontains=query) for query in search_query])
-            user_evaluations = UserEvaluation.objects.filter(qset2, employee=request.user.employee).distinct()
-
-            if filter_query:
-                if filter_query == 'on-evaluation':
-                    user_evaluations = user_evaluations.filter(percentage=0)
-                elif filter_query == 'evaluated':
-                    user_evaluations = user_evaluations.exclude(percentage=0)
-            
-        
-
-
-            return TemplateResponse(
-                request,
-                'employee/search_client_specified.html',
-                {
-                    'user_evaluations' : user_evaluations,
-                }
-            )
-
-        user_evaluations = UserEvaluation.objects.filter(employee=request.user.employee)
-
-        if filter_query:
-            if filter_query == 'on-evaluation':
-                user_evaluations = user_evaluations.filter(percentage=0)
-            elif filter_query == 'evaluated':
-                user_evaluations = user_evaluations.exclude(percentage=0)
-
-            
-
-        return TemplateResponse(
-                request,
-                'employee/search_client_specified.html',
-                {
-                    'user_evaluations' : user_evaluations,
-                }
-            )
-

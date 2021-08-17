@@ -38,7 +38,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         
         return data
     
-    
     @route(r'^notifications/$')
     def notification(self, request):
 
@@ -51,7 +50,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             template="base/notifications.html",
         )
 
-    
     @route(r'^notifications/search/$')
     def notifications_search(self, request):
         from performance_management_system.hr.models import Notification
@@ -143,7 +141,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 },
             )
     
-    
     @route(r'^notifications/(\d+)/$')
     def notification_view(self, request, notification_id):
         from performance_management_system.hr.models import EvaluationCategories, EvaluationPage, EvaluationRateAssign
@@ -189,7 +186,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             template="base/notifications_view.html",
         )
 
-
     @route(r'^notifications/(\d+)/evaluation/$')
     def notification_evaluation(self, request, notification_id):
         from performance_management_system.base.models import Notification, EvaluationPage, EvaluationCategories
@@ -213,7 +209,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             template="base/evaluation_page.html",
         )
     
-
     class Meta:
         abstract = True
         
@@ -271,7 +266,6 @@ class Client(models.Model):
             self.user.delete()
         super().delete()        
   
-
 class ClientIndexPage(BaseAbstractPage):
     max_count = 1
     parent_page_types = ['base.BaseIndexPage']
@@ -288,15 +282,11 @@ class ClientIndexPage(BaseAbstractPage):
         
         return data
     
-    
-
-        
     @route(r'^$') 
     def default_route(self, request):
         from performance_management_system.base.models import EvaluationPage
         notification_url = self.url
         
-
         return self.render(
             request,
             context_overrides={
@@ -308,8 +298,6 @@ class ClientIndexPage(BaseAbstractPage):
                 'notification_url': notification_url,
             }
         )
-    
-    
     
     @route(r'^search/employees/$')
     def employee_search(self, request):
