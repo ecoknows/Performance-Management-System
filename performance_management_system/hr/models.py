@@ -1,20 +1,15 @@
 from django.db import models
 from django.http import JsonResponse
 from django.template.response import TemplateResponse
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import redirect
-from django.shortcuts import redirect, render
-from django.utils import timezone
+from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.contrib.postgres.search import SearchVector
 from django.db.models import Q
 
 from wagtail.contrib.routable_page.models import route
 from wagtail.core.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from wagtail import search
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     MultiFieldPanel,
@@ -24,7 +19,6 @@ from performance_management_system.base.models import BaseAbstractPage, UserEval
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client
 from performance_management_system.users.models import User
-from performance_management_system import IntegerResource, StringResource, DETAILS_MENU
 
 from itertools import chain
 import operator
@@ -32,7 +26,6 @@ from functools import reduce
 
 class ClientListPage(RoutablePageMixin,Page):
     max_count = 1
-
     parent_page_types = ['HRIndexPage']
 
     def paginate_data(self, data, current_page):
@@ -50,18 +43,7 @@ class ClientListPage(RoutablePageMixin,Page):
     
     @route(r'^$') 
     def default_route(self, request):
-        hr_index_url = HRIndexPage.objects.first().url
 
-        filter_query = request.GET.get('filter', None)
-        filter_text = None
-        
-
-        menu_lists = [
-            (hr_index_url,'Dashboard'),
-            [self.url, 'All'],
-            ['?filter=evaluated','Evaluated'],
-            ['?filter=on-evaluation','On Evaluation'],
-        ]
         notification_url = HRIndexPage.objects.live().first().url
 
         client_id = request.POST.get('client_id', None)
@@ -88,19 +70,11 @@ class ClientListPage(RoutablePageMixin,Page):
                 'message': 'The client has been successfully notified!'
             })
 
-        if filter_query:
-            if filter_query == 'on-evaluation':
-                filter_text = 'On Evaluation'
-            elif filter_query  == 'evaluated':
-                filter_text = 'Evaluated'
 
         return self.render(
             request,
             context_overrides={
-                'menu_lists': menu_lists,
                 'notification_url': notification_url,
-                'filter': filter_text,
-                'filter_query': filter_query,
                 'search_page': self,
                 'client_list_index': self,
                 'employee_list_index': EmployeeListPage.objects.live().first(),
@@ -117,7 +91,6 @@ class ClientListPage(RoutablePageMixin,Page):
             context_overrides={
                 'user_model': request.user.hradmin,
                 'employee_model': Client.objects.get(pk=id),
-                'evaluation_index': 'evaluated/',
                 'client_id': id,
                 'search_page': ClientListPage.objects.live().first(),
                 'notification_url': notification_url,
@@ -131,10 +104,11 @@ class ClientListPage(RoutablePageMixin,Page):
     
     @route(r'^(\d+)/evaluated/(\d+)/$')
     def client_details_evaluated(self, request, id, user_evaluation_id):
-        user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
         evaluation_page =  EvaluationPage.objects.live().first()
         evaluation_max_rate = evaluation_page.evaluation_max_rate
         legend_evaluation = evaluation_page.legend_evaluation
+
+        user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
         hr_index_url = HRIndexPage.objects.first().url
         notification_url = HRIndexPage.objects.live().first().url
 
@@ -163,7 +137,6 @@ class ClientListPage(RoutablePageMixin,Page):
             template="base/evaluation_page.html",
         )
 
-    
     @route(r'^(\d+)/search/employees/$')
     def employee_search(self, request, client_id):
 
@@ -250,7 +223,6 @@ class ClientListPage(RoutablePageMixin,Page):
                     'current_number': user_evaluations.number,
                 },
             )
-
 
     @route(r'^search/clients/$')
     def client_search(self, request):
@@ -348,23 +320,12 @@ class EmployeeListPage(RoutablePageMixin,Page):
         return data
     
 
-    def get_menu_list(self):
-        hr_index_url = HRIndexPage.objects.first().url
-        
-        return [
-            (hr_index_url,'Dashboard'),
-            [self.url, 'All'],
-            ['?filter=evaluated','Evaluated'],
-            ['?filter=on-evaluation','On Evaluation'],
-        ]
-
     @route(r'^$') 
     def default_route(self, request):
 
         return self.render(
             request,
             context_overrides={
-                'menu_lists': self.get_menu_list(),
                 'notification_url': HRIndexPage.objects.live().first().url,
                 'search_page': self,
                 'employee_list_index': self,
@@ -464,57 +425,13 @@ class EmployeeListPage(RoutablePageMixin,Page):
                 },
             )
 
-class ClientDetailsPage( Page):
-    max_count = 1
-    def serve(self, request):
-        
-        if "query" in request.GET:
-            try:
-                return render(request, self.template,{
-                    'client': Client.objects.get(pk=request.GET['query'])
-                })
-            except Client.DoesNotExist:
-                return redirect('/')
-            
-        
-        return super().serve(request)
-
-    def get_context(self, request, *args, **kwargs):
-        context = super().get_context(request)
-        context['notification_url'] = HRIndexPage.objects.live().first().url
-        return context
-
-    
-    parent_page_types = ['ClientListPage']
-
 class EmployeeDetailsPage(RoutablePageMixin, Page):
     max_count = 1
-    
-    def get_clients_not_picked(self, employee):
-        return Client.objects.exclude(user_evaluation__employee=employee)
+    parent_page_types = ['EmployeeListPage']
         
     @route(r'^$') 
     def default_route(self, request):
         return HttpResponseRedirect('../')
-    
-    def get_context(self, request, *args, **kwargs):
-        context = super().get_context(request)
-
-        context['notification_url'] = HRIndexPage.objects.live().first().url
-        context['menu_lists'] = [
-            ('/'+HRIndexPage.objects.live().first().url, 'Dashboard')
-        ]
-        
-        employee_list_index = EmployeeListPage.objects.live().first()
-        client_list_index = ClientListPage.objects.live().first()
-        assign_employee_index = AssignEmployee.objects.live().first()
-
-        context['assign_employee_index'] = assign_employee_index
-        context['employee_list_index'] = employee_list_index
-        context['client_list_index'] = client_list_index
-
-        return context
-    
 
     @route(r'^(\d+)/$', name='id')
     def details_user_route(self, request, id):
@@ -540,30 +457,29 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             
             category_percentages.append([category,percentage])
         
-
+        
+        employee_list_index = EmployeeListPage.objects.live().first()
+        client_list_index = ClientListPage.objects.live().first()
+        assign_employee_index = AssignEmployee.objects.live().first()
+        
         return self.render(
             request,
             context_overrides={
             'user_evaluation': user_evaluation,
             'user_model': request.user.hradmin ,
             'category_percentages': category_percentages,
-            'current_menu':'employees'
+            'current_menu':'employees',
+            'assign_employee_index': assign_employee_index,
+            'employee_list_index': employee_list_index,
+            'client_list_index': client_list_index,
+            'notification_url': HRIndexPage.objects.live().first().url
             }
         )
     
     @route(r'^(\d+)/clients/$', name='id')
     def client_list(self, request, id):
         employee = Employee.objects.get(pk=id)
-        menu_lists = [
-            [HRIndexPage.objects.live().first().url, 'Dashboard'],
-            ['../', 'Details'],
-            ['../pick-a-client','Pick a client'],
-            [self.url+id+'/clients','All'],
-            ['?filter=evaluated','Evaluated'],
-            ['?filter=on-evaluation','On Evaluation'],
-        ]
 
-        
         user_evaluation_id = request.POST.get('user_evaluation_id', None)
 
 
@@ -592,16 +508,6 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
 
                 
         
-        filter_query = request.GET.get('filter', None)
-        filter_text = None
-        
-        if filter_query:
-            if filter_query == 'on-evaluation':
-                filter_text = 'On Evaluation'
-            elif filter_query  == 'evaluated':
-                filter_text = 'Evaluated'
-            
-
         categories = EvaluationCategories.objects.all()
         category_percentages = []
         max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
@@ -635,9 +541,6 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             request,
             context_overrides={
             'employee': employee,
-            'menu_lists': menu_lists,
-            'filter': filter_text,
-            'filter_query': filter_query,
             'search_page': self,
             'latest_evaluation': latest_evaluation,
             'categories': categories,
@@ -652,90 +555,30 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
         user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
         evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         legend_evaluation = EvaluationPage.objects.live().first().legend_evaluation
-        menu_lists = [
-            [HRIndexPage.objects.live().first().url, 'Dashboard'],
-            ['../../', 'Details'],
-            ['../../pick-a-client','Pick a client'],
-            ['../','Clients'],
-        ]
+
+        
+        employee_list_index = EmployeeListPage.objects.live().first()
+        client_list_index = ClientListPage.objects.live().first()
+        assign_employee_index = AssignEmployee.objects.live().first()
+
         return self.render(
             request,
             context_overrides={
                 'user_evaluation': user_evaluation,
                 'evaluation_categories': EvaluationCategories.objects.all(),
                 'disabled' : True,
-                'menu_lists': menu_lists,
                 'user_model' : request.user.hradmin,
                 'employee_model': user_evaluation.client,
                 'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
                 'search_page': HRIndexPage.objects.live().first(),
-                'current_menu':'employees'
+                'current_menu':'employees',
+                'assign_employee_index': assign_employee_index,
+                'employee_list_index': employee_list_index,
+                'client_list_index': client_list_index,
+                'notification_url': HRIndexPage.objects.live().first().url
             },
             template="base/evaluation_page.html",
         )
-
-    @route(r'^(\d+)/pick-a-client/$')
-    def pick_a_client(self, request, id):
-        
-        menu_lists = [
-            [HRIndexPage.objects.live().first().url, 'Dashboard'],
-            ['../', 'Details'],
-            ['../clients','Clients'],
-        ]
-        return self.render(
-            request,
-            context_overrides={
-            'employee_id': id,
-            'employee': Employee.objects.get(pk=id),
-            'menu_lists': menu_lists,
-            'user_filter_exclude': id,
-            'search_page': self,
-            },
-            template="hr/pick_client_page.html",
-        )
-        
-    @route(r'^(\d+)/pick-a-client/add/$')
-    def add_a_client(self, request, employee_id):
-        client_id = request.POST.get('client_id', None)
-        project_assign = request.POST.get('project_assign', None)
-
-        if client_id:
-            user_evaluation = UserEvaluation.objects.create(
-                employee_id=employee_id,
-                client_id=client_id,
-                hr_admin=request.user,
-                project_assign=project_assign
-            )
-            
-            employee = Employee.objects.get(pk=employee_id)
-            employee.status = 'on-evaluation'
-
-            client = Client.objects.get(pk=client_id)
-            client.status = 'on-evaluation'
-
-            Notification.objects.create(
-                reciever=client.user,
-                hr_admin=request.user.hradmin,
-                message='A new employee have been assign',
-                user_evaluation=user_evaluation,
-                notification_type='new-employee-client'
-            )
-
-            Notification.objects.create(
-                reciever=employee.user,
-                hr_admin=request.user.hradmin,
-                message='A new client have been assign',
-                user_evaluation=user_evaluation,
-                notification_type='new-client-employee'
-            )
-
-            employee.save()
-            client.save()
-        
-        return JsonResponse(data={'message': 'Successfull'})
-
-    parent_page_types = ['EmployeeListPage']
-
 
     @route(r'^search/$')
     def client_search_specified(self, request):
@@ -783,39 +626,6 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
                     'user_evaluations' : user_evaluations.exclude(pk=latest_evaluation_id),
                 }
             )
-    
-    @route(r'^search/pick_client/$')
-    def pick_client_search(self, request):
-
-        search_query = request.GET.get('search_query', None).split()
-        employee_id = request.GET.get('employee_id', None)
-        employee = Employee.objects.get(pk=employee_id)
-
-        if search_query:
-            qset2 =  reduce(operator.__or__, [Q(company__icontains=query) for query in search_query])
-            clients = Client.objects.exclude(user_evaluation__employee_id=employee_id).filter(qset2).distinct()
-
-            
-            return TemplateResponse(
-                request,
-                'hr/search_pick_client.html',
-                {
-                    'clients' : clients,
-                    'employee': employee,
-                }
-            )
-
-        clients = Client.objects.exclude(user_evaluation__employee_id=employee_id)
-
-        
-        return TemplateResponse(
-                request,
-                'hr/search_pick_client.html',
-                {
-                    'clients' : clients,
-                    'employee': employee,
-                }
-            )
 
 class AssignEmployee(RoutablePageMixin, Page):
     max_count = 1
@@ -861,8 +671,6 @@ class AssignEmployee(RoutablePageMixin, Page):
             template='hr/assign_client.html'
         )
     
-    
-
     @route(r'^(\d+)/search/clients/$')
     def client_search(self, request, id):
 
@@ -944,8 +752,6 @@ class AssignEmployee(RoutablePageMixin, Page):
 
     @route(r'^search/employees/$')
     def employee_search(self, request):
-
-
         page = request.GET.get('page', 1)
 
         name = request.GET.get('name', '')
@@ -1032,7 +838,6 @@ class AssignEmployee(RoutablePageMixin, Page):
                 },
             )
 
-
 class HrAdmin(models.Model):
     user = models.OneToOneField(
         User,
@@ -1091,62 +896,19 @@ class HRIndexPage(BaseAbstractPage):
     max_count = 1
     parent_page_types = ['base.BaseIndexPage']
 
-    @route(r'^search/$')
-    def pop_search(self, request):
-
-        search_query = request.GET.get('search_query', None).split()
-
-        if search_query :        
-            qset1 =  reduce(operator.__or__, [Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(position__icontains=query) for query in search_query])
-            qset2 =  reduce(operator.__or__, [Q(company__icontains=query) for query in search_query])
-
-            employees = Employee.objects.filter(qset1).distinct()
-            clients = Client.objects.filter(qset2).distinct()
-
-            results = list(chain(employees, clients))
-
-            if len(results) == 0:
-                return JsonResponse(data={
-                    'empty': True
-                })
-
-        
-            return TemplateResponse(request, 'base/pop_search.html', {
-                'results' : results,
-                'employee_details_index': EmployeeDetailsPage.objects.live().first(),
-                'client_details_index': ClientListPage.objects.live().first()
-            })
-        return JsonResponse(data={
-            'empty': True
-        })
-    
-    
-
     def get_context(self, request):
         context = super(HRIndexPage, self).get_context(request)
-
-        context['evaluated_employee'] = len(Employee.objects.filter(status='evaluated'))
-        context['evaluated_client'] = len(Client.objects.filter(status='evaluated'))
-
-        
-        context['on_evaluation_employee'] = len(Employee.objects.filter(status='on-evaluation'))
-        context['on_evaluation_client'] = len(Client.objects.filter(status='on-evaluation'))
 
         employee_list_index = EmployeeListPage.objects.live().first()
         client_list_index = ClientListPage.objects.live().first()
         assign_employee_index = AssignEmployee.objects.live().first()
-
+ 
         context['employee_list_index'] = employee_list_index
         context['client_list_index'] = client_list_index
         context['assign_employee_index'] = assign_employee_index
 
         context['client_count'] = len(Client.objects.all())
         context['employee_count'] = len(Employee.objects.all())
-        context['menu_lists'] = [
-            [employee_list_index.url, 'Employees'],
-            [client_list_index.url, 'Clients']
-        ]
-        context['search_page'] = self
 
         return context
     

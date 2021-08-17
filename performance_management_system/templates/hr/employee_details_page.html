@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block header %}
-{% include 'includes/header_latest.html' with user_model=user_model %}
+{% include 'includes/header.html' with user_model=user_model %}
 {% endblock %}
 
 {% block side_menu %}
@@ -36,7 +36,7 @@
       </div>
     </div>
     
-    <div class="flex justify-between py-4">
+    <div class="flex justify-between py-4 space-x-2">
       <div class="flex-1" >
         <div class="flex space-x-2">
           <span class="font-sans font-semibold text-gray">Client Name : </span>

@@ -1,148 +1,69 @@
 {% load static wagtailcore_tags  wagtailimages_tags notification_tags %}
 
-<header class="fixed w-full py-4 lg:py-4 lg:block lg-min-height-100 bg-color-gray z-index-1k ">
-	
-	<div class="container flex flex-col mx-auto space-y-2 lg:flex-row lg:space-y-0 ">
-			<div class='flex items-start px-4 lg:items-center lg:px-0 lg:flex-1'>
-				<div class="flex-1 space-x-2">
-					<h1 class="font-sans font-bold tracking-wide text-color-primary" style="font-size: 1.9vw;" >EMPLOYEE PERFORMANCE EVALUATION SYSTEM</h1>
-				</div>
-
-				<div class="flex items-center justify-end ">
-					<div class="flex items-center ">
-						<div class="relative w-36" >
-							<h1 class="mr-2 font-sans text-lg font-semibold text-right text-gray-3" >
-								{% if filter %}
-								{{filter}}
-								{% else %}
-								{{menu_text}}
-								{% endif %}
-							</h1>
-							<ul id='menu-container' class="absolute hidden w-40 px-4 py-2 font-sans text-lg font-semibold bg-white rounded-lg text-gray-3 shadow-box">
-									{% for menu_list in menu_lists %}
-										<li>
-											<a href="{{menu_list.0}}">{{menu_list.1}}</a>
-										</li>
-									{% endfor %}
-								<li>
-									<a href="/logout">Logout</a>
-								</li>
-							</ul>
-						</div>
-						
-						<div id="menu-btn" class="p-2 mr-2 rounded-full focus:outline-none">
-							<div id="menu-btn__burger"></div>
-						</div>
-					</div>
-
-					
-					<div class="relative flex"  >
-						{% if menu_text == 'Evaluation' %}
-						<button id='print-evaluation' class="p-2 mr-2 bg-white rounded-full shadow-box">
-							<img src='{% static "img/icons/printer.png" %}' width="20">
-						</button>
-						{% endif %}
-						<a href='{{notification_url}}notifications' class="p-2 bg-white rounded-full shadow-box">
-							<img src='{% static "img/icons/notif.png" %}' width="18">
-						</a>
-						<div id='notification-container'>
-							{% notication_count request.user.pk as result_notif %}
-							{% if result_notif  > 0 %}
-							<span class="absolute -top-1.5 right-0 w-5 h-5 text-center text-white bg-red-600 rounded-full text-sm">{{result_notif}}</span>
-							{% endif %}
-						</div>
-					</div>
-
-				</div>
-
-			</div>
-			
-			<div class="flex items-center px-4 " style="width: 430px;">
-				<div>
-					<div class="flex items-center px-2 mr-4 space-x-2 bg-white rounded-full shadow-box padding-y-4" >
-						<img src='{% static "img/icons/search.png" %}' width="18">
-						<input id='search-input' autocomplete="off" data-url='{% pageurl search_page %}search' class='focus:outline-none bg-color-transparent' placeholder="Search">
-					</div>
-
-					<ul id='pop-box' class="absolute hidden p-4 mt-2 space-y-2 overflow-y-auto font-sans text-lg font-semibold bg-white rounded-lg max-height-600 w-60 text-gray-3 shadow-box" >
-						
-					</ul>
-				</div>
-				<div class="flex items-start justify-center space-x-4 ">
-					{% if request.user.is_client %}
-					{% image user_model.profile_pic fill-80x80 as profile_pic %}
-					<div>
-						<img src='{{profile_pic.url}}' width="45" class="rounded-full" > 
-					</div>
-					<div class="leading-3 ">
-						<h2 class="font-sans text-xl font-bold leading-5">{{user_model.company | truncatechars:10}}</h2>
-						{% if request.user.is_hr %}
-						<h3 class="font-semibold text-md text-gray-1">HR Admin</h3>
-						{% elif request.user.is_employee %}	
-						<h3 class="font-semibold text-md text-gray-1">Employee</h3>
-						{% else %}
-						<h3 class="font-semibold text-md text-gray-1">Client</h3>
-						{% endif %}
-					</div>
-					{% else %}
-					{% image user_model.profile_pic fill-80x80 as profile_pic %}
-					<div>
-						<img src='{{profile_pic.url}}' width="45" class="rounded-full "> 
-					</div>
-					<div class="leading-3 ">
-						<h2 class="font-sans text-2xl font-bold">{{request.user.last_name}}</h2>
-						{% if request.user.is_hr %}
-						<h3 class="font-semibold text-md text-gray-1">HR Admin</h3>
-						{% elif request.user.is_employee %}	
-						<h3 class="font-semibold text-md text-gray-1">Employee</h3>
-						{% else %}
-						<h3 class="font-semibold text-md text-gray-1">Client</h3>
-						{% endif %}
-					</div>
-					{% endif %}
-		
-				</div>
-		
-			</div>
-	</div>
-
-	<div  class="container mx-auto space-y-2 ">
-		{% if title %}
-			<h1 class="font-sans text-2xl font-bold tracking-widest lg:text-2xl text-color-primary">{{title}}</h1>
-		{% elif employee_model %}
-			<div class="flex space-x-4">
-				{% image employee_model.profile_pic fill-60x60 as employee_pic %}
-				
-				<img src="{{employee_pic.url}}" class="rounded-full width-60 height-60">
-				<div class="flex flex-col justify-center">
-					<h1 class="font-sans text-sm font-bold lg:text-2xl text-gray" >
-						{{employee_model}}
-					</h1>
-					<h2 class="font-sans text-sm font-semibold lg:text-md text-gray-1">
-						{{employee_model.position}}
-					</h2>
-				</div>
-			</div>
+<header>
+    <div class="flex flex-row items-center px-8 py-2 space-x-2 "  style="box-shadow: 10px 2px 10px rgb(124, 124, 124, 0.316);">
+        <div class="flex-1">
+        </div>
+		{% if request.user.is_client %}
+        <div>
+			{% image user_model.profile_pic original as profile_pic %}
+            <img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 50px; height: 50px; ' > 
+        </div>
 		{% else %}
-			{% if employee %}
-			<span>
-				<a class="font-sans text-2xl font-bold tracking-widest text-color-primary" >EMPLOYEE</a>
-			</span>
-			<span>
-				<a href='../client-list-page' class='font-sans text-lg font-bold tracking-widest text-gray-2'>CLIENT</a>
-			</span>
-			{% elif client %}
-			<span>
-				<a href='../employee-list-page' class="font-sans text-lg font-bold tracking-widest text-gray-2">EMPLOYEE</a>
-			</span>
-			<span>
-				<a class='font-sans text-2xl font-bold tracking-widest text-color-primary'>CLIENT</a>
-			</span>
-			{% else %}
-				<h1 class="font-sans text-lg font-bold tracking-widest text-color-primary" >DASHBOARD</h1>
-			{% endif %}
-		{% endif %}
+        <div>
+			{% image user_model.profile_pic fill-40x40 as profile_pic %}
+            <img src='{{profile_pic.url}}' width="40" class="rounded-full "> 
+        </div>
+		{% endif %} 
+
+    </div>
+	<div >
+        {% if title == 'Dashboard' %}
+		<div class="flex items-end p-4 space-x-2 ">
+			<img src="{% static 'img/icons/dashboard-orange.png' %}">
+			<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
+		</div>
+
+		{% elif title == 'Assign Employee' %}
+		<div class="flex items-end p-4 space-x-2 ">
+			<img src="{% static 'img/icons/assign-employee-orange.png' %}">
+			<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
+		</div>
+        {% elif title == 'Clients' %}
+			<div class="flex items-end flex-1 p-4 space-x-2">
+				{% if employee_model %}
+				<div class="flex space-x-2">
+					{% image employee_model.profile_pic fill-35x35 as employee_pic %}
+					
+					<img src="{{employee_pic.url}}" class="rounded-full" width="35">
+					<div class="flex flex-col justify-center">
+						<h1 class="font-sans text-sm font-bold lg:text-xl text-gray" >
+							{{employee_model}} Employees
+						</h1>
+						<h2 class="font-sans text-sm font-semibold text-gray-1">
+							{{employee_model.position}}
+						</h2>
+					</div>
+				</div>
+				{% else %}
+				<img src="{% static 'img/icons/clients-orange.png' %}">
+				<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
+				{% endif %}
+			</div>
+
+        {% elif title == 'Employees' %}
+		<div class="flex items-end flex-1 space-x-2">
+			<div class="flex items-end flex-1 p-4 space-x-2">
+				<img src="{% static 'img/icons/employees-orange.png' %}">
+				<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
+			</div>
+		</div>
+		
+        {% elif title == 'Notifications' %}
+		<div class="flex items-end p-4 space-x-2 ">
+			<img src="{% static 'img/icons/notifications-orange.png' %}">
+			<h1 class="font-sans text-xl font-bold" style="color: #E67E22;">{{title}}</h1>
+		</div>
+        {% endif %}
 	</div>
-	
-	
 </header>

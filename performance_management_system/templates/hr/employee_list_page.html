@@ -2,10 +2,8 @@
 
 {% load static wagtailimages_tags wagtailcore_tags %}
 
-
-
 {% block header %}
-{% include 'includes/header_latest.html' with user_model=request.user.hradmin title='Employees' search=True %}
+{% include 'includes/header.html' with user_model=request.user.hradmin title='Employees' search=True %}
 {% endblock %}
 
 
