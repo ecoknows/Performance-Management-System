@@ -838,6 +838,47 @@ class AssignEmployee(RoutablePageMixin, Page):
                 },
             )
 
+    @route(r'^(\d+)/add/$')
+    def add_a_client(self, request, employee_id):
+        client_id = request.POST.get('client_id', None)
+        project_assign = request.POST.get('project_assign', None)
+
+        if client_id:
+            user_evaluation = UserEvaluation.objects.create(
+                employee_id=employee_id,
+                client_id=client_id,
+                hr_admin=request.user,
+                project_assign=project_assign
+            )
+            
+            employee = Employee.objects.get(pk=employee_id)
+            employee.status = 'on-evaluation'
+
+            client = Client.objects.get(pk=client_id)
+            client.status = 'on-evaluation'
+
+            Notification.objects.create(
+                reciever=client.user,
+                hr_admin=request.user.hradmin,
+                message='A new employee have been assign',
+                user_evaluation=user_evaluation,
+                notification_type='new-employee-client'
+            )
+
+            Notification.objects.create(
+                reciever=employee.user,
+                hr_admin=request.user.hradmin,
+                message='A new client have been assign',
+                user_evaluation=user_evaluation,
+                notification_type='new-client-employee'
+            )
+
+            employee.save()
+            client.save()
+        
+        return JsonResponse(data={'message': 'Successfull'})
+
+
 class HrAdmin(models.Model):
     user = models.OneToOneField(
         User,

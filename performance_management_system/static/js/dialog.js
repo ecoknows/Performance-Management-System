@@ -20,40 +20,21 @@ function close_dialog(){
 
 function refresh_clients(){
 
-    let search_input = $('#search-input')
-    let url = search_input.data('url')
-    let container = $('#pick-client-container')
+    let pages_indicator = $('#pages-indicator')
 
     $.ajax({
-        url : url + '/pick_client',
+        url : 'search/clients/',
         type: 'GET',
         data:{
-            'search_query' : search_input.val(),
-            'employee_id': employee_id,
+            'page': current_page,
         },
         success: function(data){
-            container.html(data)
+            $('#container-page-indicator').removeClass('hidden')
+            container.html(data.html)
+            next_page = data.next_number
+            pages_indicator.html(data.pages_indicator)
         }
     })
-
-    search_input.keyup(function(e){
-        e.preventDefault();
-        let search_query = $(this).val()
-
-        $.ajax({
-            url : url  + '/pick_client',
-            type: 'GET',
-            data:{
-                'search_query' : search_query,
-                'employee_id': employee_id,
-            },
-            success: function(data){
-                container.html(data)
-            }
-        })
-
-
-    });
 }
 
 function check_project_assign(){
