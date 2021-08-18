@@ -71,7 +71,6 @@ $(function(){
         url : url,
         type: 'GET',
         data:{
-            
             'page': current_page,
         },
         success: function(data){
