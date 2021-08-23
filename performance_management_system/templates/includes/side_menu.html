@@ -3,7 +3,13 @@
 <nav class="py-4 space-y-4 width-300" style="box-shadow: 2px 0 8px 0px rgba(124, 124, 124, 0.316); background-color: rgb(52, 58, 64);">
     
     <div class="flex justify-center space-x-2">
-        <h1 class="font-sans text-2xl font-bold text-white">ADMIN</h1>
+        {% if request.user.is_hr %}
+        <h1 class="font-sans text-2xl font-bold text-white">HR ADMIN</h1>
+        {% elif request.user.is_employee %}
+        <h1 class="font-sans text-2xl font-bold text-white">EMPLOYEE</h1>
+        {% elif request.user.is_client %}
+        <h1 class="font-sans text-2xl font-bold text-white">CLIENT</h1>
+        {% endif %}
     </div>
     <ul class="font-sans font-semibold text-white">
         <li class="cursor-pointer hover:bg-gray-600 {% if current_menu == 'dashboard'%}bg-blue-hover{% endif %}  ">
