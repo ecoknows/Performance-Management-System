@@ -1,18 +1,23 @@
 {% load static wagtailcore_tags  wagtailimages_tags notification_tags %}
 
 <header>
-    <div class="flex flex-row items-center px-8 py-2 space-x-2 "  style="box-shadow: 10px 2px 10px rgb(124, 124, 124, 0.316);">
-        <div class="flex-1">
+    <div class="flex flex-row items-center px-2 py-2 space-x-2 "  style="box-shadow: 10px 2px 10px rgb(124, 124, 124, 0.316); background-color: rgb(0, 123, 255);">
+        <div class="flex items-center flex-1 space-x-1">
+			
+            <img src='{% static "img/icons/burger.png" %}' style= ' width: 20px; height: 20px; ' > 
+			<h1 class="font-sans font-semibold text-white">Employee Performance Evaluation System</h1>
         </div>
 		{% if request.user.is_client %}
-        <div>
+        <div class="flex items-center px-2 space-x-1">
 			{% image user_model.profile_pic original as profile_pic %}
             <img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 50px; height: 50px; ' > 
+			<h1 class="font-sans font-semibold text-white">{{user_model}}</h1>
         </div>
 		{% else %}
-        <div>
-			{% image user_model.profile_pic fill-40x40 as profile_pic %}
-            <img src='{{profile_pic.url}}' width="40" class="rounded-full "> 
+        <div class="flex items-center px-2 space-x-1">
+			{% image user_model.profile_pic fill-30x30 as profile_pic %}
+            <img src='{{profile_pic.url}}' width="30" class="rounded-full "> 
+			<h1 class="font-semibold text-white font-san">{{user_model}}</h1>
         </div>
 		{% endif %} 
 
