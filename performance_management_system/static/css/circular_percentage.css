@@ -42,7 +42,7 @@ transform: translate(-50%, -50%) scale(0.91);
 }
 .card .circle .box span,
 .wrapper .card .text{
-background: #E67E22;
+background: #007bff;
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 }

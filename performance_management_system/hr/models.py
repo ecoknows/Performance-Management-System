@@ -878,7 +878,6 @@ class AssignEmployee(RoutablePageMixin, Page):
         
         return JsonResponse(data={'message': 'Successfull'})
 
-
 class HrAdmin(models.Model):
     user = models.OneToOneField(
         User,
