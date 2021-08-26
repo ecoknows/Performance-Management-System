@@ -27,7 +27,7 @@
 		</button>
 	</td>
 	{% if user_evaluation.employee.status == 'on-evaluation' %}
-	<td class="p-0 font-sans text-sm font-semibold text-red"><a class='flex flex-col justify-center block w-full h-12 px-4' href='evaluated/{{user_evaluation.pk}}'>On Evaluation</a></td>
+	<td class="p-0 font-sans text-sm font-semibold text-red"><a class='flex flex-col justify-center block w-full h-12 px-4' href='evaluated/{{user_evaluation.pk}}'>For Evaluation</a></td>
 	{% else %}
 	<td class="p-0 font-sans text-sm font-semibold text-green"><a class='flex flex-col justify-center block w-full h-12 px-4' href='evaluated/{{user_evaluation.pk}}'>Done Evaluating</a></td>
 	{% endif %}

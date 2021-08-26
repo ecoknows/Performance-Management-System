@@ -9,7 +9,7 @@
 		<a class='flex items-center justify-start block w-full px-4 space-x-4' href=" {% pageurl evaluation_page_index %}{{user_evaluation.pk}}" style="min-height: 3rem;">
 			{% image user_evaluation.employee.profile_pic fill-30x30 as employee_pic %}
 			<img src="{{employee_pic.url}}" width="30"  class="rounded-full" >
-			<h1 style='color:#E67E22'>{{user_evaluation.employee}}</h1>
+			<h1 style='color:#007bff'>{{user_evaluation.employee}}</h1>
 		</a>
 	</td>
 	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href=" {% pageurl evaluation_page_index %}{{user_evaluation.pk}}">{{user_evaluation.employee.address}}</a></td>
@@ -17,7 +17,7 @@
 	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href=' {% pageurl evaluation_page_index %}{{user_evaluation.pk}}'>+63{{user_evaluation.employee.contact_number}}</a></td>
 	
 	{% if user_evaluation.employee.status == 'on-evaluation' %}
-	<td class="p-0 font-sans text-sm font-semibold text-red"><a class='flex flex-col justify-center block w-full h-12 px-4' href=' {% pageurl evaluation_page_index %}{{user_evaluation.pk}}'>On Evaluation</a></td>
+	<td class="p-0 font-sans text-sm font-semibold text-red"><a class='flex flex-col justify-center block w-full h-12 px-4' href=' {% pageurl evaluation_page_index %}{{user_evaluation.pk}}'>For Evaluation</a></td>
 	{% else %}
 	<td class="p-0 font-sans text-sm font-semibold text-green"><a class='flex flex-col justify-center block w-full h-12 px-4' href=' {% pageurl evaluation_page_index %}{{user_evaluation.pk}}'>Done Evaluating</a></td>
 	{% endif %}
