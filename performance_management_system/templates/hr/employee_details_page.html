@@ -20,9 +20,8 @@
 <section class="container flex flex-col items-center pt-6 mx-auto space-y-4">
   <div style="width: 800px;" class="px-6 py-2 bg-white shadow-box">
     <div class="flex items-center justify-center flex-1 space-x-2">
-      {% image user_evaluation.employee.profile_pic fill-60x60 as employee_pic %}
-      
-      <img src="{{employee_pic.url}}" class="rounded-full" width="60">
+			{% include 'includes/employee_profile.html' with size=60 employee=user_evaluation.employee %}
+
       <div class="flex flex-col justify-center">
         <h1 class="font-sans text-sm font-bold lg:text-xl text-gray" >
           {{user_evaluation.employee}}

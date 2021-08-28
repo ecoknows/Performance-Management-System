@@ -28,8 +28,7 @@
     </div>
     {% else %}
     <div class="flex items-center px-2 space-x-1">
-      {% image user_model.profile_pic fill-30x30 as profile_pic %}
-      <img src="{{profile_pic.url}}" width="30" class="rounded-full" />
+			{% include 'includes/employee_profile.html' with size=30 employee=user_model %}
       <h1 class="font-semibold text-white font-san">{{user_model}}</h1>
     </div>
     {% endif %}

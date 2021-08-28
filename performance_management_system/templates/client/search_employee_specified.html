@@ -7,8 +7,7 @@
 		
 	<td class="p-0 font-sans font-semibold text-gray">
 		<a class='flex items-center justify-start block w-full px-4 space-x-4' href=" {% pageurl evaluation_page_index %}{{user_evaluation.pk}}" style="min-height: 3rem;">
-			{% image user_evaluation.employee.profile_pic fill-30x30 as employee_pic %}
-			<img src="{{employee_pic.url}}" width="30"  class="rounded-full" >
+			{% include 'includes/employee_profile.html' with size=30 employee=user_evaluation.employee %}
 			<h1 style='color:#007bff'>{{user_evaluation.employee}}</h1>
 		</a>
 	</td>

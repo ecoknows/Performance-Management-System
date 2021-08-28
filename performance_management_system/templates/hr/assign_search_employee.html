@@ -7,8 +7,7 @@
 		
 	<td class="p-0 font-sans font-semibold text-gray">
 		<a class='flex items-center justify-start block w-full px-4 space-x-4' style="min-height: 3rem;">
-			{% image employee.profile_pic fill-30x30 as employee_pic %}
-			<img src="{{employee_pic.url}}" width="30"  class="rounded-full" >
+			{% include 'includes/employee_profile.html' with size=30 %}
 			<div>
 				<h1 style='color:#007bff'>{{employee}}</h1>
 				<h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">

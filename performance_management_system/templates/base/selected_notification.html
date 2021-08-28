@@ -2,8 +2,7 @@
 
 {% if notification.notification_type == 'client-evaluated-hr' %}
 <div class="flex flex-col items-center" >
-    {% image notification.user_evaluation.employee.profile_pic original as profile_pic %}
-    <img src='{{profile_pic.url}}' class="object-cover w-24 h-24 rounded-full" >
+    {% include 'includes/employee_profile.html' with size=80 employee=notification.user_evaluation.employee %}
     <div class="text-center">
         <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee}}</h1>
         <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee.position}}</h1>
@@ -129,8 +128,7 @@
 
 
 <div class="flex flex-col items-center" >
-    {% image notification.user_evaluation.employee.profile_pic original as profile_pic %}
-    <img src='{{profile_pic.url}}' class="object-cover w-24 h-24 rounded-full" >
+    {% include 'includes/employee_profile.html' with size=80 employee=notification.user_evaluation.employee %}
     <div class="text-center">
         <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee}}</h1>
         <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee.position}}</h1>
@@ -188,8 +186,7 @@
 {% elif notification.notification_type == 'new-employee-client'  %}
 
 <div class="flex flex-col items-center" >
-    {% image notification.user_evaluation.employee.profile_pic original as profile_pic %}
-    <img src='{{profile_pic.url}}' class="object-cover w-24 h-24 rounded-full" >
+    {% include 'includes/employee_profile.html' with size=80 employee=notification.user_evaluation.employee %}
     <div class="text-center">
         <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee}}</h1>
         <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee.position}}</h1>

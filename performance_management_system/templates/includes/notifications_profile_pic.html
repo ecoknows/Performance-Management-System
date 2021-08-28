@@ -2,8 +2,7 @@
 {% load wagtailimages_tags %}
 
 {% if type == 'client-evaluated-hr' %}
-{% image notification.user_evaluation.employee.profile_pic fill-30x30 as employee_pic %}
-<img src="{{employee_pic.url}}" width="30"  class="rounded-full" >
+{% include 'includes/employee_profile.html' with size=30 employee=notification.user_evaluation.employee %}
 <div>
     <h1 style='color:#007bff'>{{notification.user_evaluation.employee}}</h1>
     {% if is_hr %}
@@ -52,8 +51,7 @@
 
 
 {% elif notification.notification_type == 'new-employee-client' %}
-{% image notification.user_evaluation.employee.profile_pic fill-30x30 as employee_pic %}
-<img src="{{employee_pic.url}}" width="30"  class="rounded-full" >
+{% include 'includes/employee_profile.html' with size=30 employee=notification.user_evaluation.employee %}
 <div>
     <h1 style='color:#007bff'>{{notification.user_evaluation.employee}}</h1>
     {% if is_hr %}
