@@ -1,0 +1,31 @@
+
+
+{% extends 'base.html'%}
+
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block head_style %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/loading_bar.css' %}">
+{% endblock %}
+
+
+{% block header %}
+{% include 'includes/header.html' %}
+{% endblock %}
+
+{% block side_menu %}
+  {% include 'includes/side_menu.html' with current_menu='reports' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="container p-6 mx-auto space-y-6 ">
+
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/header_search.js' %}"></script>
+{% endblock %}

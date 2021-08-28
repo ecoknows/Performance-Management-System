@@ -32,6 +32,12 @@
             </a>
             
         </li>
+        <li class="cursor-pointer hover:bg-gray-600 {% if current_menu == 'reports'%}bg-blue-hover{% endif %} ">
+            <a href='{% pageurl reports_index %}' class="flex items-center p-4 space-x-2">
+                <img src="{% static 'img/icons/reports.png' %}" class="inline">
+                <h2>Reports</h2>
+            </a>
+        </li>
 
         {% if request.user.is_hr %}
         <li class="cursor-pointer hover:bg-gray-600 {% if current_menu == 'assign-employee'%}bg-blue-hover{% endif %} ">

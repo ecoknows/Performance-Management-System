@@ -40,7 +40,6 @@ class ClientListPage(RoutablePageMixin,Page):
         
         return data
     
-    
     @route(r'^$') 
     def default_route(self, request):
 
@@ -79,6 +78,7 @@ class ClientListPage(RoutablePageMixin,Page):
                 'client_list_index': self,
                 'employee_list_index': EmployeeListPage.objects.live().first(),
                 'assign_employee_index': AssignEmployee.objects.live().first(),
+                'reports_index': ReportsHR.objects.live().first(),
             }
         )
 
@@ -97,6 +97,7 @@ class ClientListPage(RoutablePageMixin,Page):
                 'client_list_index': self,
                 'employee_list_index': EmployeeListPage.objects.live().first(),
                 'assign_employee_index': AssignEmployee.objects.live().first(),
+                'reports_index': ReportsHR.objects.live().first(),
                 'current_menu' : 'clients'
             },
             template='client/client_index_page.html'
@@ -133,6 +134,7 @@ class ClientListPage(RoutablePageMixin,Page):
                 'current_menu' : 'clients',
                 'employee_list_index': EmployeeListPage.objects.live().first(),
                 'assign_employee_index': AssignEmployee.objects.live().first(),
+                'reports_index': ReportsHR.objects.live().first(),
             },
             template="base/evaluation_page.html",
         )
@@ -319,7 +321,6 @@ class EmployeeListPage(RoutablePageMixin,Page):
         
         return data
     
-
     @route(r'^$') 
     def default_route(self, request):
 
@@ -331,10 +332,10 @@ class EmployeeListPage(RoutablePageMixin,Page):
                 'employee_list_index': self,
                 'client_list_index':  ClientListPage.objects.live().first(),
                 'assign_employee_index': AssignEmployee.objects.live().first(),
+                'reports_index': ReportsHR.objects.live().first(),
             }
         )
 
-    
     @route(r'^search/employees/$')
     def employee_search(self, request):
 
@@ -472,7 +473,8 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             'assign_employee_index': assign_employee_index,
             'employee_list_index': employee_list_index,
             'client_list_index': client_list_index,
-            'notification_url': HRIndexPage.objects.live().first().url
+            'notification_url': HRIndexPage.objects.live().first().url,
+            'reports_index': ReportsHR.objects.live().first(),
             }
         )
     
@@ -575,7 +577,8 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
                 'assign_employee_index': assign_employee_index,
                 'employee_list_index': employee_list_index,
                 'client_list_index': client_list_index,
-                'notification_url': HRIndexPage.objects.live().first().url
+                'notification_url': HRIndexPage.objects.live().first().url,
+                'reports_index': ReportsHR.objects.live().first(),
             },
             template="base/evaluation_page.html",
         )
@@ -654,6 +657,7 @@ class AssignEmployee(RoutablePageMixin, Page):
                 'employee_list_index' : EmployeeListPage.objects.live().first(),
                 'client_list_index' : ClientListPage.objects.live().first(),
                 'assign_employee_index': AssignEmployee.objects.live().first(),
+                'reports_index': ReportsHR.objects.live().first(),
             }
         )
 
@@ -666,7 +670,8 @@ class AssignEmployee(RoutablePageMixin, Page):
                 'employee_list_index' : EmployeeListPage.objects.live().first(),
                 'client_list_index' : ClientListPage.objects.live().first(),
                 'assign_employee_index': AssignEmployee.objects.live().first(),
-                'employee': Employee.objects.get(pk=employee_id)
+                'employee': Employee.objects.get(pk=employee_id),
+                'reports_index': ReportsHR.objects.live().first(),
             },
             template='hr/assign_client.html'
         )
@@ -878,6 +883,24 @@ class AssignEmployee(RoutablePageMixin, Page):
         
         return JsonResponse(data={'message': 'Successfull'})
 
+class ReportsHR(RoutablePageMixin, Page):
+    max_count = 1
+    parent_page_types = ['HRIndexPage']
+
+    @route(r'^$') 
+    def default_route(self, request):
+        
+        return self.render(
+            request,
+            context_overrides={
+                'user_model': request.user.hradmin,
+                'notification_url' : HRIndexPage.objects.live().first().url ,
+                'employee_list_index' : EmployeeListPage.objects.live().first(),
+                'client_list_index' : ClientListPage.objects.live().first(),
+                'assign_employee_index': AssignEmployee.objects.live().first(),
+                'reports_index': self,
+            })
+     
 class HrAdmin(models.Model):
     user = models.OneToOneField(
         User,
@@ -942,13 +965,15 @@ class HRIndexPage(BaseAbstractPage):
         employee_list_index = EmployeeListPage.objects.live().first()
         client_list_index = ClientListPage.objects.live().first()
         assign_employee_index = AssignEmployee.objects.live().first()
+        reports_index = ReportsHR.objects.live().first()
  
         context['employee_list_index'] = employee_list_index
         context['client_list_index'] = client_list_index
         context['assign_employee_index'] = assign_employee_index
+        context['reports_index'] = reports_index
 
         context['client_count'] = len(Client.objects.all())
         context['employee_count'] = len(Employee.objects.all())
 
         return context
-    
+

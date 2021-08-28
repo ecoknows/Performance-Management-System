@@ -37,6 +37,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             context_overrides={
                 'user_model' : request.user.employee,
                 'notification_url': self.url,
+                'reports_index': ReportsEmployee.objects.live().first()
             },
             template="base/notifications.html",
         )
@@ -163,6 +164,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 'notification': notification,
                 'categories' : categories,
                 'category_percentages': category_percentages,
+                'reports_index': ReportsEmployee.objects.live().first()
             },
             template="base/notifications_view.html",
         )
@@ -186,6 +188,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
                 'current_menu':'notifications',
                 'notification_url': self.url,
+                'reports_index': ReportsEmployee.objects.live().first()
             },
             template="base/evaluation_page.html",
         )
@@ -260,8 +263,23 @@ class Employee(models.Model):
     def delete(self):
         if self.user:
             self.user.delete()
-        super().delete()
-               
+        super().delete()             
+
+class ReportsEmployee(RoutablePageMixin, Page):
+    max_count = 1
+    parent_page_types = ['EmployeeIndexPage']
+
+    @route(r'^$') 
+    def default_route(self, request):
+        
+        return self.render(
+            request,
+            context_overrides={
+                'user_model': request.user.employee,
+                'notification_url' : EmployeeIndexPage.objects.live().first().url ,
+                'reports_index': self,
+            })
+
 class EmployeeIndexPage(BaseAbstractPage):
     max_count = 1
     parent_page_types = ['base.BaseIndexPage']
@@ -299,7 +317,8 @@ class EmployeeIndexPage(BaseAbstractPage):
             'user_evaluation': user_evaluation,
             'user_model': request.user.employee ,
             'category_percentages': category_percentages,
-            'current_menu':'dashboard'
+            'current_menu':'dashboard',
+            'reports_index': ReportsEmployee.objects.live().first()
             },
             template='hr/employee_details_page.html'
         )
@@ -323,7 +342,8 @@ class EmployeeIndexPage(BaseAbstractPage):
                 'notification_url' : self.url,
                 'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
                 'search_page' : self,
-                'current_menu':'dashboard'
+                'current_menu':'dashboard',
+                'reports_index': ReportsEmployee.objects.live().first()
             },
             template="base/evaluation_page.html",
         )

@@ -252,7 +252,6 @@ class BaseIndexPage(Page):
         
         return HttpResponseRedirect('/logout/')
 
-# ABSTRACT
 class EvaluationRates(ClusterableModel):
     evaluation_categories = ParentalKey('EvaluationCategories', on_delete=models.CASCADE, related_name='evaluation_rates')
     
@@ -369,6 +368,7 @@ class UserEvaluation(ClusterableModel, models.Model):
     ]
             
 class EvaluationPage(RoutablePageMixin, Page):
+    max_count = 1
     evaluation_max_rate = models.IntegerField(default=0)
     legend_evaluation = RichTextField(null=True)
     

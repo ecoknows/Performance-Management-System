@@ -46,6 +46,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             context_overrides={
                 'user_model' : request.user.client,
                 'notification_url': self.url,
+                'reports_index': ReportsClient.objects.live().first(),
             },
             template="base/notifications.html",
         )
@@ -182,6 +183,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 'notification': notification,
                 'categories' : categories,
                 'category_percentages': category_percentages,
+                'reports_index': ReportsClient.objects.live().first(),
             },
             template="base/notifications_view.html",
         )
@@ -205,6 +207,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
                 'current_menu':'notifications',
                 'notification_url': self.url,
+                'reports_index': ReportsClient.objects.live().first(),
             },
             template="base/evaluation_page.html",
         )
@@ -265,7 +268,22 @@ class Client(models.Model):
         if self.user:
             self.user.delete()
         super().delete()        
-  
+
+class ReportsClient(RoutablePageMixin, Page):
+    max_count = 1
+    parent_page_types = ['ClientIndexPage']
+
+    @route(r'^$') 
+    def default_route(self, request):
+        
+        return self.render(
+            request,
+            context_overrides={
+                'user_model': request.user.client,
+                'notification_url' : ClientIndexPage.objects.live().first().url ,
+                'reports_index': self,
+            })
+
 class ClientIndexPage(BaseAbstractPage):
     max_count = 1
     parent_page_types = ['base.BaseIndexPage']
@@ -296,6 +314,7 @@ class ClientIndexPage(BaseAbstractPage):
                 'evaluation_index': EvaluationPage.objects.live().first().url,
                 'search_page': self,
                 'notification_url': notification_url,
+                'reports_index': ReportsClient.objects.live().first(),
             }
         )
     
