@@ -27,7 +27,7 @@ from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from performance_management_system.users.models import User
 from performance_management_system.employee.models import Employee
-from performance_management_system.client.models import Client, ClientIndexPage
+from performance_management_system.client.models import Client, ClientIndexPage, ReportsClient
 from django.contrib.postgres.fields import ArrayField
 from itertools import chain
 import operator
@@ -510,6 +510,7 @@ class EvaluationPage(RoutablePageMixin, Page):
             'employee_model': user_evaluation.employee,
             'submit_success': submit_success,
             'search_page': ClientIndexPage.objects.live().first(),
+            'reports_index': ReportsClient.objects.live().first(),
             'current_menu' : 'dashboard'
             }
         )
