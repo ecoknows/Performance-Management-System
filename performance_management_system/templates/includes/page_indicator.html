@@ -2,7 +2,7 @@
 {% if pages.number == i %}
 <span class="px-2 font-sans text-sm font-semibold bg-gray-300 cursor-pointer select-none hover:bg-gray-200" style="color: rgb(67, 67, 67);">{{i}}</span>
 {% else %}
-    {% if forloop.counter == 4 and pages.paginator.num_pages > i %}
+    {% if forloop.counter == 4 and pages.paginator.num_pages >= i %}
     <span class="px-2 font-sans text-sm font-semibold cursor-pointer select-none hover:bg-gray-200" style="color: rgb(67, 67, 67);" onclick="page_number_click('{{i}}')">...</span>
     <span class="px-2 font-sans text-sm font-semibold cursor-pointer select-none hover:bg-gray-200" style="color: rgb(67, 67, 67);" onclick="page_number_click('{{pages.paginator.num_pages}}')">{{pages.paginator.num_pages}}</span>
     {% elif pages.paginator.num_pages >= i %}

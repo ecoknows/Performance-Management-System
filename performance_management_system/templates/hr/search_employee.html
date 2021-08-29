@@ -56,12 +56,20 @@
       >For Evaluation</a
     >
   </td>
-  {% else %}
+  {% elif employee.status == 'evaluated'  %}
   <td class="p-0 font-sans text-sm font-semibold text-green">
     <a
       class="flex flex-col justify-center block w-full h-12 px-4"
       href="{{employee_details_index}}{{employee.pk}}"
       >Done Evaluating</a
+    >
+  </td>
+  {% else %}
+  <td class="p-0 font-sans text-sm font-semibold text-gray">
+    <a
+      class="flex flex-col justify-center block w-full h-12 px-4"
+      href="{{employee_details_index}}{{employee.pk}}"
+      >No Evaluation</a
     >
   </td>
   {% endif %}

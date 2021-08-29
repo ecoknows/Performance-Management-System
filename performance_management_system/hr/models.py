@@ -374,14 +374,14 @@ class EmployeeListPage(RoutablePageMixin,Page):
                          'hr/search_employee.html',
                         {
                             'employee_details_index': EmployeeDetailsPage.objects.live().first().url,
-                            'employees' : self.paginate_data(employees.exclude(status='none'), page),
+                            'employees' : self.paginate_data(employees, page),
                         }
                     ),
                 },
             )
 
 
-        employees = Employee.objects.exclude(status='none')
+        employees = Employee.objects.all()
 
         employees = self.paginate_data(employees, page)
         max_pages = employees.paginator.num_pages
