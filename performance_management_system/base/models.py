@@ -157,7 +157,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         if sort:
             notifications = Notification.objects.filter(reciever=request.user).order_by(sort)
         else:
-            notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
+            notifications = Notification.objects.filter(reciever=request.user).order_by('seen','-created_at')
 
 
         notifications = self.paginate_data(notifications, page)
@@ -412,7 +412,6 @@ class EvaluationPage(RoutablePageMixin, Page):
         return [
             [ClientIndexPage.objects.live().first().url,'Employees']
         ]
-    
     
     @route(r'^(\d+)/$', name='id')
     def evaluate_user_with_id(self, request, id):

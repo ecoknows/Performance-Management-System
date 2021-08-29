@@ -440,6 +440,8 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
         categories = EvaluationCategories.objects.all()
         max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         category_percentages = []
+        overall_performance = 0
+
         for category in categories:
             rate_assigns = EvaluationRateAssign.objects.filter(
                 evaluation_rate__evaluation_categories=category,
@@ -456,8 +458,12 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             else:
                 percentage = 0
             
+            overall_performance = overall_performance + percentage
+            
             category_percentages.append([category,percentage])
-        
+
+        if overall_performance != 0:
+            overall_performance = overall_performance / len(categories)
         
         employee_list_index = EmployeeListPage.objects.live().first()
         client_list_index = ClientListPage.objects.live().first()
@@ -475,6 +481,8 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             'client_list_index': client_list_index,
             'notification_url': HRIndexPage.objects.live().first().url,
             'reports_index': ReportsHR.objects.live().first(),
+            'max_rate' : max_rate,
+            'overall_performance': overall_performance
             }
         )
     

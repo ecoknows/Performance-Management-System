@@ -78,7 +78,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         if sort:
             notifications = Notification.objects.filter(reciever=request.user).order_by(sort)
         else:
-            notifications = Notification.objects.filter(reciever=request.user).order_by('-created_at')
+            notifications = Notification.objects.filter(reciever=request.user).order_by('seen','-created_at')
 
 
         notifications = self.paginate_data(notifications, page)
@@ -291,6 +291,7 @@ class EmployeeIndexPage(BaseAbstractPage):
         categories = EvaluationCategories.objects.all()
         max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         category_percentages = []
+        overall_performance = 0
 
         for category in categories:
             rate_assigns = EvaluationRateAssign.objects.filter(
@@ -307,8 +308,13 @@ class EmployeeIndexPage(BaseAbstractPage):
                 percentage = (percentage / (rate_assign_len * max_rate))
             else:
                 percentage = 0
+                
+            overall_performance = overall_performance + percentage
             
             category_percentages.append([category,percentage])
+
+        if overall_performance != 0:
+            overall_performance = overall_performance / len(categories)
         
 
         return self.render(
@@ -318,7 +324,9 @@ class EmployeeIndexPage(BaseAbstractPage):
             'user_model': request.user.employee ,
             'category_percentages': category_percentages,
             'current_menu':'dashboard',
-            'reports_index': ReportsEmployee.objects.live().first()
+            'reports_index': ReportsEmployee.objects.live().first(),
+            'max_rate': max_rate,
+            'overall_performance': overall_performance
             },
             template='hr/employee_details_page.html'
         )

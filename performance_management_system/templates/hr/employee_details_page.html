@@ -64,11 +64,20 @@
       <div class="mb-8 mr-4 card">
         <div class="circle" >
           <div class="bar" data-value="{{category.1}}"></div>
-          <div class="box"><span></span></div>
+          <div class="box"><span class="text-center"></span></div>
         </div>
         <div class="text">{{category.0}}</div>
       </div>
     {% endfor  %}
+
+    <div class="mb-8 mr-4 card">
+      <div class="circle" >
+        <div class="bar" data-value="{{overall_performance}}"></div>
+        <div class="box"><span class="text-center"></span></div>
+      </div>
+      <div class="text">Overall Performance</div>
+    </div>
+    
   </div>
 
 </section>
@@ -76,7 +85,9 @@
 {% endblock %}
 
 {% block scripts %}
-
+<script>
+  max_rate = '{{max_rate}}'
+</script>
 <script src="{% static 'js/circular_percentage.js' %}"></script>
 {% endblock %}
 
