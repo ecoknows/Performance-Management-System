@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.http import JsonResponse
 from django.template.loader import render_to_string
@@ -219,12 +218,13 @@ class Employee(models.Model):
     birth_day = models.DateField()
     position = models.CharField(max_length=255, null=True)
 
-    status = models.CharField(
-        max_length=255,
-        choices=IS_EVALUATED,
-        default='none'
+    current_user_evaluation = models.ForeignKey(
+        'base.UserEvaluation',
+        null=True,
+        blank=False,
+        on_delete=models.SET_NULL,
+        related_name='+'
     )
-    
 
     panels = [
         ImageChooserPanel('profile_pic'),

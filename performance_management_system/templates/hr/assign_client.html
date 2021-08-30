@@ -8,7 +8,6 @@
 
 {% block header %}
 {% include 'includes/header.html' with user_model=request.user.hradmin title='Assign Employee' %}
-<div class="notify "style="z-index: 4000;"><span id="notifyType" class="" ></span></div>  
 {% endblock %}
 
 {% block side_menu %}
@@ -44,8 +43,7 @@
 		<div class="p-2 m-4 border-t-2 border-l-2 border-r-2 border-gray">
 			<h1 class="font-sans text-sm italic font-semibold text-gray">*dont forget to type project assign.</h1>
 			<div class="flex flex-col items-center py-4">
-				{% image employee.profile_pic fill-60x60 as profile_pic %}
-				<img src='{{profile_pic.url}}' style= 'object-fit: contain; width: 60px; height: 60px;' class="rounded-full">
+				{% include 'includes/employee_profile.html' with size=60 %}
 				<h2 class="px-2 font-sans text-lg font-bold text-gray">{{employee}}</h2>
 				<h2 class="px-2 font-sans text-sm text-gray">{{employee.position}}</h2>
 			</div>

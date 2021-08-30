@@ -53,7 +53,7 @@
 				</div>
 			
 			</td>
-			<td class="font-sans font-semibold text-gray">
+			<td class="font-sans font-semibold text-gray w-44">
 				<div>
 					Contact Number <i class="cursor-pointer fas fa-sort" data-field-name='employee__contact_number'></i> 
 				</div>
@@ -71,15 +71,16 @@
 			
 			</td>
 			{% endif %}
-			<td class="font-sans font-semibold text-gray">
+			<td class="w-40 font-sans font-semibold text-gray">
 				<div>
 					Status <i class="cursor-pointer fas fa-sort" data-field-name='employee__status'></i> 
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded " style="width: 120px;">
 					<select id='search-input-status' class="w-full focus:outline-none">
 						<option value="">All</option>
-						<option value="evaluated">Done Evaluating</option>
-						<option value="on-evaluation">For Evaluation</option>
+						<option value="done-evaluating">Done Evaluating</option>
+						<option value="for-evaluation">For Evaluation</option>
+						<option value="none">No Evaluation</option>
 					</select>
 				</div>
 			

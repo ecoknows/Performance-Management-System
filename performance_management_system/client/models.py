@@ -190,12 +190,93 @@ class BaseAbstractPage(RoutablePageMixin, Page):
 
     @route(r'^notifications/(\d+)/evaluation/$')
     def notification_evaluation(self, request, notification_id):
-        from performance_management_system.base.models import Notification, EvaluationPage, EvaluationCategories
+        from performance_management_system.base.models import Notification, EvaluationPage, EvaluationCategories, EvaluationRateAssign, EvaluationTask, EvaluationRates
 
         notification = Notification.objects.get(pk=notification_id)
         user_evaluation = notification.user_evaluation
         evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         legend_evaluation = EvaluationPage.objects.live().first().legend_evaluation
+
+        evaluation_sum = 0
+        submit_success = None
+
+        if request.method == 'POST' and request.POST.get('submit-btn', None):
+            
+            for category in EvaluationCategories.objects.all():
+                for rate in category.evaluation_rates.all():
+                    evaluation_rate_assign, created = EvaluationRateAssign.objects.get_or_create(
+                        user_evaluation=user_evaluation,
+                        evaluation_rate=rate,
+                    )
+
+                    if evaluation_rate_assign:
+                        question_rate = int(request.POST['question-'+str(rate.pk)] )
+                        evaluation_rate_assign.rate= question_rate
+                        evaluation_sum = evaluation_sum + question_rate
+                        evaluation_rate_assign.save()
+                task = request.POST['task-'+str(category.pk)]
+
+                EvaluationTask.objects.create(
+                    category=category,
+                    user_evaluation=user_evaluation,
+                    text=task
+                )
+                        
+            # update_user_evaluation = UserEvaluation.objects.get(pk=id)
+            late_and_absences = []
+            for count in range(12):
+                late = request.POST['late-'+str(count)]
+                absence = request.POST['absence-'+str(count)]
+
+                late_and_absences.append([late,absence])
+            
+            
+
+
+            perfect_rate = len(EvaluationRates.objects.all()) * evaluation_max_rate
+            user_evaluation.percentage = (evaluation_sum / perfect_rate) * 100
+            user_evaluation.submit_date = timezone.now()
+            user_evaluation.late_and_absence = late_and_absences 
+            user_evaluation.save()
+
+            employee = user_evaluation.employee
+            employee_not_evaluated = employee.user_evaluation.filter(percentage=0)
+
+            if len(employee_not_evaluated) == 0:
+                employee.status = 'evaluated'
+                employee.save()
+
+            client = user_evaluation.client
+            client_not_evaluated = client.user_evaluation.filter(percentage=0)
+            
+            if len(client_not_evaluated) == 0:
+                client.status = 'evaluated'
+                client.save()
+
+            Notification.objects.create(
+                reciever=user_evaluation.hr_admin,
+                message=user_evaluation.client.company+' has already evaluated',
+                user_evaluation=user_evaluation,
+                notification_type='client-evaluated-hr',
+            )
+            
+            Notification.objects.create(
+                reciever=user_evaluation.employee.user,
+                message=user_evaluation.client.company+' has already evaluated',
+                user_evaluation=user_evaluation,
+                notification_type='client-evaluated-employee',
+            )
+            
+
+            Notification.objects.create(
+                reciever=user_evaluation.client.user,
+                message='Thank you for evaluating, I have send the result to ' + str(user_evaluation.employee),
+                user_evaluation=user_evaluation,
+                hr_admin=user_evaluation.hr_admin.hradmin,
+                notification_type='evaluated-form-is-send-to-employee',
+            )
+            
+            submit_success = 'success'
 
         return self.render(
             request,
@@ -207,6 +288,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
                 'current_menu':'notifications',
                 'notification_url': self.url,
+                'submit_success': submit_success,
                 'reports_index': ReportsClient.objects.live().first(),
             },
             template="base/evaluation_page.html",
@@ -233,13 +315,6 @@ class Client(models.Model):
     company = models.CharField(max_length=255, null=True)
     address = models.CharField(max_length=255, null=True)
     contact_number = models.CharField(max_length=255, null=True)
-    
-    status = models.CharField(
-        max_length=255,
-        choices=IS_EVALUATED,
-        default='none'
-    )
-    
 
     panels = [
         ImageChooserPanel('profile_pic'),
@@ -340,14 +415,21 @@ class ClientIndexPage(BaseAbstractPage):
                 qset1 =  reduce(operator.__or__, [Q(employee__first_name__icontains=query) | Q(employee__last_name__icontains=query) for query in name])
                 user_evaluations = UserEvaluation.objects.filter(qset1, client=request.user.client).distinct()
                 if sort:
-                    user_evaluations = user_evaluations.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position).order_by(sort)
+                    user_evaluations = user_evaluations.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__position__icontains=position).order_by(sort)
                 else:
-                    user_evaluations = user_evaluations.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position)
+                    user_evaluations = user_evaluations.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__position__icontains=position)
             else:
                 if sort:
-                    user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position, client_id=client_id).order_by(sort)
+                    user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__position__icontains=position, client=request.user.client).order_by(sort)
                 else:
-                    user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position, client_id=client_id)
+                    user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__position__icontains=position, client=request.user.client)
+            
+            if status == 'for-evaluation':
+                user_evaluations = user_evaluations.filter( employee__current_user_evaluation__percentage=0)
+            if status == 'done-evaluating':
+                user_evaluations = user_evaluations.filter( employee__current_user_evaluation__isnull=False).exclude(employee__current_user_evaluation__percentage=0)
+            if status == 'none':
+                user_evaluations = user_evaluations.filter( employee__current_user_evaluation=None)
             
             
 
@@ -363,7 +445,7 @@ class ClientIndexPage(BaseAbstractPage):
                 },
             )
 
-        user_evaluations = UserEvaluation.objects.filter(client=request.user.client)
+        user_evaluations = UserEvaluation.objects.filter(client=request.user.client).order_by('assigned_date')
 
         user_evaluations = self.paginate_data(user_evaluations, page)
         max_pages = user_evaluations.paginator.num_pages

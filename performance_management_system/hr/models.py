@@ -160,16 +160,21 @@ class ClientListPage(RoutablePageMixin,Page):
                 qset1 =  reduce(operator.__or__, [Q(employee__first_name__icontains=query) | Q(employee__last_name__icontains=query) for query in name])
                 user_evaluations = UserEvaluation.objects.filter(qset1, client_id=client_id).distinct()
                 if sort:
-                    user_evaluations = user_evaluations.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position).order_by(sort)
+                    user_evaluations = user_evaluations.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__position__icontains=position).order_by(sort)
                 else:
-                    user_evaluations = user_evaluations.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position)
+                    user_evaluations = user_evaluations.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__position__icontains=position)
             else:
                 if sort:
-                    user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position, client_id=client_id).order_by(sort)
+                    user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__position__icontains=position, client_id=client_id).order_by(sort)
                 else:
-                    user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__status__icontains=status, employee__position__icontains=position, client_id=client_id)
+                    user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__position__icontains=position, client_id=client_id)
             
-            
+            if status == 'for-evaluation':
+                user_evaluations = user_evaluations.filter(employee__current_user_evaluation__percentage=0)
+            if status == 'done-evaluating':
+                user_evaluations = user_evaluations.filter(employee__current_user_evaluation__isnull=False).exclude(employee__current_user_evaluation__percentage=0)
+            if status == 'none':
+                user_evaluations = user_evaluations.filter(employee__current_user_evaluation=None)
 
             return JsonResponse(
                 data={
@@ -182,7 +187,7 @@ class ClientListPage(RoutablePageMixin,Page):
                 },
             )
 
-        user_evaluations = UserEvaluation.objects.filter(client_id=client_id)
+        user_evaluations = UserEvaluation.objects.filter(client_id=client_id).order_by('assigned_date')
 
         user_evaluations = self.paginate_data(user_evaluations, page)
         max_pages = user_evaluations.paginator.num_pages
@@ -349,6 +354,7 @@ class EmployeeListPage(RoutablePageMixin,Page):
         status = request.GET.get('status', '')
         sort = request.GET.get('sort', '')
 
+
         if name or address or contact_number or status or sort or position:
             employees = None
 
@@ -356,15 +362,24 @@ class EmployeeListPage(RoutablePageMixin,Page):
                 name = name.split()
                 qset1 =  reduce(operator.__or__, [Q(first_name__icontains=query) | Q(last_name__icontains=query) for query in name])
                 employees = Employee.objects.filter(qset1).distinct()
+
                 if sort:
-                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position).order_by(sort)
+                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position).order_by(sort)
                 else:
-                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position)
+                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position)
+                
             else:
                 if sort:
-                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position).order_by(sort)
+                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position).order_by(sort)
                 else:
-                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position)
+                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position)
+
+            if status == 'for-evaluation':
+                employees = employees.filter( current_user_evaluation__percentage=0)
+            if status == 'done-evaluating':
+                employees = employees.filter(current_user_evaluation__isnull=False).exclude(current_user_evaluation__percentage=0)
+            if status == 'none':
+                employees = employees.filter( current_user_evaluation=None)
             
             
 
@@ -381,7 +396,7 @@ class EmployeeListPage(RoutablePageMixin,Page):
             )
 
 
-        employees = Employee.objects.all()
+        employees = Employee.objects.all().order_by('current_user_evaluation__assigned_date')
 
         employees = self.paginate_data(employees, page)
         max_pages = employees.paginator.num_pages
@@ -771,10 +786,9 @@ class AssignEmployee(RoutablePageMixin, Page):
         address = request.GET.get('address', '')
         contact_number = request.GET.get('contact_number', '')
         position = request.GET.get('position', '')
-        status = request.GET.get('status', '')
         sort = request.GET.get('sort', '')
 
-        if name or address or contact_number or status or sort or position:
+        if name or address or contact_number or sort or position:
             employees = None
 
             if name:
@@ -782,14 +796,14 @@ class AssignEmployee(RoutablePageMixin, Page):
                 qset1 =  reduce(operator.__or__, [Q(first_name__icontains=query) | Q(last_name__icontains=query) for query in name])
                 employees = Employee.objects.filter(qset1).distinct()
                 if sort:
-                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position).order_by(sort)
+                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position).order_by(sort)
                 else:
-                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position)
+                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position)
             else:
                 if sort:
-                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position).order_by(sort)
+                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position).order_by(sort)
                 else:
-                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, status__icontains=status, position__icontains=position)
+                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position)
             
             
 
@@ -799,14 +813,14 @@ class AssignEmployee(RoutablePageMixin, Page):
                          'hr/assign_search_employee.html',
                         {
                             'employee_details_index': EmployeeDetailsPage.objects.live().first().url,
-                            'employees' : self.paginate_data(employees.filter(status='none'), page),
+                            'employees' : self.paginate_data(employees.filter(current_user_evaluation=None), page),
                         }
                     ),
                 },
             )
 
 
-        employees = Employee.objects.filter(status='none')
+        employees = Employee.objects.filter(current_user_evaluation=None)
 
         employees = self.paginate_data(employees, page)
         max_pages = employees.paginator.num_pages
@@ -865,10 +879,9 @@ class AssignEmployee(RoutablePageMixin, Page):
             )
             
             employee = Employee.objects.get(pk=employee_id)
-            employee.status = 'on-evaluation'
+            employee.current_user_evaluation = user_evaluation
 
             client = Client.objects.get(pk=client_id)
-            client.status = 'on-evaluation'
 
             Notification.objects.create(
                 reciever=client.user,
@@ -887,7 +900,6 @@ class AssignEmployee(RoutablePageMixin, Page):
             )
 
             employee.save()
-            client.save()
         
         return JsonResponse(data={'message': 'Successfull'})
 

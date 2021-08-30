@@ -111,13 +111,13 @@
 
 {% block scripts %}
 <script>
+	let table_url = 'search/employees/'
 	let current_page = 1
 	let current_sort = null
 	let previous_page = null
 	let next_page = null
     let container = $('#employee-list-container')
 </script>
-<script src="{% static 'js/employee_list_page.js' %}"></script>
 <script src="{% static 'js/employee_search.js' %}"></script>
 <script src="{% static 'js/table.js' %}"></script>
 {% endblock %}

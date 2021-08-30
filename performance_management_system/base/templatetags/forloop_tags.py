@@ -45,8 +45,9 @@ def gradient_bg(id):
 
 @register.filter(name="for_evaluation_filter")
 def for_evaluation_filter(user_evaluation):
-    # ( 10:34 PM of Aug 24 ) 
-    user_evaluation = user_evaluation.all().latest('assigned_date')
+    
+    if user_evaluation == None:
+        return 'none'
         
     date = user_evaluation.assigned_date
 
@@ -55,3 +56,15 @@ def for_evaluation_filter(user_evaluation):
     result = ending_date
 
     return result
+
+
+@register.simple_tag
+def check_status(user_evaluation):
+    
+    if user_evaluation == None:
+        return 'none'
+
+    if user_evaluation.percentage != 0 :
+        return 'done-evaluating'
+    else:
+        return 'for-evaluation'

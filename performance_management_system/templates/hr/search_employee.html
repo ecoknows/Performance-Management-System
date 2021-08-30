@@ -48,18 +48,19 @@
       <img src='{% static "img/icons/notifications-white.png"%}' />
     </button>
   </td>
-  {% if employee.status == 'on-evaluation' %}
+  {% check_status employee.current_user_evaluation as status %}
+  {% if status == 'for-evaluation' %}
   <td class="p-0 font-sans text-sm font-semibold text-red">
     <a
       class="flex flex-col justify-center block w-full h-12 px-4"
       href="{{employee_details_index}}{{employee.pk}}"
       >
       <h1>For Evaluation</h1>
-      <h2 class="text-xs text-orange">{{employee.user_evaluation | for_evaluation_filter | date:'( h:i A \o\f M d)'}}</h2>
+      <h2 class="text-xs text-orange">{{employee.current_user_evaluation | for_evaluation_filter | date:'( h:i A \o\f M d)'}}</h2>
       
       </a>
   </td>
-  {% elif employee.status == 'evaluated'  %}
+  {% elif status == 'done-evaluating'  %}
   <td class="p-0 font-sans text-sm font-semibold text-green">
     <a
       class="flex flex-col justify-center block w-full h-12 px-4"
