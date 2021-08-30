@@ -242,16 +242,8 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             employee = user_evaluation.employee
             employee_not_evaluated = employee.user_evaluation.filter(percentage=0)
 
-            if len(employee_not_evaluated) == 0:
-                employee.status = 'evaluated'
-                employee.save()
-
             client = user_evaluation.client
             client_not_evaluated = client.user_evaluation.filter(percentage=0)
-            
-            if len(client_not_evaluated) == 0:
-                client.status = 'evaluated'
-                client.save()
 
             Notification.objects.create(
                 reciever=user_evaluation.hr_admin,
