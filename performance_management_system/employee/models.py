@@ -287,7 +287,7 @@ class EmployeeIndexPage(BaseAbstractPage):
     @route(r'^$')
     def dash_board(self, request):
         from performance_management_system.base.models import EvaluationCategories, UserEvaluation, EvaluationRateAssign, EvaluationPage
-        user_evaluation = UserEvaluation.objects.filter(employee=request.user.employee).first()
+        user_evaluation = UserEvaluation.objects.filter(employee=request.user.employee).latest('assigned_date')
         categories = EvaluationCategories.objects.all()
         max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         category_percentages = []

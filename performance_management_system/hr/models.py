@@ -436,7 +436,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
 
     @route(r'^(\d+)/$', name='id')
     def details_user_route(self, request, id):
-        user_evaluation = UserEvaluation.objects.filter(employee_id=id).first()
+        user_evaluation = UserEvaluation.objects.filter(employee_id=id).latest('assigned_date')
         categories = EvaluationCategories.objects.all()
         max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         category_percentages = []

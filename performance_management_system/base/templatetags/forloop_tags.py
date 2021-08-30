@@ -1,3 +1,5 @@
+from datetime import timedelta
+from django.utils import timezone
 from django import template
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
@@ -38,6 +40,18 @@ def get_task(user_evaluation, category):
 
 
 @register.filter(name='gradient_bg')
-def  gradient_bg(id):
+def gradient_bg(id):
     return 'background-image: linear-gradient('+GRADIENT_BG[id-1][0]+','+ GRADIENT_BG[id-1][1]+')'
 
+@register.filter(name="for_evaluation_filter")
+def for_evaluation_filter(user_evaluation):
+    # ( 10:34 PM of Aug 24 ) 
+    user_evaluation = user_evaluation.all().latest('assigned_date')
+        
+    date = user_evaluation.assigned_date
+
+    ending_date = date + timedelta(weeks=1)
+
+    result = ending_date
+
+    return result

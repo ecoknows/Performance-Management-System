@@ -1,4 +1,4 @@
-{% load static wagtailimages_tags %} 
+{% load static wagtailimages_tags forloop_tags %} 
 {% for employee in employees %}
 <tr class="table-bottom-border hover:bg-gray-100">
   <td class="p-0 font-sans font-semibold text-gray">
@@ -53,8 +53,11 @@
     <a
       class="flex flex-col justify-center block w-full h-12 px-4"
       href="{{employee_details_index}}{{employee.pk}}"
-      >For Evaluation</a
-    >
+      >
+      <h1>For Evaluation</h1>
+      <h2 class="text-xs text-orange">{{employee.user_evaluation | for_evaluation_filter | date:'( h:i A \o\f M d)'}}</h2>
+      
+      </a>
   </td>
   {% elif employee.status == 'evaluated'  %}
   <td class="p-0 font-sans text-sm font-semibold text-green">
