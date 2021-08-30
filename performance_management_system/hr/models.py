@@ -372,9 +372,9 @@ class EmployeeListPage(RoutablePageMixin,Page):
                     employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position)
 
             if status == 'for-evaluation':
-                employees = employees.filter( current_user_evaluation__submit_date__isnull=True)
+                employees = employees.filter( current_user_evaluation__isnull=False, current_user_evaluation__submit_date__isnull=True)
             if status == 'done-evaluating':
-                employees = employees.filter(current_user_evaluation__isnull=False, current_user_evaluation__submit_date__isnull=False)
+                employees = employees.filter( current_user_evaluation__submit_date__isnull=False)
             if status == 'none':
                 employees = employees.filter( current_user_evaluation=None)
             
