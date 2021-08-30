@@ -350,7 +350,6 @@ class UserEvaluation(ClusterableModel, models.Model):
         on_delete=models.CASCADE
     )
     
-    percentage = models.DecimalField(default=0, decimal_places=2, max_digits=5)
     submit_date = models.DateTimeField(null=True)
     assigned_date = models.DateTimeField(auto_now_add=True, null=True)
     project_assign = models.CharField(max_length=255, null=True)
@@ -416,7 +415,6 @@ class EvaluationPage(RoutablePageMixin, Page):
     @route(r'^(\d+)/$', name='id')
     def evaluate_user_with_id(self, request, id):
         user_evaluation = UserEvaluation.objects.get(pk=id)
-        evaluation_sum = 0
         submit_success = None
 
         if request.method == 'POST' and request.POST.get('submit-btn', None):
@@ -431,8 +429,8 @@ class EvaluationPage(RoutablePageMixin, Page):
                     if evaluation_rate_assign:
                         question_rate = int(request.POST['question-'+str(rate.pk)] )
                         evaluation_rate_assign.rate= question_rate
-                        evaluation_sum = evaluation_sum + question_rate
                         evaluation_rate_assign.save()
+
                 task = request.POST['task-'+str(category.pk)]
 
                 EvaluationTask.objects.create(
@@ -449,20 +447,10 @@ class EvaluationPage(RoutablePageMixin, Page):
 
                 late_and_absences.append([late,absence])
             
-            
 
-
-            perfect_rate = len(EvaluationRates.objects.all()) * self.evaluation_max_rate
-            user_evaluation.percentage = (evaluation_sum / perfect_rate) * 100
             user_evaluation.submit_date = timezone.now()
             user_evaluation.late_and_absence = late_and_absences 
             user_evaluation.save()
-
-            employee = user_evaluation.employee
-            employee_not_evaluated = employee.user_evaluation.filter(percentage=0)
-
-            client = user_evaluation.client
-            client_not_evaluated = client.user_evaluation.filter(percentage=0)
 
             Notification.objects.create(
                 reciever=user_evaluation.hr_admin,

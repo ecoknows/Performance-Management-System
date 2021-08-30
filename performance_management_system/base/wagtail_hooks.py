@@ -24,7 +24,7 @@ class EmployeesInfo(ModelAdmin):
     create_view_class = EmployeeCreateView
     menu_label = 'Employees'
     menu_icon = 'group'
-    list_display = ('employee','employee_id','display_image','status')
+    list_display = ('employee','employee_id','display_image')
     search_fields = ('employee',)
     
 modeladmin_register(EmployeesInfo)
@@ -53,7 +53,7 @@ class Evaluation(ModelAdmin):
     model = UserEvaluation
     menu_label = 'Evaluation'
     menu_icon = 'doc-full'
-    list_display = ('employee','client','percentage')
+    list_display = ('employee','client')
     inspect_view_enabled = True
     inspect_template_name = 'modeladmin/inspect_evaluation.html'
     

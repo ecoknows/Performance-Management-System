@@ -35,6 +35,8 @@ $(".circle .bar").circleProgress(options).on('circle-animation-end',
                 break;
             case 1:
                 text='FAILED'
+            case 0:
+                text='FAILED'
                 break;
 
         }

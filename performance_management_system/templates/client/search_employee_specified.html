@@ -15,7 +15,7 @@
 	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href=" {% pageurl evaluation_page_index %}{{user_evaluation.pk}}">{{user_evaluation.employee.position}}</a></td>
 	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href=' {% pageurl evaluation_page_index %}{{user_evaluation.pk}}'>+63{{user_evaluation.employee.contact_number}}</a></td>
 	
-	{% check_status user_evaluation.employee.current_user_evaluation as status %}
+	{% check_status user_evaluation as status %}
 	{% if status == 'for-evaluation' %}
 	<td class="p-0 font-sans text-sm font-semibold text-red">
 	  <a
@@ -23,7 +23,7 @@
 		href="{{employee_details_index}}{{user_evaluation.employee.pk}}"
 		>
 		<h1>For Evaluation</h1>
-		<h2 class="text-xs text-orange">{{user_evaluation.employee.current_user_evaluation | for_evaluation_filter | date:'( h:i A \o\f M d)'}}</h2>
+		<h2 class="text-xs text-orange">{{user_evaluation | for_evaluation_filter | date:'( h:i A \o\f M d)'}}</h2>
 		
 		</a>
 	</td>

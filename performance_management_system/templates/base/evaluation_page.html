@@ -1,6 +1,11 @@
 {% extends 'base.html'%}
 {% load wagtailcore_tags forloop_tags wagtailimages_tags static %}
 
+
+{% block notify %}
+<div class="notify "style="z-index: 4000;"><span id="notifyType" class="" ></span></div>  
+{% endblock %}
+
 {% block header %}
 {% include 'includes/header.html'  %}
 {% endblock %}
@@ -246,7 +251,7 @@
 			</div>
 		</div>
 		
-	{% if disabled == None and user_evaluation.percentage == 0  %}
+	{% if disabled == None and user_evaluation.submit_date == None  %}
 	<div class="flex items-center justify-center py-10">
 		<input id='submit-evaluation' type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="px-4 py-2 font-sans text-lg font-semibold text-white">
 	</div>
@@ -259,6 +264,8 @@
 {% block scripts %}
 <script>
 	let submit_success = '{{submit_success}}'
+	let success_text = 'success'
+	let failure_text = 'failure'
 </script>
 <script src="{% static 'js/modal.js' %}"></script>
 <script src="{% static 'js/autoPrint.js' %}"></script>

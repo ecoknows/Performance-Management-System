@@ -20,7 +20,6 @@ from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client
 from performance_management_system.users.models import User
 
-from itertools import chain
 import operator
 from functools import reduce
 
@@ -57,7 +56,7 @@ class ClientListPage(RoutablePageMixin,Page):
                 notification_type='notify-evaluated-all-client'
             )
 
-            user_evaluations = client.client.user_evaluation.filter(percentage=0)
+            user_evaluations = client.client.user_evaluation.filter(submit_date__isnull=True)
             for user_evaluation in user_evaluations:
                 Notification.objects.create(
                     reciever=user_evaluation.employee.user,
@@ -170,11 +169,9 @@ class ClientListPage(RoutablePageMixin,Page):
                     user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__position__icontains=position, client_id=client_id)
             
             if status == 'for-evaluation':
-                user_evaluations = user_evaluations.filter(employee__current_user_evaluation__percentage=0)
+                user_evaluations = user_evaluations.filter( submit_date__isnull=True)
             if status == 'done-evaluating':
-                user_evaluations = user_evaluations.filter(employee__current_user_evaluation__isnull=False).exclude(employee__current_user_evaluation__percentage=0)
-            if status == 'none':
-                user_evaluations = user_evaluations.filter(employee__current_user_evaluation=None)
+                user_evaluations = user_evaluations.filter( submit_date__isnull=False)
 
             return JsonResponse(
                 data={
@@ -187,7 +184,7 @@ class ClientListPage(RoutablePageMixin,Page):
                 },
             )
 
-        user_evaluations = UserEvaluation.objects.filter(client_id=client_id).order_by('assigned_date')
+        user_evaluations = UserEvaluation.objects.filter(client_id=client_id).order_by('submit_date','assigned_date')
 
         user_evaluations = self.paginate_data(user_evaluations, page)
         max_pages = user_evaluations.paginator.num_pages
@@ -375,9 +372,9 @@ class EmployeeListPage(RoutablePageMixin,Page):
                     employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position)
 
             if status == 'for-evaluation':
-                employees = employees.filter( current_user_evaluation__percentage=0)
+                employees = employees.filter( current_user_evaluation__submit_date__isnull=True)
             if status == 'done-evaluating':
-                employees = employees.filter(current_user_evaluation__isnull=False).exclude(current_user_evaluation__percentage=0)
+                employees = employees.filter(current_user_evaluation__isnull=False, current_user_evaluation__submit_date__isnull=False)
             if status == 'none':
                 employees = employees.filter( current_user_evaluation=None)
             
@@ -396,7 +393,7 @@ class EmployeeListPage(RoutablePageMixin,Page):
             )
 
 
-        employees = Employee.objects.all().order_by('current_user_evaluation__assigned_date')
+        employees = Employee.objects.all().order_by('-current_user_evaluation__submit_date')
 
         employees = self.paginate_data(employees, page)
         max_pages = employees.paginator.num_pages
@@ -451,11 +448,13 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
 
     @route(r'^(\d+)/$', name='id')
     def details_user_route(self, request, id):
-        user_evaluation = UserEvaluation.objects.filter(employee_id=id).latest('assigned_date')
+        employee = Employee.objects.get(pk=id)
+        user_evaluation = employee.current_user_evaluation
         categories = EvaluationCategories.objects.all()
         max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         category_percentages = []
         overall_performance = 0
+
 
         for category in categories:
             rate_assigns = EvaluationRateAssign.objects.filter(
@@ -479,7 +478,7 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
 
         if overall_performance != 0:
             overall_performance = overall_performance / len(categories)
-        
+            
         employee_list_index = EmployeeListPage.objects.live().first()
         client_list_index = ClientListPage.objects.live().first()
         assign_employee_index = AssignEmployee.objects.live().first()
@@ -497,7 +496,8 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             'notification_url': HRIndexPage.objects.live().first().url,
             'reports_index': ReportsHR.objects.live().first(),
             'max_rate' : max_rate,
-            'overall_performance': overall_performance
+            'overall_performance': overall_performance,
+            'employee': employee,
             }
         )
     
@@ -610,7 +610,6 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
     def client_search_specified(self, request):
 
         search_query = request.GET.get('search_query', None).split()
-        filter_query = request.GET.get('filter_query', None)
         employee_id = request.GET.get('employee_id', None)
         latest_evaluation_id = request.GET.get('latest_evaluation_id', None)
 
@@ -619,13 +618,6 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
         if search_query:
             qset2 =  reduce(operator.__or__, [Q(client__company__icontains=query) for query in search_query])
             user_evaluations = UserEvaluation.objects.filter(qset2, employee_id=employee_id).distinct()
-
-            if filter_query:
-                if filter_query == 'on-evaluation':
-                    user_evaluations = user_evaluations.filter(percentage=0)
-                elif filter_query == 'evaluated':
-                    user_evaluations = user_evaluations.exclude(percentage=0)
-            
         
 
 
@@ -638,12 +630,6 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             )
 
         user_evaluations = UserEvaluation.objects.filter(employee_id=employee_id)
-
-        if filter_query:
-            if filter_query == 'on-evaluation':
-                user_evaluations = user_evaluations.filter(percentage=0)
-            elif filter_query == 'evaluated':
-                user_evaluations = user_evaluations.exclude(percentage=0)
 
         return TemplateResponse(
                 request,
@@ -673,6 +659,44 @@ class AssignEmployee(RoutablePageMixin, Page):
     @route(r'^$') 
     def default_route(self, request):
         
+        employee_id = request.POST.get('employee_id', None)
+        client_id = request.POST.get('client_id', None)
+        project_assign = request.POST.get('project_assign', None)
+        submit_success = ''
+
+        if client_id and employee_id and project_assign:
+            user_evaluation = UserEvaluation.objects.create(
+                employee_id=employee_id,
+                client_id=client_id,
+                hr_admin=request.user,
+                project_assign=project_assign
+            )
+            
+            employee = Employee.objects.get(pk=employee_id)
+            employee.current_user_evaluation = user_evaluation
+
+            client = Client.objects.get(pk=client_id)
+
+            Notification.objects.create(
+                reciever=client.user,
+                hr_admin=request.user.hradmin,
+                message='A new employee have been assign',
+                user_evaluation=user_evaluation,
+                notification_type='new-employee-client'
+            )
+
+            Notification.objects.create(
+                reciever=employee.user,
+                hr_admin=request.user.hradmin,
+                message='A new client have been assign',
+                user_evaluation=user_evaluation,
+                notification_type='new-client-employee'
+            )
+
+            employee.save()
+            
+            submit_success = 'success'
+        
         return self.render(
             request,
             context_overrides={
@@ -681,11 +705,14 @@ class AssignEmployee(RoutablePageMixin, Page):
                 'client_list_index' : ClientListPage.objects.live().first(),
                 'assign_employee_index': AssignEmployee.objects.live().first(),
                 'reports_index': ReportsHR.objects.live().first(),
+                'submit_success': submit_success
             }
         )
 
     @route(r'^(\d+)/$')
     def client_list(self, request, employee_id):
+        
+
         return self.render(
             request,
             context_overrides={
@@ -864,44 +891,6 @@ class AssignEmployee(RoutablePageMixin, Page):
                     'current_number': employees.number,
                 },
             )
-
-    @route(r'^(\d+)/add/$')
-    def add_a_client(self, request, employee_id):
-        client_id = request.POST.get('client_id', None)
-        project_assign = request.POST.get('project_assign', None)
-
-        if client_id:
-            user_evaluation = UserEvaluation.objects.create(
-                employee_id=employee_id,
-                client_id=client_id,
-                hr_admin=request.user,
-                project_assign=project_assign
-            )
-            
-            employee = Employee.objects.get(pk=employee_id)
-            employee.current_user_evaluation = user_evaluation
-
-            client = Client.objects.get(pk=client_id)
-
-            Notification.objects.create(
-                reciever=client.user,
-                hr_admin=request.user.hradmin,
-                message='A new employee have been assign',
-                user_evaluation=user_evaluation,
-                notification_type='new-employee-client'
-            )
-
-            Notification.objects.create(
-                reciever=employee.user,
-                hr_admin=request.user.hradmin,
-                message='A new client have been assign',
-                user_evaluation=user_evaluation,
-                notification_type='new-client-employee'
-            )
-
-            employee.save()
-        
-        return JsonResponse(data={'message': 'Successfull'})
 
 class ReportsHR(RoutablePageMixin, Page):
     max_count = 1

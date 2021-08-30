@@ -197,7 +197,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         legend_evaluation = EvaluationPage.objects.live().first().legend_evaluation
 
-        evaluation_sum = 0
         submit_success = None
 
         if request.method == 'POST' and request.POST.get('submit-btn', None):
@@ -212,7 +211,6 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                     if evaluation_rate_assign:
                         question_rate = int(request.POST['question-'+str(rate.pk)] )
                         evaluation_rate_assign.rate= question_rate
-                        evaluation_sum = evaluation_sum + question_rate
                         evaluation_rate_assign.save()
                 task = request.POST['task-'+str(category.pk)]
 
@@ -233,17 +231,9 @@ class BaseAbstractPage(RoutablePageMixin, Page):
             
 
 
-            perfect_rate = len(EvaluationRates.objects.all()) * evaluation_max_rate
-            user_evaluation.percentage = (evaluation_sum / perfect_rate) * 100
             user_evaluation.submit_date = timezone.now()
             user_evaluation.late_and_absence = late_and_absences 
             user_evaluation.save()
-
-            employee = user_evaluation.employee
-            employee_not_evaluated = employee.user_evaluation.filter(percentage=0)
-
-            client = user_evaluation.client
-            client_not_evaluated = client.user_evaluation.filter(percentage=0)
 
             Notification.objects.create(
                 reciever=user_evaluation.hr_admin,
@@ -417,11 +407,9 @@ class ClientIndexPage(BaseAbstractPage):
                     user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__position__icontains=position, client=request.user.client)
             
             if status == 'for-evaluation':
-                user_evaluations = user_evaluations.filter( employee__current_user_evaluation__percentage=0)
+                user_evaluations = user_evaluations.filter( submit_date__isnull=True)
             if status == 'done-evaluating':
-                user_evaluations = user_evaluations.filter( employee__current_user_evaluation__isnull=False).exclude(employee__current_user_evaluation__percentage=0)
-            if status == 'none':
-                user_evaluations = user_evaluations.filter( employee__current_user_evaluation=None)
+                user_evaluations = user_evaluations.filter( submit_date__isnull=False)
             
             
 
@@ -437,7 +425,7 @@ class ClientIndexPage(BaseAbstractPage):
                 },
             )
 
-        user_evaluations = UserEvaluation.objects.filter(client=request.user.client).order_by('assigned_date')
+        user_evaluations = UserEvaluation.objects.filter(client=request.user.client).order_by('submit_date', 'assigned_date')
 
         user_evaluations = self.paginate_data(user_evaluations, page)
         max_pages = user_evaluations.paginator.num_pages

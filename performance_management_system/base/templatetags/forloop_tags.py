@@ -30,7 +30,7 @@ def get_rate_assign(rate, user_evaluation):
 @register.simple_tag
 def get_task(user_evaluation, category):
     try:
-        if user_evaluation.percentage > 0:
+        if user_evaluation.submit_date:
             task = user_evaluation.evaluation_task.get(category=category)
             return task.text
     except EvaluationTask.DoesNotExist:
@@ -64,7 +64,7 @@ def check_status(user_evaluation):
     if user_evaluation == None:
         return 'none'
 
-    if user_evaluation.percentage != 0 :
+    if user_evaluation.submit_date :
         return 'done-evaluating'
     else:
         return 'for-evaluation'

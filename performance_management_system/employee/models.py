@@ -286,8 +286,8 @@ class EmployeeIndexPage(BaseAbstractPage):
 
     @route(r'^$')
     def dash_board(self, request):
-        from performance_management_system.base.models import EvaluationCategories, UserEvaluation, EvaluationRateAssign, EvaluationPage
-        user_evaluation = UserEvaluation.objects.filter(employee=request.user.employee).latest('assigned_date')
+        from performance_management_system.base.models import EvaluationCategories, EvaluationRateAssign, EvaluationPage
+        user_evaluation = request.user.employee.current_user_evaluation
         categories = EvaluationCategories.objects.all()
         max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         category_percentages = []
@@ -326,9 +326,9 @@ class EmployeeIndexPage(BaseAbstractPage):
             'current_menu':'dashboard',
             'reports_index': ReportsEmployee.objects.live().first(),
             'max_rate': max_rate,
-            'overall_performance': overall_performance
+            'overall_performance': overall_performance,
+            'employee': request.user.employee
             },
-            template='hr/employee_details_page.html'
         )
     
     @route(r'evaluation/(\d+)/$')

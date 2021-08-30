@@ -1,14 +1,3 @@
-
-#success{
-    background:#03a679;
-    color:#f0f0f0;  
-  }
-  
-#failure{
-background:#ff3939;
-color:#f0f0f0;  
-}
-
 .notify{  
 position:fixed;
 z-index: 100;
@@ -46,8 +35,12 @@ Content:"Evaluation has been sent! successfully thank you ";
 Content:"Message not sent check the input";
 }
 
-.assign-successfull:before{
+.success-assign:before{
 Content:"The employee has been assign successfully thank youu!";
+}
+
+.failure-assign:before{
+  Content:"Oppss theres a problem please try again...";
 }
 .fill-project-assign:before{
 Content:"Assign fail please indicate project assign";

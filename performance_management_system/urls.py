@@ -17,8 +17,6 @@ urlpatterns = [
     path('documents/', include(wagtaildocs_urls)),
 
     path('search/', search_views.search, name='search'),
-    path('data_chart/<int:category_id>/<int:employee_id>/', hr_views.data_chart),
-    path('get_recent/', hr_views.get_recent),
     path('logout/', user_views.logout, name='wagtailadmin_logout'),
 
 ]
