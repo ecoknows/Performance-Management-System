@@ -55,7 +55,7 @@
         </div>
         <div class="flex space-x-2">
           <span class="font-sans font-semibold text-gray">Hiring Date : </span>
-          <span class="font-sans text-gray">{{user_evaluation.assigned_date}}</span>
+          <span id='utc-date' class="font-sans text-gray">{{ user_evaluation.assigned_date | date:'Y-m-d H:i:s.uO'  }}</span>
         </div>  
       </div>
     </div>
@@ -91,5 +91,6 @@
   let max_rate = '{{max_rate}}'
 </script>
 <script src="{% static 'js/circular_percentage.js' %}"></script>
+<script src="{% static 'js/utc_date_format.js' %}"></script>
 {% endblock %}
 

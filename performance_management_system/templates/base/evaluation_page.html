@@ -102,7 +102,7 @@
 			
 			<div>
 				<h1 class="inline-block font-bold">Hiring Date: </h1>
-				<h1 id='utc-date' class="inline-block">{{user_evaluation | for_evaluation_filter }}</h1>
+				<h1 id='utc-date' class="inline-block">{{ user_evaluation.assigned_date | date:'Y-m-d H:i:s.uO' }}</h1>
 			</div>
 
 		</div>
@@ -253,7 +253,7 @@
 		
 	{% if disabled == None and user_evaluation.submit_date == None  %}
 	<div class="flex items-center justify-center py-10">
-		<input id='submit-evaluation' type="submit" name='submit-btn' style="background-color: #2b4949;" value="SUBMIT EVALUATION" class="px-4 py-2 font-sans text-lg font-semibold text-white">
+		<input id='submit-evaluation' type="submit" name='submit-btn' style="background-color: #3d729e;" value="SUBMIT EVALUATION" class="px-4 py-2 font-sans text-lg font-semibold text-white">
 	</div>
 	{% endif %}
 	

@@ -63,6 +63,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         position = request.GET.get('position', '')
         status = request.GET.get('status', '')
         sort = request.GET.get('sort', '')
+        timezone = request.GET.get('timezone', '')
 
         notifications = None
 
@@ -90,6 +91,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                          'base/search_notifications.html',
                         {
                             'notifications' : self.paginate_data(notifications.order_by('created_at'), page),
+                            'timezone': timezone,
                         }
                     ),
                 },
@@ -127,6 +129,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                         'base/search_notifications.html',
                         {
                             'notifications' : notifications,
+                            'timezone': timezone,
                         }
                     ),
                     'pages_indicator': render_to_string(
@@ -427,7 +430,7 @@ class ClientIndexPage(BaseAbstractPage):
                 },
             )
 
-        user_evaluations = UserEvaluation.objects.filter(client=request.user.client).order_by('submit_date', 'assigned_date')
+        user_evaluations = UserEvaluation.objects.filter(client=request.user.client).order_by('-submit_date', 'assigned_date')
 
         user_evaluations = self.paginate_data(user_evaluations, page)
         max_pages = user_evaluations.paginator.num_pages

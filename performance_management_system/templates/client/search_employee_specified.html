@@ -23,7 +23,13 @@
 		href="{{employee_details_index}}{{user_evaluation.employee.pk}}"
 		>
 		<h1>For Evaluation</h1>
+
+		{% check_if_time_exceed user_evaluation as not_exceed %}
+		{% if not_exceed %}
 		<h2 class="text-xs text-orange">{{user_evaluation | for_evaluation_filter | timezone:timezone | date:'( h:i A \o\f M d)'}}</h2>
+		{% else %}
+		<h2 class="text-xs text-orange">( Please evaluate )</h2>
+		{% endif %}
 		
 		</a>
 	</td>

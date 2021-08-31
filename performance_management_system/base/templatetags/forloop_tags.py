@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import time, timedelta
 from django.utils import timezone
 from django import template
 from django.core.serializers.json import DjangoJSONEncoder
@@ -42,6 +42,7 @@ def get_task(user_evaluation, category):
 @register.filter(name='gradient_bg')
 def gradient_bg(id):
     return 'background-image: linear-gradient('+GRADIENT_BG[id-1][0]+','+ GRADIENT_BG[id-1][1]+')'
+    
 
 @register.filter(name="for_evaluation_filter")
 def for_evaluation_filter(user_evaluation):
@@ -55,8 +56,27 @@ def for_evaluation_filter(user_evaluation):
 
     result = ending_date
 
-    return result.strftime('%Y-%m-%d %H:%M:%S.%f%z')
+    # return timezone.now()
 
+    return result
+
+
+@register.simple_tag
+def check_if_time_exceed(user_evaluation):
+    
+    if user_evaluation == None:
+        return False
+        
+    date = user_evaluation.assigned_date
+
+    ending_date = date + timedelta(weeks=1)
+
+    result = ending_date
+
+    if result < timezone.now():
+        return False
+
+    return True
 
 @register.simple_tag
 def check_status(user_evaluation):

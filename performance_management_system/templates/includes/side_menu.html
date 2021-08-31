@@ -15,7 +15,16 @@
         <li class="cursor-pointer hover:bg-gray-600 {% if current_menu == 'dashboard'%}bg-blue-hover{% endif %}  ">
             <a href='/' class="flex items-center p-4 space-x-2">
                 <img src="{% static 'img/icons/dashboard.png' %}" class="inline">
-                <h2>Dashboard</h2>
+                <h2 class="flex-1">Dashboard</h2>
+                
+                {% if request.user.is_client %}
+                <div id='notification-container'>
+                    {% for_evaluation_count request.user.client as result_count %}
+                    {% if result_count > 0 %}
+                    <div class="flex items-center justify-center w-6 h-6 text-xs text-center text-white bg-red-600 rounded-full ">{{result_count}}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
             </a>
         </li>
         <li class="cursor-pointer hover:bg-gray-600 {% if current_menu == 'notifications'%}bg-blue-hover{% endif %} ">
