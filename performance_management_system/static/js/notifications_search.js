@@ -29,6 +29,7 @@ $(function(){
                         'message': message.val(),
                         'time': time.val(),
                         'status': status.val(),
+                        'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     },
                     success: function(data){
                         container.html(data.html)
@@ -53,6 +54,7 @@ $(function(){
                 'time': time.val(),
                 'status': status.val(),
                 'sort': field_name,
+                'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                 
             },
             success: function(data){
@@ -69,8 +71,8 @@ $(function(){
         url : table_url,
         type: 'GET',
         data:{
-            
             'page': current_page,
+            'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
         success: function(data){
             $('#container-page-indicator').removeClass('hidden')
@@ -96,6 +98,7 @@ $(function(){
                     'time': time.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val() : null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
                     'page': current_page,
                 },
@@ -112,6 +115,7 @@ $(function(){
                     'message': message.val(),
                     'time': time.val(),
                     'status': status.val(),
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
                 },
                 success: function(data){
@@ -137,6 +141,7 @@ $(function(){
                     'time': time.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
                     'page': current_page,
                 },
@@ -153,6 +158,7 @@ $(function(){
                     'name': name.val(),
                     'time': time.val(),
                     'status': status.val(),
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
                 },
                 success: function(data){
@@ -180,6 +186,7 @@ $(function(){
                     'time': time.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
                     'page': current_page,
                 },
@@ -196,6 +203,7 @@ $(function(){
                     'name': name.val(),
                     'message': message.val(),
                     'status': status.val(),
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
                 },
                 success: function(data){
@@ -221,6 +229,7 @@ $(function(){
                     'time': time.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
                     'page': current_page,
                 },
@@ -237,6 +246,7 @@ $(function(){
                     'time' : time.val(),
                     'name': name.val(),
                     'message': message.val(),
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
                 },
                 success: function(data){

@@ -1,4 +1,4 @@
-{% load static wagtailimages_tags forloop_tags %} 
+{% load static wagtailimages_tags forloop_tags static tz %} 
 {% for employee in employees %}
 <tr class="table-bottom-border hover:bg-gray-100">
   <td class="p-0 font-sans font-semibold text-gray">
@@ -56,8 +56,9 @@
       href="{{employee_details_index}}{{employee.pk}}"
       >
       <h1>For Evaluation</h1>
-      <h2 class="text-xs text-orange">{{employee.current_user_evaluation | for_evaluation_filter | date:'( h:i A \o\f M d)'}}</h2>
-      
+      <h2 class="text-xs text-orange utc-to-convert" >
+        {{employee.current_user_evaluation | for_evaluation_filter | timezone:timezone | date:'( h:i A \o\f M d)' }}
+      </h2>
       </a>
   </td>
   {% elif status == 'done-evaluating'  %}

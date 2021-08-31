@@ -149,6 +149,7 @@ class ClientListPage(RoutablePageMixin,Page):
         position = request.GET.get('position', '')
         status = request.GET.get('status', '')
         sort = request.GET.get('sort', '')
+        timezone = request.GET.get('timezone', '')
 
         user_evaluations = None
 
@@ -179,6 +180,7 @@ class ClientListPage(RoutablePageMixin,Page):
                          'hr/search_employee_specified.html',
                         {
                             'user_evaluations' : self.paginate_data(user_evaluations, page),
+                            'timezone': timezone,
                         }
                     ),
                 },
@@ -206,13 +208,13 @@ class ClientListPage(RoutablePageMixin,Page):
         elif (starting_point - 1) % 3  != 0:
             starting_point = starting_point - 1 
 
-
         return JsonResponse(
                 data={
                     'html' : render_to_string(
                         'hr/search_employee_specified.html',
                         {
                             'user_evaluations' : user_evaluations,
+                            'timezone': timezone,
                         }
                     ),
                     'pages_indicator': render_to_string(
@@ -350,6 +352,7 @@ class EmployeeListPage(RoutablePageMixin,Page):
         position = request.GET.get('position', '')
         status = request.GET.get('status', '')
         sort = request.GET.get('sort', '')
+        timezone = request.GET.get('timezone', '')
 
 
         if name or address or contact_number or status or sort or position:
@@ -387,6 +390,7 @@ class EmployeeListPage(RoutablePageMixin,Page):
                         {
                             'employee_details_index': EmployeeDetailsPage.objects.live().first().url,
                             'employees' : self.paginate_data(employees, page),
+                            'timezone': timezone,
                         }
                     ),
                 },
@@ -423,6 +427,7 @@ class EmployeeListPage(RoutablePageMixin,Page):
                         {
                             'employee_details_index': EmployeeDetailsPage.objects.live().first().url,
                             'employees' : employees,
+                            'timezone': timezone,
                         }
                     ),
                     'pages_indicator': render_to_string(

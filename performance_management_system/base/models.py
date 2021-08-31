@@ -120,6 +120,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         position = request.GET.get('position', '')
         status = request.GET.get('status', '')
         sort = request.GET.get('sort', '')
+        timezone = request.GET.get('timezone', '')
 
         notifications = None
 
@@ -147,7 +148,8 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                          'base/search_notifications.html',
                         {
                             'notifications' : self.paginate_data(notifications.order_by('created_at'), page),
-                            'is_hr': request.user.is_hr
+                            'is_hr': request.user.is_hr,
+                            'timezone': timezone,
                         }
                     ),
                 },
@@ -188,7 +190,8 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                         'base/search_notifications.html',
                         {
                             'notifications' : notifications,
-                            'is_hr': request.user.is_hr
+                            'is_hr': request.user.is_hr,
+                            'timezone': timezone,
                         }
                     ),
                     'pages_indicator': render_to_string(

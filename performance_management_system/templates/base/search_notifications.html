@@ -1,5 +1,5 @@
 
-{% load static wagtailcore_tags wagtailimages_tags humanize %}
+{% load static wagtailcore_tags wagtailimages_tags humanize tz %}
 
 
 {% for notification in notifications %}
@@ -11,7 +11,9 @@
 		</a>
 	</td>
 	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href="{{notification.pk}}">{{notification.message}}</a></td>
-	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{notification.pk}}'>{{notification.created_at}}</a></td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{notification.pk}}'>
+		{{notification.created_at | timezone:timezone}}</a>
+	</td>
 
 </tr>
 {% endfor %}

@@ -17,6 +17,7 @@ $(function(){
             data:{
                 'page': next_page == null ? current_page : next_page,
                 'sort':sort,
+                'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
             },
             success: function(data){
                 container.html(data.html)
@@ -40,6 +41,7 @@ $(function(){
             data:{
                 'page': previous_page == null ? null : previous_page,
                 'sort':sort,
+                'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
             },
             success: function(data){
                 container.html(data.html)
@@ -65,6 +67,7 @@ function page_number_click(page_click){
         data:{
             'page': page_click,
             'sort': sort,
+            'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
         success: function(data){
             container.html(data.html)

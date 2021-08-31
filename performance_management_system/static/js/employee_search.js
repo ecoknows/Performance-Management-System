@@ -18,6 +18,7 @@ $(function(){
         type: 'GET',
         data:{
             'page': current_page,
+            'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
         success: function(data){
             $('#container-page-indicator').removeClass('hidden')
@@ -48,6 +49,7 @@ $(function(){
                         'position': position.val(),
                         'contact_number': contact_number.val(),
                         'status': status.val(),
+                        'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
         
                     },
                     success: function(data){
@@ -74,6 +76,7 @@ $(function(){
                 'contact_number': contact_number.val(),
                 'status': status.val(),
                 'sort': field_name,
+                'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
 
             },
             success: function(data){
@@ -101,6 +104,7 @@ $(function(){
                     'contact_number': contact_number.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
 
     
                     'page': current_page,
@@ -120,6 +124,7 @@ $(function(){
                     'contact_number': contact_number.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
 
                     'status': status.val(),
     
@@ -149,6 +154,7 @@ $(function(){
                     'contact_number': contact_number.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
 
     
                     'page': current_page,
@@ -168,6 +174,7 @@ $(function(){
                     'contact_number': contact_number.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
 
                     'status': status.val(),
     
@@ -197,6 +204,7 @@ $(function(){
                     'contact_number': contact_number.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
     
                     'page': current_page,
@@ -216,6 +224,7 @@ $(function(){
                     'contact_number': contact_number.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
     
                 },
@@ -245,6 +254,7 @@ $(function(){
                     'contact_number': contact_number.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
 
     
                     'page': current_page,
@@ -264,6 +274,7 @@ $(function(){
                     'contact_number': contact_number.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
 
     
                 },
@@ -292,6 +303,7 @@ $(function(){
                     'contact_number': contact_number.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
 
     
                     'page': current_page,
@@ -311,6 +323,7 @@ $(function(){
                     'contact_number': contact_number.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
     
                 },
                 success: function(data){

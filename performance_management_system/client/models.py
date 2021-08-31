@@ -387,6 +387,7 @@ class ClientIndexPage(BaseAbstractPage):
         position = request.GET.get('position', '')
         status = request.GET.get('status', '')
         sort = request.GET.get('sort', '')
+        timezone = request.GET.get('timezone', '')
 
         user_evaluations = None
 
@@ -419,7 +420,8 @@ class ClientIndexPage(BaseAbstractPage):
                          'client/search_employee_specified.html',
                         {
                             'user_evaluations' : self.paginate_data(user_evaluations, page),
-                            'evaluation_page_index': EvaluationPage.objects.live().first()
+                            'evaluation_page_index': EvaluationPage.objects.live().first(),
+                            'timezone': timezone,
                         }
                     ),
                 },
@@ -454,7 +456,8 @@ class ClientIndexPage(BaseAbstractPage):
                         'client/search_employee_specified.html',
                         {
                             'user_evaluations' : user_evaluations,
-                            'evaluation_page_index': EvaluationPage.objects.live().first()
+                            'evaluation_page_index': EvaluationPage.objects.live().first(),
+                            'timezone': timezone,
                         }
                     ),
                     'pages_indicator': render_to_string(
