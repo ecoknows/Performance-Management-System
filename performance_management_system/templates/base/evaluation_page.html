@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-{% load wagtailcore_tags forloop_tags wagtailimages_tags static %}
+{% load wagtailcore_tags forloop_tags wagtailimages_tags static forloop_tags %}
 
 
 {% block notify %}
@@ -102,7 +102,7 @@
 			
 			<div>
 				<h1 class="inline-block font-bold">Hiring Date: </h1>
-				<h1 class="inline-block">{{user_evaluation.assigned_date}}</h1>
+				<h1 id='utc-date' class="inline-block">{{user_evaluation | for_evaluation_filter }}</h1>
 			</div>
 
 		</div>
@@ -270,4 +270,5 @@
 <script src="{% static 'js/modal.js' %}"></script>
 <script src="{% static 'js/autoPrint.js' %}"></script>
 <script src="{% static 'js/header_search.js' %}"></script>
+<script src="{% static 'js/utc_date_format.js' %}"></script>
 {% endblock %}

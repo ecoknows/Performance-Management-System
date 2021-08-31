@@ -55,7 +55,7 @@ def for_evaluation_filter(user_evaluation):
 
     result = ending_date
 
-    return result
+    return result.strftime('%Y-%m-%d %H:%M:%S.%f%z')
 
 
 @register.simple_tag
