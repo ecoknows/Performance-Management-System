@@ -41,12 +41,35 @@
             </a>
             
         </li>
+        
+        {% if request.user.is_hr %}
+        <li class="cursor-pointer">
+            <a href='{% pageurl reports_index %}' class="flex items-center p-4 space-x-2 hover:bg-gray-600 ">
+                <img src="{% static 'img/icons/reports.png' %}" class="inline">
+                <h2 class="flex-1">Reports</h2>
+                <div>
+                    <img src="{% static 'img/icons/chevron-down.png' %}" width="20">
+                </div>
+            </a>
+            <div class="{% if current_menu != 'reports' and current_menu != 'client-reports'%} hidden {% endif %}" >
+                <a href='{% pageurl reports_index %}' class="flex items-center p-4 pl-8 space-x-2 hover:bg-gray-600 {% if current_menu == 'reports'%}bg-blue-hover{% endif %}">
+                    <img src="{% static 'img/icons/employees.png' %}" width="20">
+                    <h2 class="flex-1 text-xs">Employees</h2>
+                </a>
+                <a href='{% pageurl reports_index %}clients' class="flex items-center p-4 pl-8 space-x-2 hover:bg-gray-600 {% if current_menu == 'client-reports'%}bg-blue-hover{% endif %}">
+                    <img src="{% static 'img/icons/clients.png' %}" width="20">
+                    <h2 class="flex-1 text-xs">Clients</h2>
+                </a>
+            </div>
+        </li>
+        {% else %}
         <li class="cursor-pointer hover:bg-gray-600 {% if current_menu == 'reports'%}bg-blue-hover{% endif %} ">
             <a href='{% pageurl reports_index %}' class="flex items-center p-4 space-x-2">
                 <img src="{% static 'img/icons/reports.png' %}" class="inline">
                 <h2>Reports</h2>
             </a>
         </li>
+        {% endif %}
 
         {% if request.user.is_hr %}
         <li class="cursor-pointer hover:bg-gray-600 {% if current_menu == 'assign-employee'%}bg-blue-hover{% endif %} ">

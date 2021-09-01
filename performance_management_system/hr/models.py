@@ -174,19 +174,13 @@ class ClientListPage(RoutablePageMixin,Page):
             if status == 'done-evaluating':
                 user_evaluations = user_evaluations.filter( submit_date__isnull=False)
 
-            return JsonResponse(
-                data={
-                    'html' : render_to_string(
-                         'hr/search_employee_specified.html',
-                        {
-                            'user_evaluations' : self.paginate_data(user_evaluations, page),
-                            'timezone': timezone,
-                        }
-                    ),
-                },
-            )
 
-        user_evaluations = UserEvaluation.objects.filter(client_id=client_id).order_by('-submit_date','assigned_date')
+        else:
+            if sort:
+                user_evaluations = UserEvaluation.objects.filter(client_id=client_id).order_by(sort)
+            else:
+                user_evaluations = UserEvaluation.objects.filter(client_id=client_id).order_by('-submit_date','assigned_date')
+            
 
         user_evaluations = self.paginate_data(user_evaluations, page)
         max_pages = user_evaluations.paginator.num_pages
@@ -254,24 +248,11 @@ class ClientListPage(RoutablePageMixin,Page):
                 clients = clients.exclude( user_evaluation__submit_date__isnull=True)
             if status == 'none':
                 clients = clients.filter( user_evaluation=None)
-
-            return JsonResponse(
-                data={
-                    'html' : render_to_string(
-                         'hr/search_client.html',
-                        {
-                            'clients' : self.paginate_data(clients, page),
-                            'employee': employee
-                        }
-                    ),
-                },
-            )
-            
-
-        if sort:
-            clients = Client.objects.all().order_by(sort)
         else:
-            clients = Client.objects.all().order_by('user_evaluation')
+            if sort:
+                clients = Client.objects.all().order_by(sort)
+            else:
+                clients = Client.objects.all()
 
         clients = self.paginate_data(clients, page)
         max_pages = clients.paginator.num_pages
@@ -387,24 +368,13 @@ class EmployeeListPage(RoutablePageMixin,Page):
                 employees = employees.filter( current_user_evaluation__submit_date__isnull=False)
             if status == 'none':
                 employees = employees.filter( current_user_evaluation=None)
-            
-            
 
-            return JsonResponse(
-                data={
-                    'html' : render_to_string(
-                         'hr/search_employee.html',
-                        {
-                            'employee_details_index': EmployeeDetailsPage.objects.live().first().url,
-                            'employees' : self.paginate_data(employees, page),
-                            'timezone': timezone,
-                        }
-                    ),
-                },
-            )
+        else:
+            if sort:
+                employees = Employee.objects.all().order_by(sort)
+            else:
+                employees = Employee.objects.all()
 
-
-        employees = Employee.objects.all().order_by('-current_user_evaluation__submit_date')
 
         employees = self.paginate_data(employees, page)
         max_pages = employees.paginator.num_pages
@@ -746,33 +716,20 @@ class AssignEmployee(RoutablePageMixin, Page):
         name = request.GET.get('name', '')
         address = request.GET.get('address', '')
         contact_number = request.GET.get('contact_number', '')
-        status = request.GET.get('status', '')
         sort = request.GET.get('sort', '')
 
         employee = Employee.objects.get(pk=id)
 
-        if name or address or contact_number or status:
+        if name or address or contact_number:
             if sort:
-                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number, status__icontains=status).order_by(sort)
+                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number).order_by(sort)
             else:
-                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number, status__icontains=status)
-            
-            return JsonResponse(
-                data={
-                    'html' : render_to_string(
-                         'hr/assign_search_client.html',
-                        {
-                            'clients' : self.paginate_data(clients, page),
-                            'employee': employee
-                        }
-                    ),
-                },
-            )
-
-        if sort:
-            clients = Client.objects.all().order_by(sort)
+                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number)
         else:
-            clients = Client.objects.all()
+            if sort:
+                clients = Client.objects.all().order_by(sort)
+            else:
+                clients = Client.objects.all()
 
         clients = self.paginate_data(clients, page)
         max_pages = clients.paginator.num_pages
@@ -843,23 +800,8 @@ class AssignEmployee(RoutablePageMixin, Page):
                     employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position).order_by(sort)
                 else:
                     employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position)
-            
-            
-
-            return JsonResponse(
-                data={
-                    'html' : render_to_string(
-                         'hr/assign_search_employee.html',
-                        {
-                            'employee_details_index': EmployeeDetailsPage.objects.live().first().url,
-                            'employees' : self.paginate_data(employees.filter(current_user_evaluation=None), page),
-                        }
-                    ),
-                },
-            )
-
-
-        employees = Employee.objects.filter(current_user_evaluation=None)
+        else:
+            employees = Employee.objects.filter(current_user_evaluation=None)
 
         employees = self.paginate_data(employees, page)
         max_pages = employees.paginator.num_pages
@@ -921,6 +863,22 @@ class ReportsHR(RoutablePageMixin, Page):
                 'assign_employee_index': AssignEmployee.objects.live().first(),
                 'reports_index': self,
             })
+    
+    @route(r'^clients/$') 
+    def client_reports(self, request):
+        
+        return self.render(
+            request,
+            context_overrides={
+                'user_model': request.user.hradmin,
+                'notification_url' : HRIndexPage.objects.live().first().url ,
+                'employee_list_index' : EmployeeListPage.objects.live().first(),
+                'client_list_index' : ClientListPage.objects.live().first(),
+                'assign_employee_index': AssignEmployee.objects.live().first(),
+                'reports_index': self,
+            },
+            template='hr/reports_client.html'
+            )
      
 class HrAdmin(models.Model):
     user = models.OneToOneField(

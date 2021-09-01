@@ -54,6 +54,7 @@ $(function(){
                     },
                     success: function(data){
                         container.html(data.html)
+                        pages_indicator.html(data.pages_indicator)
                     }
                 })
                 current_sort= null
@@ -65,6 +66,7 @@ $(function(){
         
         latest_sort.addClass('sort-active')
         current_sort = latest_sort
+
 
         $.ajax({
             url : url,
@@ -106,11 +108,11 @@ $(function(){
                     'sort': current_sort ? current_sort.val(): null,
                     'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
 
-    
                     'page': current_page,
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{
@@ -125,9 +127,6 @@ $(function(){
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
                     'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-
-                    'status': status.val(),
-    
                 },
                 success: function(data){
                     container.html(data.html)
@@ -155,12 +154,11 @@ $(function(){
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
                     'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-
-    
                     'page': current_page,
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{
@@ -175,9 +173,6 @@ $(function(){
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
                     'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-
-                    'status': status.val(),
-    
                 },
                 success: function(data){
                     container.html(data.html)
@@ -205,12 +200,12 @@ $(function(){
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
                     'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    
-    
+                
                     'page': current_page,
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{
@@ -226,7 +221,6 @@ $(function(){
                     'sort': current_sort ? current_sort.val(): null,
                     'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
-    
                 },
                 success: function(data){
                     container.html(data.html)
@@ -255,12 +249,12 @@ $(function(){
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
                     'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-
     
                     'page': current_page,
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{
@@ -275,8 +269,6 @@ $(function(){
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
                     'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-
-    
                 },
                 success: function(data){
                     container.html(data.html)
@@ -304,12 +296,12 @@ $(function(){
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
                     'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-
     
                     'page': current_page,
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{

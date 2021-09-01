@@ -112,7 +112,7 @@ def check_status(user_evaluation):
 def client_status(client):
     user_evaluations = client.user_evaluation.all()
     
-    if user_evaluations == None:
+    if len(user_evaluations) == 0:
         return None
     
     for_evaluation = user_evaluations.filter(submit_date__isnull=True)

@@ -56,29 +56,16 @@ class BaseAbstractPage(RoutablePageMixin, Page):
 
         notifications = None
 
-        if name or message or time or status or position:
+        if name or message or time or status or position or sort:
             if sort:
                 notifications = Notification.objects.filter(user_evaluation__client__company__icontains=name, message__icontains=message, created_at__icontains=time, seen__icontains=status, reciever=request.user).order_by(sort)
             else:
                 notifications = Notification.objects.filter(user_evaluation__client__company__icontains=name, message__icontains=message, created_at__icontains=time, seen__icontains=status, reciever=request.user)
-            
-
-            return JsonResponse(
-                data={
-                    'html' : render_to_string(
-                         'base/search_notifications.html',
-                        {
-                            'notifications' : self.paginate_data(notifications.order_by('created_at'), page),
-                            'timezone': timezone,
-                        }
-                    ),
-                },
-            )
-
-        if sort:
-            notifications = Notification.objects.filter(reciever=request.user).order_by(sort)
         else:
-            notifications = Notification.objects.filter(reciever=request.user).order_by('seen','-created_at')
+            if sort:
+                notifications = Notification.objects.filter(reciever=request.user).order_by(sort)
+            else:
+                notifications = Notification.objects.filter(reciever=request.user).order_by('seen','-created_at')
 
 
         notifications = self.paginate_data(notifications, page)

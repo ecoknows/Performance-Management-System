@@ -142,26 +142,11 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 else:
                     notifications = Notification.objects.filter( message__icontains=message, created_at__icontains=time, seen__icontains=status, reciever=request.user)
             
-            
-
-            return JsonResponse(
-                data={
-                    'html' : render_to_string(
-                         'base/search_notifications.html',
-                        {
-                            'notifications' : self.paginate_data(notifications.order_by('created_at'), page),
-                            'is_hr': request.user.is_hr,
-                            'timezone': timezone,
-                        }
-                    ),
-                },
-            )
-
-
-        if sort:
-            notifications = Notification.objects.filter(reciever=request.user).order_by(sort)
         else:
-            notifications = Notification.objects.filter(reciever=request.user).order_by('seen','-created_at')
+            if sort:
+                notifications = Notification.objects.filter(reciever=request.user).order_by(sort)
+            else:
+                notifications = Notification.objects.filter(reciever=request.user).order_by('seen','-created_at')
 
 
         notifications = self.paginate_data(notifications, page)
@@ -542,7 +527,6 @@ class CalendarOrderable(Orderable):
         max_length=255,
         choices=CALENDAR,
     )
-
 
 @register_setting(icon='date')
 class RulesSettings(BaseSetting, ClusterableModel):

@@ -67,7 +67,7 @@ class BaseAbstractPage(RoutablePageMixin, Page):
 
         notifications = None
 
-        if name or message or time or status or position:
+        if name or message or time or status or position or sort:
 
             if name:
                 name = name.split()
@@ -82,25 +82,11 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                     notifications = Notification.objects.filter( message__icontains=message, created_at__icontains=time, seen__icontains=status, reciever=request.user).order_by(sort)
                 else:
                     notifications = Notification.objects.filter( message__icontains=message, created_at__icontains=time, seen__icontains=status, reciever=request.user)
-            
-            
-
-            return JsonResponse(
-                data={
-                    'html' : render_to_string(
-                         'base/search_notifications.html',
-                        {
-                            'notifications' : self.paginate_data(notifications.order_by('created_at'), page),
-                            'timezone': timezone,
-                        }
-                    ),
-                },
-            )
-
-        if sort:
-            notifications = Notification.objects.filter(reciever=request.user).order_by(sort)
         else:
-            notifications = Notification.objects.filter(reciever=request.user).order_by('seen','-created_at')
+            if sort:
+                notifications = Notification.objects.filter(reciever=request.user).order_by(sort)
+            else:
+                notifications = Notification.objects.filter(reciever=request.user).order_by('seen','-created_at')
 
         notifications = self.paginate_data(notifications, page)
         max_pages = notifications.paginator.num_pages
@@ -415,22 +401,11 @@ class ClientIndexPage(BaseAbstractPage):
             if status == 'done-evaluating':
                 user_evaluations = user_evaluations.filter( submit_date__isnull=False)
             
-            
-
-            return JsonResponse(
-                data={
-                    'html' : render_to_string(
-                         'client/search_employee_specified.html',
-                        {
-                            'user_evaluations' : self.paginate_data(user_evaluations, page),
-                            'evaluation_page_index': EvaluationPage.objects.live().first(),
-                            'timezone': timezone,
-                        }
-                    ),
-                },
-            )
-
-        user_evaluations = UserEvaluation.objects.filter(client=request.user.client).order_by('-submit_date', 'assigned_date')
+        else:
+            if sort:
+                user_evaluations = UserEvaluation.objects.filter(client=request.user.client).order_by(sort)
+            else:
+                user_evaluations = UserEvaluation.objects.filter(client=request.user.client).order_by('-submit_date', 'assigned_date')
 
         user_evaluations = self.paginate_data(user_evaluations, page)
         max_pages = user_evaluations.paginator.num_pages

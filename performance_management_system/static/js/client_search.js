@@ -12,6 +12,23 @@ $(function(){
     let status = $('#search-input-status')
     let sort = $('.fa-sort')
 
+
+    $.ajax({
+        url : url,
+        type: 'GET',
+        data:{
+            'page': current_page,
+        },
+        success: function(data){
+            $('#container-page-indicator').removeClass('hidden')
+            container.html(data.html)
+            next_page = data.next_number
+            back_button.removeClass('hidden')
+            next_button.removeClass('hidden')
+            pages_indicator.html(data.pages_indicator)
+        }
+    })
+
     sort.click(function(){
         let latest_sort = $(this)
         let field_name = latest_sort.data('field-name')
@@ -34,6 +51,7 @@ $(function(){
                     },
                     success: function(data){
                         container.html(data.html)
+                        pages_indicator.html(data.pages_indicator)
                     }
                 })
                 current_sort = null
@@ -66,22 +84,6 @@ $(function(){
 
     })
 
-
-    $.ajax({
-        url : url,
-        type: 'GET',
-        data:{
-            'page': current_page,
-        },
-        success: function(data){
-            $('#container-page-indicator').removeClass('hidden')
-            container.html(data.html)
-            next_page = data.next_number
-            back_button.removeClass('hidden')
-            next_button.removeClass('hidden')
-            pages_indicator.html(data.pages_indicator)
-        }
-    })
    
     name.keyup(function(e){
         e.preventDefault();
@@ -96,12 +98,13 @@ $(function(){
                     'address': address.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val() : null,
+                    'sort': current_sort ? current_sort.val() : null,
                     
                     'page': current_page,
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{
@@ -138,12 +141,13 @@ $(function(){
                     'address': address.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
                     
                     'page': current_page,
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{
@@ -181,12 +185,13 @@ $(function(){
                     'address': address.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
                     
                     'page': current_page,
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{
@@ -222,12 +227,13 @@ $(function(){
                     'address': address.val(),
                     'contact_number': contact_number.val(),
                     'status': status.val(),
-                    'sort': previous_sort ? previous_sort.val(): null,
+                    'sort': current_sort ? current_sort.val(): null,
                     
                     'page': current_page,
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{

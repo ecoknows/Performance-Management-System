@@ -1,4 +1,3 @@
-
 $(function(){
 
     let pages_indicator = $('#pages-indicator')
@@ -10,6 +9,24 @@ $(function(){
     let time = $('#search-input-time')
     let status = $('#search-input-status')
     let sort = $('.fa-sort')
+
+    $.ajax({
+        url : table_url,
+        type: 'GET',
+        data:{
+            'page': current_page,
+            'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
+        success: function(data){
+            $('#container-page-indicator').removeClass('hidden')
+            container.html(data.html)
+            next_page = data.next_number
+            back_button.removeClass('hidden')
+            next_button.removeClass('hidden')
+            pages_indicator.html(data.pages_indicator)
+        }
+    })
+   
 
     sort.click(function(){
         let latest_sort = $(this)
@@ -33,6 +50,7 @@ $(function(){
                     },
                     success: function(data){
                         container.html(data.html)
+                        pages_indicator.html(data.pages_indicator)
                     }
                 })
                 current_sort = null
@@ -67,23 +85,6 @@ $(function(){
     })
 
 
-    $.ajax({
-        url : table_url,
-        type: 'GET',
-        data:{
-            'page': current_page,
-            'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-        },
-        success: function(data){
-            $('#container-page-indicator').removeClass('hidden')
-            container.html(data.html)
-            next_page = data.next_number
-            back_button.removeClass('hidden')
-            next_button.removeClass('hidden')
-            pages_indicator.html(data.pages_indicator)
-        }
-    })
-   
     name.keyup(function(e){
         e.preventDefault();
         let search_query = $(this).val()
@@ -104,6 +105,7 @@ $(function(){
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{
@@ -147,6 +149,7 @@ $(function(){
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{
@@ -192,6 +195,7 @@ $(function(){
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{
@@ -235,6 +239,7 @@ $(function(){
                 },
                 success: function(data){
                     container.html(data.html)
+                    pages_indicator.html(data.pages_indicator)
                 }
             })
         }else{
