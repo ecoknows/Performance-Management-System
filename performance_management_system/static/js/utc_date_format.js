@@ -7,5 +7,8 @@ let option = {
 }
 
 
-let get_time = new Date($('#utc-date').html()).toLocaleTimeString('en-Us',option)
-$('#utc-date').html(get_time)
+let get_date = new Date($('#utc-date').html())
+if ( get_date != 'Invalid Date'){
+    let get_time = get_date.toLocaleTimeString('en-Us',option)
+    $('#utc-date').html(get_time)
+}
