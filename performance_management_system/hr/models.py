@@ -186,7 +186,7 @@ class ClientListPage(RoutablePageMixin,Page):
                 },
             )
 
-        user_evaluations = UserEvaluation.objects.filter(client_id=client_id).order_by('submit_date','assigned_date')
+        user_evaluations = UserEvaluation.objects.filter(client_id=client_id).order_by('-submit_date','assigned_date')
 
         user_evaluations = self.paginate_data(user_evaluations, page)
         max_pages = user_evaluations.paginator.num_pages
@@ -242,13 +242,19 @@ class ClientListPage(RoutablePageMixin,Page):
         sort = request.GET.get('sort', '')
 
         employee = None
-
-        if name or address or contact_number or status:
+        if name or address or contact_number or status or sort:
             if sort:
-                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number, status__icontains=status).order_by(sort)
+                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number).order_by(sort)
             else:
-                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number, status__icontains=status)
+                clients = Client.objects.filter(company__icontains=name, address__icontains=address, contact_number__icontains=contact_number)
             
+            if status == 'for-evaluation':
+                clients = clients.filter( user_evaluation__submit_date__isnull=True)
+            if status == 'done-evaluating':
+                clients = clients.exclude( user_evaluation__submit_date__isnull=True)
+            if status == 'none':
+                clients = clients.filter( user_evaluation=None)
+
             return JsonResponse(
                 data={
                     'html' : render_to_string(
@@ -260,11 +266,12 @@ class ClientListPage(RoutablePageMixin,Page):
                     ),
                 },
             )
+            
 
         if sort:
             clients = Client.objects.all().order_by(sort)
         else:
-            clients = Client.objects.all()
+            clients = Client.objects.all().order_by('user_evaluation')
 
         clients = self.paginate_data(clients, page)
         max_pages = clients.paginator.num_pages

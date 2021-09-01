@@ -10,7 +10,6 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.images.edit_handlers import ImageChooserPanel
 
-from performance_management_system import IS_EVALUATED
 from performance_management_system.users.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 

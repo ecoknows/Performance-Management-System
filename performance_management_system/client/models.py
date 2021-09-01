@@ -13,7 +13,7 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.images.edit_handlers import ImageChooserPanel
 
-from performance_management_system import IntegerResource, StringResource, IS_EVALUATED
+from performance_management_system import IntegerResource, StringResource
 from performance_management_system.users.models import User
 from django.http import JsonResponse
 from django.template.loader import render_to_string

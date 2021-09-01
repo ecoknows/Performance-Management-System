@@ -1,4 +1,7 @@
-{% load static wagtailimages_tags %} {% for client in clients %}
+{% load static wagtailimages_tags forloop_tags %} 
+
+
+{% for client in clients %}
 <tr class="table-bottom-border hover:bg-gray-100">
   <td class="p-0 font-sans font-semibold text-gray">
     <a
@@ -43,15 +46,20 @@
       <img src='{% static "img/icons/notifications-white.png"%}' />
     </button>
   </td>
-  {% if client.status == 'on-evaluation' %}
+  {% client_status client as result %}
+  {% if result.status == 'for-evaluation' %}
   <td class="p-0 font-sans text-sm font-semibold text-red">
     <a
       class="flex flex-col justify-center block w-full h-12 px-4"
-      href="{{client.pk}}"
-      >For Evaluation</a
-    >
+      href="{{client.pk}}">
+      <h1>
+        For Evaluation
+      </h1>
+      
+      <h2 class="text-xs text-orange">( {{result.count}} remaining )</h2>
+    </a>
   </td>
-  {% elif client.status == 'evaluated' %}
+  {% elif result.status == 'done-evaluating' %}
   <td class="p-0 font-sans text-sm font-semibold text-green">
     <a
       class="flex flex-col justify-center block w-full h-12 px-4"

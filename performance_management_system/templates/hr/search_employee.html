@@ -1,4 +1,4 @@
-{% load static wagtailimages_tags forloop_tags static tz %} 
+{% load static wagtailimages_tags forloop_tags static tz wagtailsettings_tags %} 
 {% for employee in employees %}
 <tr class="table-bottom-border hover:bg-gray-100">
   <td class="p-0 font-sans font-semibold text-gray">
@@ -61,7 +61,9 @@
       {% if not_exceed %}
       <h2 class="text-xs text-orange">{{employee.current_user_evaluation | for_evaluation_filter | timezone:timezone | date:'( h:i A \o\f M d)'}}</h2>
       {% else %}
-      <h2 class="text-xs text-orange">( Please evaluate )</h2>
+      
+      {% get_settings use_default_site=True %}
+      <h2 class="text-xs text-orange">( {{settings.base.RulesSettings.limit_message}} )</h2>
       {% endif %}
       </a>
   </td>

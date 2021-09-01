@@ -1,7 +1,6 @@
 
 
 from django.template.response import TemplateResponse
-from performance_management_system import NOTIFICATION_TYPE
 from django.dispatch.dispatcher import receiver
 from django.http import HttpResponseRedirect
 from django.db import models
@@ -14,10 +13,12 @@ from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+from wagtail.contrib.settings.models import BaseSetting, register_setting
 
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     InlinePanel,
+    MultiFieldPanel,
     ObjectList,
     TabbedInterface,
     RichTextField
@@ -28,6 +29,7 @@ from modelcluster.models import ClusterableModel
 from performance_management_system.users.models import User
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client, ClientIndexPage, ReportsClient
+from performance_management_system import CALENDAR, NOTIFICATION_TYPE
 from django.contrib.postgres.fields import ArrayField
 from itertools import chain
 import operator
@@ -530,3 +532,42 @@ class Notification(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+class CalendarOrderable(Orderable):
+    page = ParentalKey("RulesSettings", related_name="calendar_orderable")
+
+    count = models.IntegerField(default=0)
+
+    calendar = models.CharField(
+        max_length=255,
+        choices=CALENDAR,
+    )
+
+
+@register_setting(icon='date')
+class RulesSettings(BaseSetting, ClusterableModel):
+
+    limit_message = models.CharField(
+        max_length=255,
+        null=True,
+    )
+
+    panels = [
+        FieldPanel(
+            'limit_message'
+        ),
+        MultiFieldPanel(
+            [
+                InlinePanel(
+                    "calendar_orderable",
+                    max_num=5, 
+                    min_num=1, 
+                    label="Rule"
+                )
+            ],
+            heading="Rules",
+        ),
+    ]
+
+    class Meta:
+        verbose_name = 'Rules'

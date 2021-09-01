@@ -11,20 +11,6 @@ class StringResource:
     EMPLOYEE = 'Employee'
     HR_ADMIN = 'HR Admin'
 
-DETAILS_MENU = [
-    ['', 'Details'],
-    ['clients', 'Clients'],
-    ['pick-a-client','Pick a client'],
-    ['evaluated','Evaluated'],
-    ['on-evaluation','On Evaluation'],
-]
-
-IS_EVALUATED = [
-    ('none', 'None'),
-    ('evaluated', 'Evaluated'),
-    ('on-evaluation','On Evaluation')
-]
-
 NOTIFICATION_TYPE = [
     ('client-evaluated-hr','Client Evaluated'),
     ('client-evaluated-employee','Client Evaluated'),
@@ -52,4 +38,11 @@ GRADIENT_BG = [
     ['#93EDC7', '#1CD8D2'],
     ['#93EDC7', '#1CD8D2'],
     ['#93EDC7', '#1CD8D2'],
+]
+
+CALENDAR = [
+    ('day','day'),
+    ('week','week'),
+    ('month','month'),
+    ('year','year'),
 ]

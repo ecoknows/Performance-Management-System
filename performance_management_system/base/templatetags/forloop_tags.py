@@ -1,11 +1,11 @@
-from datetime import time, timedelta
+from datetime import date, time, timedelta
 from django.utils import timezone
 from django import template
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 
 from performance_management_system import GRADIENT_BG
-from performance_management_system.base.models import EvaluationTask
+from performance_management_system.base.models import CalendarOrderable, EvaluationTask
 
 register = template.Library()
 
@@ -51,15 +51,25 @@ def for_evaluation_filter(user_evaluation):
         return 'none'
         
     date = user_evaluation.assigned_date
+    # date = timezone.now()
 
-    ending_date = date + timedelta(weeks=1)
+    rules = CalendarOrderable.objects.all()
 
-    result = ending_date
+    for rule in rules:
 
-    # return timezone.now()
+        if rule.calendar == 'day':
+            ending_date = date + timedelta(days=rule.count)
+        if rule.calendar == 'week':
+            ending_date = date + timedelta(days=rule.count * 7)
+        if rule.calendar == 'month':
+            ending_date = date + timedelta(days=rule.count * 30)
+        if rule.calendar == 'year':
+            ending_date = date + timedelta(days=rule.count * 365)
 
-    return result
+        if ending_date > timezone.now():
+            return ending_date
 
+    return None
 
 @register.simple_tag
 def check_if_time_exceed(user_evaluation):
@@ -69,22 +79,52 @@ def check_if_time_exceed(user_evaluation):
         
     date = user_evaluation.assigned_date
 
-    ending_date = date + timedelta(weeks=1)
+    
+    rules = CalendarOrderable.objects.all()
+    for rule in rules:
 
-    result = ending_date
+        if rule.calendar == 'day':
+            ending_date = date + timedelta(days=rule.count)
+        if rule.calendar == 'week':
+            ending_date = date + timedelta(days=rule.count * 7)
+        if rule.calendar == 'month':
+            ending_date = date + timedelta(days=rule.count * 30)
+        if rule.calendar == 'year':
+            ending_date = date + timedelta(days=rule.count * 365)
 
-    if result < timezone.now():
-        return False
+        if ending_date > timezone.now():
+            return True
 
-    return True
+    return False
 
 @register.simple_tag
 def check_status(user_evaluation):
     
     if user_evaluation == None:
-        return 'none'
+        return None
 
     if user_evaluation.submit_date :
         return 'done-evaluating'
     else:
         return 'for-evaluation'
+
+@register.simple_tag
+def client_status(client):
+    user_evaluations = client.user_evaluation.all()
+    
+    if user_evaluations == None:
+        return None
+    
+    for_evaluation = user_evaluations.filter(submit_date__isnull=True)
+
+    if for_evaluation:
+        return {
+            'status': 'for-evaluation',
+            'count': len(for_evaluation)
+        }
+    else:
+        return { 
+            'status' : 'done-evaluating'
+        }
+    
+    

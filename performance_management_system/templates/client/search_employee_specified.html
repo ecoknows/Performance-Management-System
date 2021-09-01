@@ -1,5 +1,5 @@
 
-{% load static wagtailcore_tags wagtailimages_tags forloop_tags tz %}
+{% load static wagtailcore_tags wagtailimages_tags forloop_tags tz wagtailsettings_tags %}
 
 
 {% for user_evaluation in user_evaluations %}
@@ -28,7 +28,8 @@
 		{% if not_exceed %}
 		<h2 class="text-xs text-orange">{{user_evaluation | for_evaluation_filter | timezone:timezone | date:'( h:i A \o\f M d)'}}</h2>
 		{% else %}
-		<h2 class="text-xs text-orange">( Please evaluate )</h2>
+		{% get_settings use_default_site=True %}
+		<h2 class="text-xs text-orange">( {{settings.base.RulesSettings.limit_message}} )</h2>
 		{% endif %}
 		
 		</a>
