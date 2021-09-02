@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
+from django.utils import timezone
 
 from wagtail.contrib.routable_page.models import route
 from wagtail.core.models import Page
@@ -22,6 +23,7 @@ from performance_management_system.users.models import User
 
 import operator
 from functools import reduce
+import pytz
 
 class ClientListPage(RoutablePageMixin,Page):
     max_count = 1
@@ -557,9 +559,10 @@ class EmployeeDetailsPage(RoutablePageMixin, Page):
             template="hr/employee_client_list.html",
         )
 
-    @route(r'^(\d+)/evaluation/(\d+)/$')
-    def client_evaluation_details(self, request, id, user_evaluation_id):
-        user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+    @route(r'^(\d+)/evaluation/$')
+    def client_evaluation_details(self, request, id):
+        employee = Employee.objects.get(pk=id)
+        user_evaluation = employee.current_user_evaluation
         evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
         legend_evaluation = EvaluationPage.objects.live().first().legend_evaluation
 
@@ -644,6 +647,10 @@ class AssignEmployee(RoutablePageMixin, Page):
         employee_id = request.POST.get('employee_id', None)
         client_id = request.POST.get('client_id', None)
         project_assign = request.POST.get('project_assign', None)
+        local_timezone = request.POST.get('timezone', None)
+
+        print(timezone, 'gasdf')
+
         submit_success = ''
 
         if client_id and employee_id and project_assign:
@@ -653,8 +660,9 @@ class AssignEmployee(RoutablePageMixin, Page):
                 hr_admin=request.user,
                 project_assign=project_assign
             )
-
-            user_evaluation.searchable_assigned_date = user_evaluation.assigned_date.strftime('%b. %e, %Y, %I:%M %p')
+            
+            local_time_convert = timezone.localtime(user_evaluation.searchable_assigned_date, pytz.timezone(local_timezone))
+            user_evaluation.searchable_assigned_date = local_time_convert.strftime('%b. %e, %Y, %I:%M %p')
             user_evaluation.save()
 
             employee = Employee.objects.get(pk=employee_id)
@@ -879,6 +887,94 @@ class ReportsHR(RoutablePageMixin, Page):
                 'reports_index': self,
             })
     
+    @route(r'^(\d+)/$')
+    def details_user_route(self, request, user_evaluation_id):
+        user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+        employee = user_evaluation.employee
+        categories = EvaluationCategories.objects.all()
+        max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        category_percentages = []
+        overall_performance = 0
+
+
+        for category in categories:
+            rate_assigns = EvaluationRateAssign.objects.filter(
+                evaluation_rate__evaluation_categories=category,
+                user_evaluation = user_evaluation
+            )
+            percentage = 0
+            for rate_assign in rate_assigns:
+                percentage = rate_assign.rate + percentage
+
+            rate_assign_len = len(rate_assigns) 
+
+            if rate_assign_len:
+                percentage = (percentage / (rate_assign_len * max_rate))
+            else:
+                percentage = 0
+            
+            overall_performance = overall_performance + percentage
+            
+            category_percentages.append([category,percentage])
+
+        if overall_performance != 0:
+            overall_performance = overall_performance / len(categories)
+            
+        employee_list_index = EmployeeListPage.objects.live().first()
+        client_list_index = ClientListPage.objects.live().first()
+        assign_employee_index = AssignEmployee.objects.live().first()
+        
+        return self.render(
+            request,
+            context_overrides={
+            'user_evaluation': user_evaluation,
+            'user_model': request.user.hradmin ,
+            'category_percentages': category_percentages,
+            'current_menu':'reports',
+            'assign_employee_index': assign_employee_index,
+            'employee_list_index': employee_list_index,
+            'client_list_index': client_list_index,
+            'notification_url': HRIndexPage.objects.live().first().url,
+            'reports_index': ReportsHR.objects.live().first(),
+            'max_rate' : max_rate,
+            'overall_performance': overall_performance,
+            'employee': employee,
+            },
+            template='hr/employee_details_page.html'
+            
+        )
+
+    @route(r'^(\d+)/evaluation/$')
+    def client_evaluation_details(self, request, user_evaluation_id):
+        user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+        evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        legend_evaluation = EvaluationPage.objects.live().first().legend_evaluation
+
+        
+        employee_list_index = EmployeeListPage.objects.live().first()
+        client_list_index = ClientListPage.objects.live().first()
+        assign_employee_index = AssignEmployee.objects.live().first()
+
+        return self.render(
+            request,
+            context_overrides={
+                'user_evaluation': user_evaluation,
+                'evaluation_categories': EvaluationCategories.objects.all(),
+                'disabled' : True,
+                'user_model' : request.user.hradmin,
+                'employee_model': user_evaluation.client,
+                'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
+                'search_page': HRIndexPage.objects.live().first(),
+                'current_menu':'reports',
+                'assign_employee_index': assign_employee_index,
+                'employee_list_index': employee_list_index,
+                'client_list_index': client_list_index,
+                'notification_url': HRIndexPage.objects.live().first().url,
+                'reports_index': ReportsHR.objects.live().first(),
+            },
+            template="base/evaluation_page.html",
+        )
+
     @route(r'^search/evaluations/$')
     def evaluation_search(self, request):
 
@@ -915,10 +1011,10 @@ class ReportsHR(RoutablePageMixin, Page):
             
         else:
             if sort:
-                user_evaluations = UserEvaluation.objects.order_by(sort)
+                user_evaluations = UserEvaluation.objects.all().order_by(sort)
             else:
-                user_evaluations = UserEvaluation.objects.order_by('-submit_date','assigned_date')
-            
+                user_evaluations = UserEvaluation.objects.all().order_by('-submit_date','assigned_date')
+        
 
         user_evaluations = self.paginate_data(user_evaluations, page)
         max_pages = user_evaluations.paginator.num_pages

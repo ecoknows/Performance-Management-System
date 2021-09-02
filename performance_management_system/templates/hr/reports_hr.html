@@ -25,7 +25,7 @@
 		<thead>
 			<td class="font-sans font-semibold text-gray">
 				<div>
-					Name/ID <i class="cursor-pointer fas fa-sort" data-field-name='first_name'></i> 
+					Name/ID <i class="cursor-pointer fas fa-sort" data-field-name='employee__first_name'></i> 
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded ">
 					<img src='{% static "img/icons/search.png" %}' width="18">
@@ -35,7 +35,7 @@
 			</td>
 			<td class="font-sans font-semibold text-gray ">
 				<div>
-					Client <i class="cursor-pointer fas fa-sort" data-field-name='address'></i> 
+					Client <i class="cursor-pointer fas fa-sort" data-field-name='client__company'></i> 
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded ">
 					<img src='{% static "img/icons/search.png" %}' width="18">
@@ -45,7 +45,7 @@
 			</td>
 			<td class="font-sans font-semibold text-gray ">
 				<div>
-					Project Assign <i class="cursor-pointer fas fa-sort" data-field-name='-position'></i> 
+					Project Assign <i class="cursor-pointer fas fa-sort" data-field-name='project_assign'></i> 
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded ">
 					<img src='{% static "img/icons/search.png" %}' width="18">
@@ -55,7 +55,7 @@
 			</td>
 			<td class="font-sans font-semibold text-gray">
 				<div>
-					Performance <i class="cursor-pointer fas fa-sort" data-field-name='current_user_evaluation__submit_date'></i> 
+					Performance <i class="cursor-pointer fas fa-sort" data-field-name='performance'></i> 
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded " >
 					<select id='search-input-performance' class="w-full focus:outline-none">
@@ -71,7 +71,7 @@
 			</td>
 			<td class="font-sans font-semibold text-gray ">
 				<div>
-					Date <i class="cursor-pointer fas fa-sort" data-field-name='contact_number'></i> 
+					Date <i class="cursor-pointer fas fa-sort" data-field-name='searchable_assigned_date'></i> 
 				</div>
 				<div class="flex items-center px-1 border border-gray-300 rounded ">
 					<img src='{% static "img/icons/search.png" %}' width="18">

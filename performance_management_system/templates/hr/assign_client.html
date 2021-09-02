@@ -41,6 +41,7 @@
 			</div>
 			
 			<h1 class="font-sans text-lg font-semibold text-gray">Project Assign: </h1>
+			<input required id='timezone' name="timezone" type="text" hidden  >
 			<input required id='employee_id' name="employee_id" type="number" value="{{employee.pk}}" hidden>
 			<input required id='client_id' name="client_id" type="number" hidden>
 			<textarea required name='project_assign' id='dialog-text-area' placeholder="Kindly indicate here..." style="width: 100%;" class="p-4 bg-gray-50"></textarea>
@@ -118,6 +119,7 @@
 	let next_page = null
     let container = $('#client-list-container')
 	let employee_id = '{{employee.pk}}'
+	$('#timezone').val(Intl.DateTimeFormat().resolvedOptions().timeZone)
 </script>
 <script src="{% static 'js/client_search.js' %}"></script>
 <script src="{% static 'js/table.js' %}"></script>
