@@ -324,6 +324,19 @@ class ReportsClient(RoutablePageMixin, Page):
     max_count = 1
     parent_page_types = ['ClientIndexPage']
 
+    def paginate_data(self, data, current_page):
+        paginator = Paginator(data, 7)
+
+        try:
+            data = paginator.page(current_page)
+        except PageNotAnInteger:
+            data = paginator.page(1)
+        except EmptyPage:
+            data = paginator.page(paginator.num_pages)
+        
+        return data
+    
+
     @route(r'^$') 
     def default_route(self, request):
         
@@ -334,6 +347,166 @@ class ReportsClient(RoutablePageMixin, Page):
                 'notification_url' : ClientIndexPage.objects.live().first().url ,
                 'reports_index': self,
             })
+
+    @route(r'^(\d+)/$')
+    def details_user_route(self, request, user_evaluation_id):
+        from performance_management_system.base.models import EvaluationCategories, EvaluationPage, UserEvaluation, EvaluationRateAssign
+        user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+        employee = user_evaluation.employee
+        categories = EvaluationCategories.objects.all()
+        max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        category_percentages = []
+        overall_performance = 0
+
+
+        for category in categories:
+            rate_assigns = EvaluationRateAssign.objects.filter(
+                evaluation_rate__evaluation_categories=category,
+                user_evaluation = user_evaluation
+            )
+            percentage = 0
+            for rate_assign in rate_assigns:
+                percentage = rate_assign.rate + percentage
+
+            rate_assign_len = len(rate_assigns) 
+
+            if rate_assign_len:
+                percentage = (percentage / (rate_assign_len * max_rate))
+            else:
+                percentage = 0
+            
+            overall_performance = overall_performance + percentage
+            
+            category_percentages.append([category,percentage])
+
+        if overall_performance != 0:
+            overall_performance = overall_performance / len(categories)
+        
+        return self.render(
+            request,
+            context_overrides={
+            'user_evaluation': user_evaluation,
+            'user_model': request.user.client ,
+            'category_percentages': category_percentages,
+            'current_menu':'reports',
+            'notification_url': ClientIndexPage.objects.live().first().url,
+            'reports_index': self,
+            'max_rate' : max_rate,
+            'overall_performance': overall_performance,
+            'employee': employee,
+            },
+            template='hr/employee_details_page.html'
+            
+        )
+
+    @route(r'^(\d+)/evaluation/$')
+    def client_evaluation_details(self, request, user_evaluation_id):
+        from performance_management_system.base.models import UserEvaluation, EvaluationPage, EvaluationCategories
+        user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+        evaluation_max_rate = EvaluationPage.objects.live().first().evaluation_max_rate
+        legend_evaluation = EvaluationPage.objects.live().first().legend_evaluation
+
+        
+        return self.render(
+            request,
+            context_overrides={
+                'user_evaluation': user_evaluation,
+                'evaluation_categories': EvaluationCategories.objects.all(),
+                'disabled' : True,
+                'user_model' : request.user.client,
+                'employee_model': user_evaluation.client,
+                'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
+                'current_menu':'reports',
+                'notification_url': ClientIndexPage.objects.live().first().url,
+                'reports_index': self,
+            },
+            template="base/evaluation_page.html",
+        )
+
+    @route(r'^search/evaluations/$')
+    def evaluation_search(self, request):
+
+        from performance_management_system.base.models import UserEvaluation
+
+        page = request.GET.get('page', 1)
+
+        employee = request.GET.get('employee', '')
+        project_assign = request.GET.get('project_assign', '')
+        performance = request.GET.get('performance', '')
+        date = request.GET.get('date', '')
+
+        sort = request.GET.get('sort', '')
+        timezone = request.GET.get('timezone', '')
+
+        user_evaluations = None
+
+        if employee or project_assign or date or performance or sort:
+
+            if employee:
+                employee_name = employee.split()
+                qset1 =  reduce(operator.__or__, [Q(employee__first_name__icontains=query) | Q(employee__last_name__icontains=query) for query in employee_name])
+                
+                user_evaluations = UserEvaluation.objects.filter(qset1).distinct()
+
+                if sort:
+                    user_evaluations = user_evaluations.filter(project_assign__icontains=project_assign, performance__icontains=performance, searchable_assigned_date__icontains=date).order_by(sort)
+                else:
+                    user_evaluations = user_evaluations.filter(project_assign__icontains=project_assign, performance__icontains=performance, searchable_assigned_date__icontains=date)
+            else:
+                if sort:
+                    user_evaluations = UserEvaluation.objects.filter(project_assign__icontains=project_assign, performance__icontains=performance, searchable_assigned_date__icontains=date).order_by(sort)
+                else:
+                    user_evaluations = UserEvaluation.objects.filter(project_assign__icontains=project_assign, performance__icontains=performance, searchable_assigned_date__icontains=date)
+            
+        else:
+            if sort:
+                user_evaluations = UserEvaluation.objects.all().order_by(sort)
+            else:
+                user_evaluations = UserEvaluation.objects.all().order_by('-submit_date','assigned_date')
+        
+
+        user_evaluations = self.paginate_data(user_evaluations.filter(client=request.user.client), page)
+        max_pages = user_evaluations.paginator.num_pages
+        starting_point = user_evaluations.number
+        next_number = 1
+        previous_number = 1
+
+        if user_evaluations.has_next():
+            next_number = user_evaluations.next_page_number()
+        
+        if user_evaluations.has_previous():
+            previous_number = user_evaluations.previous_page_number()
+
+        if max_pages > 3 :
+            max_pages = 4
+
+        if starting_point % 3 == 0:
+            starting_point = starting_point - 2
+        elif (starting_point - 1) % 3  != 0:
+            starting_point = starting_point - 1 
+
+        return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                        'client/search_reports.html',
+                        {
+                            'user_evaluations' : user_evaluations,
+                            'timezone': timezone,
+                        }
+                    ),
+                    'pages_indicator': render_to_string(
+                        'includes/page_indicator.html',
+                        {
+                            'pages': user_evaluations,
+                            'xrange': range(starting_point, starting_point + max_pages)
+                        }
+                    ),
+                    'next_number': next_number,
+                    'previous_number': previous_number,
+                    'current_number': user_evaluations.number,
+                },
+            )
+
 
 class ClientIndexPage(BaseAbstractPage):
     max_count = 1
@@ -363,7 +536,6 @@ class ClientIndexPage(BaseAbstractPage):
                 'current_menu': 'dashboard',
                 'title': 'EMPLOYEES',
                 'evaluation_index': EvaluationPage.objects.live().first().url,
-                'search_page': self,
                 'notification_url': notification_url,
                 'reports_index': ReportsClient.objects.live().first(),
             }

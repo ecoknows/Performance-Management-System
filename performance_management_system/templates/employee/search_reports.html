@@ -1,0 +1,74 @@
+
+{% load static wagtailcore_tags wagtailimages_tags forloop_tags  %}
+
+
+{% for user_evaluation in user_evaluations %}
+<tr class="table-bottom-border hover:bg-gray-100">
+		
+	<td class="p-0 font-sans font-semibold text-gray">
+		<a class='flex items-center justify-start block w-full px-4 space-x-4' href="{{user_evaluation.pk}}" style="min-height: 3rem;">
+			{% include 'includes/employee_profile.html' with size=30 employee=user_evaluation.client %}
+			<div>
+				<h1 style='color:#007bff'>{{user_evaluation.client}}</h1>
+			</div>
+		</a>
+	</td>
+
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href="{{user_evaluation.pk}}">{{user_evaluation.project_assign}}</a></td>
+	
+	<td class="p-0 font-sans text-sm text-gray">
+		{% check_performance user_evaluation as performance %}
+		{% if performance == 'Failed' %}
+		<a class='flex flex-col justify-center block w-full h-12 px-4 font-sans text-red' href='{{user_evaluation.pk}}'>
+			<h1 class="font-bold">
+				{{user_evaluation.performance}}
+			</h1>
+			<h2 class="text-xs font-semibold">
+				Failed
+			</h2>
+		</a>
+		{% elif performance == 'Needs Improvment' %}
+		<a class='flex flex-col justify-center block w-full h-12 px-4 font-sans text-red' href='{{user_evaluation.pk}}'>
+			<h1 class="font-bold">
+				{{user_evaluation.performance}}
+			</h1>
+			<h2 class="text-xs font-semibold">
+				Needs Improvment
+			</h2>
+		</a>
+		{% elif performance == 'Marginal' %}
+		<a class='flex flex-col justify-center block w-full h-12 px-4 font-sans text-orange' href='{{user_evaluation.pk}}'>
+			<h1 class="font-bold">
+				{{user_evaluation.performance}}
+			</h1>
+			<h2 class="text-xs font-semibold">
+				Marginal
+			</h2>
+		</a>
+		{% elif performance == 'Proficient' %}
+		<a class='flex flex-col justify-center block w-full h-12 px-4 font-sans text-green' href='{{user_evaluation.pk}}'>
+			<h1 class="font-bold">
+				{{user_evaluation.performance}}
+			</h1>
+			<h2 class="text-xs font-semibold">
+				Proficient
+			</h2>
+		</a>
+		{% elif performance == 'Outstanding' %}
+		<a class='flex flex-col justify-center block w-full h-12 px-4 font-sans text-green' href='{{user_evaluation.pk}}'>
+			<h1 class="font-bold">
+				{{user_evaluation.performance}}
+			</h1>
+			<h2 class="text-xs font-semibold">
+				Outstanding
+			</h2>
+		</a>
+		{% elif performance == 'none' %}
+		<a class='flex flex-col justify-center block w-full h-12 px-4 font-sans font-semibold' href='{{user_evaluation.pk}}'>For Evaluation</a>
+		{% endif %}
+	</td>
+	
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href='{{user_evaluation.pk}}'>{{user_evaluation.searchable_assigned_date}}</a></td>
+	
+</tr>
+{% endfor %}

@@ -5,11 +5,13 @@
 {% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block head_style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/table.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 
 {% block header %}
-{% include 'includes/header.html' %}
+{% include 'includes/header.html' with title='Reports' %}
 {% endblock %}
 
 {% block side_menu %}
@@ -18,12 +20,80 @@
 
 {% block content %}
 
-<section class="container p-6 mx-auto space-y-6 ">
-  Under Maintenance
-
+<section class="container flex flex-col items-start justify-start h-full mx-auto" >
+	<table >
+		<thead>
+			<td class="font-sans font-semibold text-gray ">
+				<div>
+					Client <i class="cursor-pointer fas fa-sort" data-field-name='client__company'></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded ">
+					<img src='{% static "img/icons/search.png" %}' width="18">
+					<input id='search-input-client' autocomplete="off" class='w-full px-2 focus:outline-none bg-color-transparent '>
+				</div>
+			
+			</td>
+			<td class="font-sans font-semibold text-gray ">
+				<div>
+					Project Assign <i class="cursor-pointer fas fa-sort" data-field-name='project_assign'></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded ">
+					<img src='{% static "img/icons/search.png" %}' width="18">
+					<input id='search-input-project-assign' autocomplete="off" class='w-full px-2 focus:outline-none bg-color-transparent '>
+				</div>
+			
+			</td>
+			<td class="font-sans font-semibold text-gray">
+				<div>
+					Performance <i class="cursor-pointer fas fa-sort" data-field-name='performance'></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded " >
+					<select id='search-input-performance' class="w-full focus:outline-none">
+						<option value="">All</option>
+						<option value="5.">Outstanding</option>
+						<option value="4.">Proficient</option>
+						<option value="3.">Marginal</option>
+						<option value="2.">Needs Improvement</option>
+						<option value="1.">Failed</option>
+						<option value="0.">For Evaluation</option>
+					</select>
+				</div>
+			</td>
+			<td class="font-sans font-semibold text-gray ">
+				<div>
+					Date <i class="cursor-pointer fas fa-sort" data-field-name='searchable_assigned_date'></i> 
+				</div>
+				<div class="flex items-center px-1 border border-gray-300 rounded ">
+					<img src='{% static "img/icons/search.png" %}' width="18">
+					<input id='search-input-date' autocomplete="off" data-url='search' class='w-full px-2 focus:outline-none bg-color-transparent '>
+				</div>
+			
+			</td>
+		</thead>
+		<tbody id="employee-list-container" >
+		</tbody>
+	</table>
+	<div id='container-page-indicator' class="flex items-end justify-center flex-1 hidden w-full py-4">
+		<div class="flex items-center justify-center">
+			<i id='back-button' class="px-2 py-1 cursor-pointer select-none fas fa-angle-left hover:bg-gray-200"></i>
+			<div id='pages-indicator' class="flex items-center justify-center ">
+			</div>
+			<i id='next-button' class="px-2 py-1 cursor-pointer select-none fas fa-angle-right hover:bg-gray-200"></i>
+		</div>
+	</div>
 </section>
 
 {% endblock %}
 
 {% block scripts %}
+<script>
+	let current_page = 1
+	let current_sort = null
+	let table_url = 'search/evaluations/'
+	let previous_page = null
+	let next_page = null
+    let container = $('#employee-list-container')
+</script>
+<script src="{% static 'js/reports_search.js' %}"></script>
+<script src="{% static 'js/table.js' %}"></script>
 {% endblock %}

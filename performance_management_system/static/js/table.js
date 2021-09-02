@@ -10,6 +10,13 @@ $(function(){
     let position = $('#search-input-position')
     let contact_number = $('#search-input-contact-number')
     let status = $('#search-input-status')
+
+    let employee = $('#search-input-employee')
+    let client = $('#search-input-client')
+    let project_assign = $('#search-input-project-assign')
+    let performance = $('#search-input-performance')
+    let date = $('#search-input-date')
+
     
     next_button.click(function(){
         let sort = null
@@ -28,6 +35,12 @@ $(function(){
                 'position': position.val(),
                 'contact_number': contact_number.val(),
                 'status': status.val(),
+                'employee': employee.val(),
+                'client': client.val(),
+                'project_assign': project_assign.val(),
+                'performance': performance.val(),
+                'date': date.val(),
+                
                 'sort': sort,
 
                 'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -59,6 +72,12 @@ $(function(){
                 'position': position.val(),
                 'contact_number': contact_number.val(),
                 'status': status.val(),
+                'employee': employee.val(),
+                'client': client.val(),
+                'project_assign': project_assign.val(),
+                'performance': performance.val(),
+                'date': date.val(),
+
                 'sort': sort,
 
                 'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -82,6 +101,14 @@ function page_number_click(page_click){
     let position = $('#search-input-position')
     let contact_number = $('#search-input-contact-number')
     let status = $('#search-input-status')
+    
+    let employee = $('#search-input-employee')
+    let client = $('#search-input-client')
+    let project_assign = $('#search-input-project-assign')
+    let performance = $('#search-input-performance')
+    let date = $('#search-input-date')
+
+
     let sort = null
     if(current_sort){
         sort = current_sort.data('field-name')
@@ -98,6 +125,12 @@ function page_number_click(page_click){
             'position': position.val(),
             'contact_number': contact_number.val(),
             'status': status.val(),
+            'employee': employee.val(),
+            'client': client.val(),
+            'project_assign': project_assign.val(),
+            'performance': performance.val(),
+            'date': date.val(),
+
             'sort': sort,
 
             'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,

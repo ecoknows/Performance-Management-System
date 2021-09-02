@@ -491,7 +491,6 @@ class EvaluationPage(RoutablePageMixin, Page):
             'user_model': request.user.client,
             'employee_model': user_evaluation.employee,
             'submit_success': submit_success,
-            'search_page': ClientIndexPage.objects.live().first(),
             'reports_index': ReportsClient.objects.live().first(),
             'current_menu' : 'dashboard'
             }
