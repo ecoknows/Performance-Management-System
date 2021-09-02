@@ -127,4 +127,24 @@ def client_status(client):
             'status' : 'done-evaluating'
         }
     
+@register.simple_tag
+def check_performance(user_evaluation):
+    mean = user_evaluation.performance
     
+    if mean <= 0:
+        return 'none'
+
+
+    if int(mean) == 1:
+        return 'Failed'
+    if int(mean) == 2:
+        return 'Needs Improvment'
+    if int(mean) == 3:
+        return 'Marginal'
+    if int(mean) == 4:
+        return 'Proficient'
+    if int(mean) == 5:
+        return 'Outstanding'
+
+
+    return 'none'  

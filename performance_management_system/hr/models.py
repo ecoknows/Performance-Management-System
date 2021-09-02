@@ -653,7 +653,10 @@ class AssignEmployee(RoutablePageMixin, Page):
                 hr_admin=request.user,
                 project_assign=project_assign
             )
-            
+
+            user_evaluation.searchable_assigned_date = user_evaluation.assigned_date.strftime('%b. %e, %Y, %I:%M %p')
+            user_evaluation.save()
+
             employee = Employee.objects.get(pk=employee_id)
             employee.current_user_evaluation = user_evaluation
 
@@ -850,6 +853,18 @@ class ReportsHR(RoutablePageMixin, Page):
     max_count = 1
     parent_page_types = ['HRIndexPage']
 
+    def paginate_data(self, data, current_page):
+        paginator = Paginator(data, 7)
+
+        try:
+            data = paginator.page(current_page)
+        except PageNotAnInteger:
+            data = paginator.page(1)
+        except EmptyPage:
+            data = paginator.page(paginator.num_pages)
+        
+        return data
+    
     @route(r'^$') 
     def default_route(self, request):
         
@@ -864,22 +879,89 @@ class ReportsHR(RoutablePageMixin, Page):
                 'reports_index': self,
             })
     
-    @route(r'^clients/$') 
-    def client_reports(self, request):
+    @route(r'^search/evaluations/$')
+    def evaluation_search(self, request):
+
+        page = request.GET.get('page', 1)
+
+        employee = request.GET.get('employee', '')
+        client = request.GET.get('client', '')
+        project_assign = request.GET.get('project_assign', '')
+        performance = request.GET.get('performance', '')
+        date = request.GET.get('date', '')
+
+        sort = request.GET.get('sort', '')
+        timezone = request.GET.get('timezone', '')
+
+        user_evaluations = None
+
+        if employee or client or project_assign or date or performance or sort:
+
+            if employee:
+                employee_name = employee.split()
+                qset1 =  reduce(operator.__or__, [Q(employee__first_name__icontains=query) | Q(employee__last_name__icontains=query) for query in employee_name])
+                
+                user_evaluations = UserEvaluation.objects.filter(qset1).distinct()
+
+                if sort:
+                    user_evaluations = user_evaluations.filter(client__company__icontains=client, project_assign__icontains=project_assign, performance__icontains=performance, searchable_assigned_date__icontains=date).order_by(sort)
+                else:
+                    user_evaluations = user_evaluations.filter(client__company__icontains=client, project_assign__icontains=project_assign, performance__icontains=performance, searchable_assigned_date__icontains=date)
+            else:
+                if sort:
+                    user_evaluations = UserEvaluation.objects.filter(client__company__icontains=client, project_assign__icontains=project_assign, performance__icontains=performance, searchable_assigned_date__icontains=date).order_by(sort)
+                else:
+                    user_evaluations = UserEvaluation.objects.filter(client__company__icontains=client, project_assign__icontains=project_assign, performance__icontains=performance, searchable_assigned_date__icontains=date)
+            
+        else:
+            if sort:
+                user_evaluations = UserEvaluation.objects.order_by(sort)
+            else:
+                user_evaluations = UserEvaluation.objects.order_by('-submit_date','assigned_date')
+            
+
+        user_evaluations = self.paginate_data(user_evaluations, page)
+        max_pages = user_evaluations.paginator.num_pages
+        starting_point = user_evaluations.number
+        next_number = 1
+        previous_number = 1
+
+        if user_evaluations.has_next():
+            next_number = user_evaluations.next_page_number()
         
-        return self.render(
-            request,
-            context_overrides={
-                'user_model': request.user.hradmin,
-                'notification_url' : HRIndexPage.objects.live().first().url ,
-                'employee_list_index' : EmployeeListPage.objects.live().first(),
-                'client_list_index' : ClientListPage.objects.live().first(),
-                'assign_employee_index': AssignEmployee.objects.live().first(),
-                'reports_index': self,
-            },
-            template='hr/reports_client.html'
+        if user_evaluations.has_previous():
+            previous_number = user_evaluations.previous_page_number()
+
+        if max_pages > 3 :
+            max_pages = 4
+
+        if starting_point % 3 == 0:
+            starting_point = starting_point - 2
+        elif (starting_point - 1) % 3  != 0:
+            starting_point = starting_point - 1 
+
+        return JsonResponse(
+                data={
+                    'html' : render_to_string(
+                        'hr/search_reports.html',
+                        {
+                            'user_evaluations' : user_evaluations,
+                            'timezone': timezone,
+                        }
+                    ),
+                    'pages_indicator': render_to_string(
+                        'includes/page_indicator.html',
+                        {
+                            'pages': user_evaluations,
+                            'xrange': range(starting_point, starting_point + max_pages)
+                        }
+                    ),
+                    'next_number': next_number,
+                    'previous_number': previous_number,
+                    'current_number': user_evaluations.number,
+                },
             )
-     
+
 class HrAdmin(models.Model):
     user = models.OneToOneField(
         User,

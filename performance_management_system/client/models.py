@@ -187,6 +187,8 @@ class BaseAbstractPage(RoutablePageMixin, Page):
         legend_evaluation = EvaluationPage.objects.live().first().legend_evaluation
 
         submit_success = None
+        performance = 0
+        rates_length = 0
 
         if request.method == 'POST' and request.POST.get('submit-btn', None):
             
@@ -201,6 +203,10 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                         question_rate = int(request.POST['question-'+str(rate.pk)] )
                         evaluation_rate_assign.rate= question_rate
                         evaluation_rate_assign.save()
+                        performance = question_rate + performance
+                        
+                    rates_length = rates_length + 1
+
                 task = request.POST['task-'+str(category.pk)]
 
                 EvaluationTask.objects.create(
@@ -218,10 +224,9 @@ class BaseAbstractPage(RoutablePageMixin, Page):
                 late_and_absences.append([late,absence])
             
             
-
-
             user_evaluation.submit_date = timezone.now()
             user_evaluation.late_and_absence = late_and_absences 
+            user_evaluation.performance = performance / rates_length
             user_evaluation.save()
 
             Notification.objects.create(

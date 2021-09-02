@@ -342,8 +342,15 @@ class UserEvaluation(ClusterableModel, models.Model):
     
     submit_date = models.DateTimeField(null=True)
     assigned_date = models.DateTimeField(auto_now_add=True, null=True)
+    searchable_assigned_date = models.CharField(max_length=255, null=True)
     project_assign = models.CharField(max_length=255, null=True)
     late_and_absence = ArrayField(ArrayField(models.IntegerField()), null=True)
+
+    performance = models.DecimalField(
+        max_digits=5,
+        decimal_places=2, 
+        default=0.0
+    )
 
     hr_admin = models.ForeignKey(
         User,
@@ -406,6 +413,8 @@ class EvaluationPage(RoutablePageMixin, Page):
     def evaluate_user_with_id(self, request, id):
         user_evaluation = UserEvaluation.objects.get(pk=id)
         submit_success = None
+        performance = 0
+        rates_length = 0
 
         if request.method == 'POST' and request.POST.get('submit-btn', None):
             
@@ -418,8 +427,11 @@ class EvaluationPage(RoutablePageMixin, Page):
 
                     if evaluation_rate_assign:
                         question_rate = int(request.POST['question-'+str(rate.pk)] )
-                        evaluation_rate_assign.rate= question_rate
+                        evaluation_rate_assign.rate = question_rate
                         evaluation_rate_assign.save()
+                        performance = question_rate + performance
+
+                    rates_length = rates_length + 1
 
                 task = request.POST['task-'+str(category.pk)]
 
@@ -440,6 +452,7 @@ class EvaluationPage(RoutablePageMixin, Page):
 
             user_evaluation.submit_date = timezone.now()
             user_evaluation.late_and_absence = late_and_absences 
+            user_evaluation.performance = performance / rates_length
             user_evaluation.save()
 
             Notification.objects.create(
