@@ -1,11 +1,10 @@
-
-
+from django.db.models import F  
 from wagtail.core import hooks
 from wagtail.contrib.modeladmin.options import (
     ModelAdmin,
     modeladmin_register
 )
-
+from wagtail.contrib.modeladmin.helpers import PermissionHelper
 
 from performance_management_system.client.models import Client
 from performance_management_system.client.views import ClientCreateView
@@ -17,7 +16,26 @@ from performance_management_system.hr.models import HrAdmin
 from performance_management_system.hr.views import HRAdminCreateView
 
 from performance_management_system.base.models import UserEvaluation
-     
+from performance_management_system.users.models import User
+
+class AuditTrailPermissionHelper(PermissionHelper):
+    def user_can_create(self, user):
+        return False  # Or any logic related to the user.
+
+class AuditTrail(ModelAdmin):
+    model = User
+    menu_label = 'Audit Trail'
+    menu_icon = 'group'
+    list_display = ('profile_pic','name','username','latest_login')
+    add_to_settings_menu = True
+    permission_helper_class = AuditTrailPermissionHelper
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Only show people managed by the current user
+        return qs.order_by(F('last_login').desc(nulls_last=True))
+
+modeladmin_register(AuditTrail)
 
 class EmployeesInfo(ModelAdmin):
     model = Employee
@@ -63,13 +81,15 @@ modeladmin_register(Evaluation)
 def hide_documents(request, menu_items):
     menu_items[:] = [item for item in menu_items if item.name != "documents"]
     
-# @hooks.register("construct_main_menu")
-# def hide_documents(request, menu_items):
-#     menu_items[:] = [item for item in menu_items if item.name != "images"]
 
 
 @hooks.register("construct_main_menu")
 def hide_workflows(request, menu_items):
     if request.user.is_superuser is False:
         menu_items[:] = [item for item in menu_items if item.name != "reports"]
+
+@hooks.register("construct_settings_menu")
+def hide_users(request, menu_items):
+    menu_items[:] = [item for item in menu_items if item.name != "users"]
+
 

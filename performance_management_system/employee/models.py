@@ -238,6 +238,7 @@ class Employee(models.Model):
     @property
     def employee(self):
         return self.last_name + ', ' + self.first_name + ' ' + self.middle_name[0] + '.'
+    
         
     
     @property
