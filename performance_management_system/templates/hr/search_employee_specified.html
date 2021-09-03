@@ -1,6 +1,5 @@
 
-{% load static wagtailcore_tags wagtailimages_tags forloop_tags tz wagtailsettings_tags %}
-
+{% load static wagtailcore_tags wagtailimages_tags forloop_tags tz wagtailsettings_tags notification_tags %}
 
 {% for user_evaluation in user_evaluations %}
 <tr class="table-bottom-border hover:bg-gray-100">
@@ -19,12 +18,29 @@
 	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href="evaluated/{{user_evaluation.pk}}">{{user_evaluation.employee.address}}</a></td>
 	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href="evaluated/{{user_evaluation.pk}}">{{user_evaluation.employee.position}}</a></td>
 	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href='evaluated/{{user_evaluation.pk}}'>+63{{user_evaluation.employee.contact_number}}</a></td>
-	<td class="p-0 font-sans text-sm text-gray">
-		<button onclick="notify_client('{{client.user.pk}}')" class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full" style="background-color: #007bff; padding-left: 10px; padding-right: 10px;">
-			<h1 class="font-sans text-xs">Notitfy Me</h1>
-			<img src='{% static "img/icons/notifications-white.png"%}' >
+	
+	<td class="flex flex-col items-center justify-center p-0 pt-3 space-y-1 font-sans text-sm text-gray">
+		<button
+		  onclick="notify_both('{{user_evaluation.pk}}', this)"
+		  class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full focus:outline-none "
+		  style="background-color: #007bff; padding-left: 10px; padding-right: 10px">
+
+		  <h1 class="font-sans text-xs">Notify Me</h1>
+		  <img src='{% static "img/icons/notifications-white.png"%}' />
 		</button>
+	
+		{% get_latest_notif_date user_evaluation.client.user as notif_date %}
+		{% if notif_date %}
+		<div>
+		  <h1 class="font-sans text-xs notification_text text-orange">Last notified {{notif_date | timezone:timezone | date:'N j, Y' }}</h1>
+		</div>
+		{% else %}
+		<div>
+		  <h1 class="font-sans text-xs notification_text text-orange"></h1>
+		</div>
+		{% endif %}
 	</td>
+
 	{% check_status user_evaluation as status %}
 	{% if status == 'for-evaluation' %}
 	<td class="p-0 font-sans text-sm font-semibold text-red">
@@ -40,7 +56,6 @@
 		{% get_settings use_default_site=True %}
 		<h2 class="text-xs text-orange">( {{settings.base.RulesSettings.limit_message}} )</h2>
 		{% endif %}
-		
 		
 		</a>
 	</td>

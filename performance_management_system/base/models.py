@@ -501,6 +501,7 @@ class Notification(models.Model):
         User,
         on_delete=models.CASCADE,
         null=True,
+        related_name='notifications'
     )
 
     message = models.CharField(

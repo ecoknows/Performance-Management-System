@@ -44,16 +44,18 @@ class ClientListPage(RoutablePageMixin,Page):
     @route(r'^$') 
     def default_route(self, request):
 
-        notification_url = HRIndexPage.objects.live().first().url
 
         client_id = request.POST.get('client_id', None)
 
         if client_id:
             client = User.objects.get(pk=client_id)
+            client_remaining_eval = client.client.user_evaluation.filter(submit_date__isnull=True)
+            
+            client_message = 'Kindly finish your ' +  str(len(client_remaining_eval)) + ' remaining evaluation'
 
-            Notification.objects.create(
+            notification_client = Notification.objects.create(
                 reciever=client,
-                message='Kindly finish the remaining evaluation ',
+                message=client_message,
                 hr_admin=request.user.hradmin,
                 notification_type='notify-evaluated-all-client'
             )
@@ -66,16 +68,18 @@ class ClientListPage(RoutablePageMixin,Page):
                     hr_admin=request.user.hradmin,
                     notification_type='client-has-been-notify'
                 )
+
             return JsonResponse(data={
-                'message': 'The client has been successfully notified!'
+                'message': 'The client has been successfully notified!',
+                'created_at': notification_client.created_at,
             })
 
 
         return self.render(
             request,
             context_overrides={
-                'notification_url': notification_url,
                 'client_list_index': self,
+                'notification_url': HRIndexPage.objects.live().first().url,
                 'employee_list_index': EmployeeListPage.objects.live().first(),
                 'assign_employee_index': AssignEmployee.objects.live().first(),
                 'reports_index': ReportsHR.objects.live().first(),
@@ -84,22 +88,44 @@ class ClientListPage(RoutablePageMixin,Page):
 
     @route(r'^(\d+)/$')
     def client_details(self, request, id):
-        notification_url = HRIndexPage.objects.live().first().url
-        
+
+        user_evaluation_id = request.POST.get('user_evaluation_id', None)
+
+        if user_evaluation_id:
+            user_evaluation = UserEvaluation.objects.get(pk=user_evaluation_id)
+            notification_client = Notification.objects.create(
+                reciever=user_evaluation.client.user,
+                message='Please Evaluate '+ str(user_evaluation.employee),
+                hr_admin=request.user.hradmin,
+                user_evaluation= user_evaluation,
+                notification_type='notify-evaluated-specific-client'
+            )
+            Notification.objects.create(
+                reciever=user_evaluation.employee.user,
+                message='Rest assured I have notify '+ user_evaluation.client.company + ' to evalaute',
+                hr_admin=request.user.hradmin,
+                user_evaluation= user_evaluation,
+                notification_type='client-has-been-notify'
+            )
+            return JsonResponse(data={
+                'message': 'The employee has been successfully notified!',
+                'created_at': notification_client.created_at,
+            })
+
         return self.render(
             request,
             context_overrides={
                 'user_model': request.user.hradmin,
-                'employee_model': Client.objects.get(pk=id),
+                'client_model': Client.objects.get(pk=id),
                 'client_id': id,
-                'notification_url': notification_url,
+                'notification_url': HRIndexPage.objects.live().first().url,
                 'client_list_index': self,
                 'employee_list_index': EmployeeListPage.objects.live().first(),
                 'assign_employee_index': AssignEmployee.objects.live().first(),
                 'reports_index': ReportsHR.objects.live().first(),
                 'current_menu' : 'clients'
             },
-            template='client/client_index_page.html'
+            template='hr/client_details_page.html'
         )
     
     @route(r'^(\d+)/evaluated/(\d+)/$')
@@ -233,6 +259,7 @@ class ClientListPage(RoutablePageMixin,Page):
         contact_number = request.GET.get('contact_number', '')
         status = request.GET.get('status', '')
         sort = request.GET.get('sort', '')
+        timezone = request.GET.get('timezone', '')
 
         employee = None
         if name or address or contact_number or status or sort:
@@ -280,7 +307,8 @@ class ClientListPage(RoutablePageMixin,Page):
                         'hr/search_client.html',
                         {
                             'clients' : clients,
-                            'employee': employee
+                            'employee': employee,
+                            'timezone': timezone,
                         }
                     ),
                     'pages_indicator': render_to_string(
@@ -314,6 +342,24 @@ class EmployeeListPage(RoutablePageMixin,Page):
     
     @route(r'^$') 
     def default_route(self, request):
+        employee_id = request.POST.get('employee_id', None)
+
+        if employee_id:
+            employee = User.objects.get(pk=employee_id)
+
+            notification_client = Notification.objects.create(
+                reciever=employee,
+                message='Dear employee, kindly wait you evaluation, we have notify already your current client',
+                hr_admin=request.user.hradmin,
+                user_evaluation=employee.employee.current_user_evaluation,
+                notification_type='client-has-been-notify'
+            )
+
+            return JsonResponse(data={
+                'message': 'The employee has been successfully notified!',
+                'created_at': notification_client.created_at,
+            })
+
 
         return self.render(
             request,

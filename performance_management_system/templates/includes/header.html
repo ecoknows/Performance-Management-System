@@ -51,18 +51,16 @@
     </div>
     {% elif title == 'Clients' %}
     <div class="flex items-end flex-1 p-4 space-x-2">
-      {% if employee_model %}
-      <div class="flex space-x-2">
-        {% image employee_model.profile_pic fill-35x35 as employee_pic %}
 
-        <img src="{{employee_pic.url}}" class="rounded-full" width="35" />
+      {% if client_model %}
+      <div class="flex space-x-2">
+        {% image client_model.profile_pic fill-40x30  as employee_pic %}
+
+        <img src="{{employee_pic.url}}" />
         <div class="flex flex-col justify-center">
           <h1 class="font-sans text-sm font-bold lg:text-xl text-gray">
-            {{employee_model}} Employees
+            {{client_model}}
           </h1>
-          <h2 class="font-sans text-sm font-semibold text-gray-1">
-            {{employee_model.position}}
-          </h2>
         </div>
       </div>
       {% else %}

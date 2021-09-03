@@ -336,7 +336,6 @@ class ReportsClient(RoutablePageMixin, Page):
         
         return data
     
-
     @route(r'^$') 
     def default_route(self, request):
         
@@ -412,7 +411,6 @@ class ReportsClient(RoutablePageMixin, Page):
             context_overrides={
                 'user_evaluation': user_evaluation,
                 'evaluation_categories': EvaluationCategories.objects.all(),
-                'disabled' : True,
                 'user_model' : request.user.client,
                 'employee_model': user_evaluation.client,
                 'self': {'evaluation_max_rate': evaluation_max_rate, 'legend_evaluation': legend_evaluation},
@@ -506,7 +504,6 @@ class ReportsClient(RoutablePageMixin, Page):
                     'current_number': user_evaluations.number,
                 },
             )
-
 
 class ClientIndexPage(BaseAbstractPage):
     max_count = 1

@@ -1,4 +1,4 @@
-{% load static wagtailimages_tags forloop_tags %} 
+{% load static wagtailimages_tags forloop_tags notification_tags tz %} 
 
 
 {% for client in clients %}
@@ -9,10 +9,9 @@
       href="{{client.pk}}"
       style="min-height: 3rem"
     >
-      {% image client.profile_pic original as client_pic %}
+      {% image client.profile_pic fill-40x30 as client_pic %}
       <img
         src="{{client_pic.url}}"
-        style="object-fit: contain; width: 45px; height: 45px"
       />
       <div>
         <h1 style="color: #007bff">{{client}}</h1>
@@ -36,15 +35,26 @@
       >+63{{client.contact_number}}</a
     >
   </td>
-  <td class="p-0 font-sans text-sm text-gray">
+  <td class="flex flex-col items-center justify-center p-0 pt-3 space-y-1 font-sans text-sm text-gray">
     <button
-      onclick="notify_client('{{client.user.pk}}')"
-      class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full "
+      onclick="notify_client('{{client.user.pk}}', this)"
+      class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full focus:outline-none "
       style="background-color: #007bff; padding-left: 10px; padding-right: 10px"
     >
       <h1 class="font-sans text-xs">Notify Me</h1>
       <img src='{% static "img/icons/notifications-white.png"%}' />
     </button>
+
+    {% get_latest_notif_date client.user as notif_date %}
+    {% if notif_date %}
+    <div>
+      <h1 class="font-sans text-xs notification_text text-orange">Last notified {{notif_date | timezone:timezone | date:'N j, Y' }}</h1>
+    </div>
+    {% else %}
+    <div>
+      <h1 class="font-sans text-xs notification_text text-orange"></h1>
+    </div>
+    {% endif %}
   </td>
   {% client_status client as result %}
   {% if result.status == 'for-evaluation' %}

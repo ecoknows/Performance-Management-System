@@ -19,7 +19,7 @@
   
 	<td class="p-0 font-sans font-semibold text-gray">
 		<a class='flex items-center justify-start block w-full px-4 space-x-4' href="{{user_evaluation.pk}}" style="min-height: 3rem;">
-			{% include 'includes/employee_profile.html' with size=30 employee=user_evaluation.client %}
+			{% include 'includes/employee_profile.html' with size=30 employee=user_evaluation.client not_round=True %}
 			<div>
 				<h1 style='color:#007bff'>{{user_evaluation.client}}</h1>
 				<h2 class="font-sans text-gray-400" style="font-size: 0.6rem;">

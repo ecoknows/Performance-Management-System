@@ -131,7 +131,7 @@
     <div class="text-center">
         <h1 class="font-sans text-xl font-extrabold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee}}</h1>
         <h1 class="mb-2 font-sans text-lg font-semibold leading-tight text-gray-primary-color">{{notification.user_evaluation.employee.position}}</h1>
-        <a href="evaluation{{notification.user_evaluation.pk}}" class="px-4 py-1 font-sans text-lg text-white rounded-full font-base " style="background-color: #3d729e;">
+        <a href="evaluation" class="px-4 py-1 font-sans text-lg text-white rounded-full font-base " style="background-color: #3d729e;">
             EVALUATE NOW
         </a>
     </div>
@@ -159,7 +159,7 @@
 {% elif notification.notification_type == 'new-client-employee'  %}
 
 
-<div class="px-4 space-y-1 font-sans text-xl font-semibold text-gray-fourthary-color">
+<div class="px-4 space-y-1 font-sans font-semibold text-gray-fourthary-color">
     <h1 >{{notification.created_at}}</h1>
     <br>
     <h1>{{notification.reciever.employee}}</h1>
@@ -169,8 +169,8 @@
     
     <h1>Dear {{notification.reciever.employee.first_name}},</h1>
     <p>
-        I want to inform you that a new client have been assign to you, it's company name is {{notification.user_evaluation.client.company}}
-        kindly wait for it to evaluate you, if the result of your performance doesn't come within days, contact me to notify it to evaluate
+        I want to inform you that a new client have been assign to you, you can check it on your dashboard, 
+        it's company name is {{notification.user_evaluation.client.company}} kindly wait for it to evaluate you, if the result of your performance doesn't come within days, contact me to notify it to evaluate
     </p>
     
     <br>

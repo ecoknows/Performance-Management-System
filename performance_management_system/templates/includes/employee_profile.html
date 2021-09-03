@@ -1,7 +1,7 @@
 {% load static wagtailimages_tags %} 
 {% if employee.profile_pic %}
 {% image employee.profile_pic fill-80x80 as employee_pic %}
-<img src="{{employee_pic.url}}" width="{{size}}" class="rounded-full" />
+<img src="{{employee_pic.url}}" width="{{size}}" class="{% if not_round == None %} rounded-full {% endif %}" />
 {% else %}
-<img src="{% static 'img/profile-placeholder.jpg' %}" width="{{size}}" class="rounded-full" />
+<img src="{% static 'img/profile-placeholder.jpg' %}" width="{{size}}" class="{% if not_round == None %} rounded-full {% endif %}" />
 {% endif %}

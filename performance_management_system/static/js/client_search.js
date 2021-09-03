@@ -18,6 +18,7 @@ $(function(){
         type: 'GET',
         data:{
             'page': current_page,
+            'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
         success: function(data){
             $('#container-page-indicator').removeClass('hidden')
@@ -47,6 +48,7 @@ $(function(){
                         'address': address.val(),
                         'contact_number': contact_number.val(),
                         'status': status.val(),
+                        'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                         
                     },
                     success: function(data){
@@ -73,6 +75,7 @@ $(function(){
                 'contact_number': contact_number.val(),
                 'status': status.val(),
                 'sort': field_name,
+                'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                 
             },
             success: function(data){
@@ -83,137 +86,6 @@ $(function(){
 
 
     })
-
-   
-    name.keyup(function(e){
-        e.preventDefault();
-        let search_query = $(this).val()
-        
-        if(search_query == ''){
-            $.ajax({
-                url : url,
-                type: 'GET',
-                data:{
-                    'name' : name.val(),
-                    'address': address.val(),
-                    'contact_number': contact_number.val(),
-                    'status': status.val(),
-                    'sort': current_sort ? current_sort.val() : null,
-                    
-                    'page': current_page,
-                },
-                success: function(data){
-                    container.html(data.html)
-                    pages_indicator.html(data.pages_indicator)
-                }
-            })
-        }else{
-            $.ajax({
-                url : url,
-                type: 'GET',
-                data:{
-                    'name' : search_query,
-                    'address': address.val(),
-                    'contact_number': contact_number.val(),
-                    'status': status.val(),
-                    
-                },
-                success: function(data){
-                    container.html(data.html)
-                    pages_indicator.html(data.pages_indicator)
-                }
-            })
-        }
-
-
-    });
-
-    address.keyup(function(e){
-        e.preventDefault();
-        let search_query = $(this).val()
-
-        if(search_query == ''){
-            $.ajax({
-                url : url,
-                type: 'GET',
-                data:{
-                    'name' : name.val(),
-                    'address': address.val(),
-                    'contact_number': contact_number.val(),
-                    'status': status.val(),
-                    'sort': current_sort ? current_sort.val(): null,
-                    
-                    'page': current_page,
-                },
-                success: function(data){
-                    container.html(data.html)
-                    pages_indicator.html(data.pages_indicator)
-                }
-            })
-        }else{
-            $.ajax({
-                url : url,
-                type: 'GET',
-                data:{
-                    'address' : search_query,
-                    'name': name.val(),
-                    'contact_number': contact_number.val(),
-                    'status': status.val(),
-                    
-                },
-                success: function(data){
-                    container.html(data.html)
-                    pages_indicator.html(data.pages_indicator)
-                }
-            })
-        }
-
-
-    });
-
-    
-    contact_number.keyup(function(e){
-        e.preventDefault();
-        let search_query = $(this).val()
-
-        if(search_query == ''){
-            $.ajax({
-                url : url,
-                type: 'GET',
-                data:{
-                    'name' : name.val(),
-                    'address': address.val(),
-                    'contact_number': contact_number.val(),
-                    'status': status.val(),
-                    'sort': current_sort ? current_sort.val(): null,
-                    
-                    'page': current_page,
-                },
-                success: function(data){
-                    container.html(data.html)
-                    pages_indicator.html(data.pages_indicator)
-                }
-            })
-        }else{
-            $.ajax({
-                url : url,
-                type: 'GET',
-                data:{
-                    'contact_number' : search_query,
-                    'name': name.val(),
-                    'address': address.val(),
-                    'status': status.val(),
-                    
-                },
-                success: function(data){
-                    container.html(data.html)
-                    pages_indicator.html(data.pages_indicator)
-                }
-            })
-        }
-
-
-    });
 
     status.change(function(){
         let search_query = $(this).val();
@@ -228,6 +100,7 @@ $(function(){
                     'contact_number': contact_number.val(),
                     'status': status.val(),
                     'sort': current_sort ? current_sort.val(): null,
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
                     'page': current_page,
                 },
@@ -245,6 +118,7 @@ $(function(){
                     'contact_number' : contact_number.val(),
                     'name': name.val(),
                     'address': address.val(),
+                    'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
                     
                 },
                 success: function(data){
@@ -255,4 +129,61 @@ $(function(){
         }
 
     })
+
+    function key_up_func(element){
+        
+        element.keyup(function(e){
+            e.preventDefault();
+            let search_query = $(this).val()
+
+            let elements_value = {
+                'name' : name.val(),
+                'address': address.val(),
+                'contact_number': contact_number.val(),
+                'status': status.val(),
+                'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
+
+                'sort': current_sort ? current_sort.val(): null,
+                'page': current_page,
+            }
+            
+            if(search_query == ''){
+                $.ajax({
+                    url : url,
+                    type: 'GET',
+                    data:{
+                        ...elements_value,
+                        'timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        
+                        'sort': current_sort ? current_sort.val() : null,
+                        'page': current_page,
+                    },
+                    success: function(data){
+                        container.html(data.html)
+                        pages_indicator.html(data.pages_indicator)
+                    }
+                })
+            }else{
+                $.ajax({
+                    url : url,
+                    type: 'GET',
+                    data:{
+                        ...elements_value,
+                    },
+                    success: function(data){
+                        container.html(data.html)
+                        pages_indicator.html(data.pages_indicator)
+                    }
+                })
+            }
+
+
+        });
+
+    }
+
+    key_up_func(name);
+    key_up_func(contact_number);
+    key_up_func(address);
+
 })

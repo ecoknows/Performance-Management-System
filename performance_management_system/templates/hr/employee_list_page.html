@@ -2,6 +2,10 @@
 
 {% load static wagtailimages_tags wagtailcore_tags %}
 
+{% block notify %}
+<div class="notify "style="z-index: 4000;"><span id="notifyType" class="" ></span></div>  
+{% endblock %}
+
 {% block header %}
 {% include 'includes/header.html' with user_model=request.user.hradmin title='Employees' search=True %}
 {% endblock %}
@@ -13,6 +17,7 @@
 
 {% block head_style %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/table.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
@@ -51,7 +56,7 @@
 				</div>
 			
 			</td>
-			<td class="font-sans font-semibold text-gray w-44">
+			<td class="font-sans font-semibold text-gray">
 				<div>
 					Contact Number <i class="cursor-pointer fas fa-sort" data-field-name='contact_number'></i> 
 				</div>
@@ -62,7 +67,7 @@
 			
 			</td>
 			
-			<td class="font-sans font-semibold text-gray" style="width: 120px;">
+			<td class="font-sans font-semibold text-gray" style="width: 150px;">
 				<div>
 					Notify
 				</div>
@@ -99,6 +104,7 @@
 
 {% block scripts %}
 <script>
+	let csrf_token = '{{csrf_token}}'
 	let current_page = 1
 	let current_sort = null
 	let table_url = 'search/employees/'
@@ -106,7 +112,7 @@
 	let next_page = null
     let container = $('#employee-list-container')
 </script>
-<script src="{% static 'js/employee_list_page.js' %}"></script>
+<script src="{% static 'js/notify_employee.js' %}"></script>
 <script src="{% static 'js/employee_search.js' %}"></script>
 <script src="{% static 'js/table.js' %}"></script>
 {% endblock %}
