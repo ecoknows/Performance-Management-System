@@ -45,7 +45,7 @@
       <img src='{% static "img/icons/notifications-white.png"%}' />
     </button>
 
-    {% get_latest_notif_date client.user as notif_date %}
+    {% get_latest_notif_date client.user 'notify-evaluated-all-client' as notif_date %}
     {% if notif_date %}
     <div>
       <h1 class="font-sans text-xs notification_text text-orange">Last notified {{notif_date | timezone:timezone | date:'N j, Y' }}</h1>
