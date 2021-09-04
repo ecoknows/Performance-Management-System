@@ -361,7 +361,12 @@ class UserEvaluation(ClusterableModel, models.Model):
     panels = [
         FieldPanel('employee'),
         FieldPanel('client'),
+        FieldPanel('submit_date'),
+        FieldPanel('searchable_assigned_date'),
     ]
+
+    def __str__(self):
+        return self.employee.last_name + ' to ' + self.client.company
             
 class EvaluationPage(RoutablePageMixin, Page):
     max_count = 1

@@ -689,8 +689,6 @@ class AssignEmployee(RoutablePageMixin, Page):
         project_assign = request.POST.get('project_assign', None)
         local_timezone = request.POST.get('timezone', None)
 
-        print(timezone, 'gasdf')
-
         submit_success = ''
 
         if client_id and employee_id and project_assign:
@@ -843,16 +841,38 @@ class AssignEmployee(RoutablePageMixin, Page):
                 qset1 =  reduce(operator.__or__, [Q(first_name__icontains=query) | Q(last_name__icontains=query) for query in name])
                 employees = Employee.objects.filter(qset1).distinct()
                 if sort:
-                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position).order_by(sort)
+                    employees = employees.filter(
+                        address__icontains=address, 
+                        contact_number__icontains=contact_number, 
+                        position__icontains=position
+                    ).order_by(sort)
                 else:
-                    employees = employees.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position)
+                    employees = employees.filter(
+                        address__icontains=address, 
+                        contact_number__icontains=contact_number, 
+                        position__icontains=position
+                    )
+                employees = employees.filter(Q(current_user_evaluation__submit_date__isnull=False) | Q(current_user_evaluation=None))
+                
             else:
                 if sort:
-                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position).order_by(sort)
+                    employees = Employee.objects.filter(
+                        address__icontains=address,
+                        contact_number__icontains=contact_number,
+                        position__icontains=position
+                    ).order_by(sort)
                 else:
-                    employees = Employee.objects.filter( address__icontains=address, contact_number__icontains=contact_number, position__icontains=position)
+                    employees = Employee.objects.filter(
+                        address__icontains=address, 
+                        contact_number__icontains=contact_number, 
+                        position__icontains=position
+                    )
+                
+                employees = employees.filter(Q(current_user_evaluation__submit_date__isnull=False) | Q(current_user_evaluation=None))
         else:
-            employees = Employee.objects.filter(current_user_evaluation=None)
+            employees = Employee.objects.filter(Q(current_user_evaluation__submit_date__isnull=False) | Q(current_user_evaluation=None))
+
+        
 
         employees = self.paginate_data(employees, page)
         max_pages = employees.paginator.num_pages
