@@ -74,6 +74,7 @@ class Evaluation(ModelAdmin):
     list_display = ('employee','client', 'searchable_assigned_date')
     inspect_view_enabled = True
     inspect_template_name = 'modeladmin/inspect_evaluation.html'
+    permission_helper_class = AuditTrailPermissionHelper
     
 modeladmin_register(Evaluation)
 
