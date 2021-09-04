@@ -361,8 +361,6 @@ class UserEvaluation(ClusterableModel, models.Model):
     panels = [
         FieldPanel('employee'),
         FieldPanel('client'),
-        FieldPanel('assigned_date'),
-        FieldPanel('searchable_assigned_date'),
     ]
 
     def __str__(self):
