@@ -89,8 +89,8 @@ def hide_workflows(request, menu_items):
     if request.user.is_superuser is False:
         menu_items[:] = [item for item in menu_items if item.name != "reports"]
 
-@hooks.register("construct_settings_menu")
-def hide_users(request, menu_items):
-    menu_items[:] = [item for item in menu_items if item.name != "users"]
+# @hooks.register("construct_settings_menu")
+# def hide_users(request, menu_items):
+#     menu_items[:] = [item for item in menu_items if item.name != "users"]
 
 
