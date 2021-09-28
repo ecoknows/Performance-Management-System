@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load account socialaccount static %}
 
+
 {% block style %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
 {% endblock %}
@@ -20,7 +21,12 @@
 		<div class="container">
 			<div class="form">
 				<h2>Login Form</h2>
-				<form method="POST" action="{% url 'account_login' %}">
+				<h3 class="text-white ">
+					{% for key, value in form.errors.items %}
+						{% if key != '__all__' %}{{ key }} {% endif %}{{ value }}
+					{% endfor %}
+				</h3>
+				<form method="POST" action="{% url 'account_login' %}" class="login" >
 					{% csrf_token %}
 					<div class="inputBox">
 						<input type='text' name='login' placeholder="Username">

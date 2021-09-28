@@ -8,12 +8,8 @@
       background-color: rgb(0, 123, 255);
     "
   >
-    <div class="flex items-center flex-1 space-x-1">
-      <img
-        src='{% static "img/icons/burger.png" %}'
-        style="width: 20px; height: 20px"
-      />
-      <h1 class="font-sans font-semibold text-white">
+    <div class="flex items-center justify-center flex-1 space-x-1">
+      <h1 class="font-sans font-semibold text-center text-white">
         Employee Performance Evaluation System
       </h1>
     </div>
@@ -26,6 +22,7 @@
       />
       <h1 class="font-sans font-semibold text-white">{{user_model}}</h1>
     </div>
+    {% elif request.user.is_employee %}
     {% else %}
     <div class="flex items-center px-2 space-x-1">
 			{% include 'includes/employee_profile.html' with size=30 employee=user_model %}
