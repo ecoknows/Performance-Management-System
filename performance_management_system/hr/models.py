@@ -343,22 +343,29 @@ class EmployeeListPage(RoutablePageMixin,Page):
     @route(r'^$') 
     def default_route(self, request):
         employee_id = request.POST.get('employee_id', None)
+        action = request.POST.get('action', None)
 
         if employee_id:
-            employee = User.objects.get(pk=employee_id)
+            if action == 'notify':
+                employee = User.objects.get(pk=employee_id)
 
-            notification_client = Notification.objects.create(
-                reciever=employee,
-                message='Dear employee, kindly wait you evaluation, we have notify already your current client',
-                hr_admin=request.user.hradmin,
-                user_evaluation=employee.employee.current_user_evaluation,
-                notification_type='client-has-been-notify'
-            )
+                notification_client = Notification.objects.create(
+                    reciever=employee,
+                    message='Dear employee, kindly wait you evaluation, we have notify already your current client',
+                    hr_admin=request.user.hradmin,
+                    user_evaluation=employee.employee.current_user_evaluation,
+                    notification_type='client-has-been-notify'
+                )
 
-            return JsonResponse(data={
-                'message': 'The employee has been successfully notified!',
-                'created_at': notification_client.created_at,
-            })
+                return JsonResponse(data={
+                    'message': 'The employee has been successfully notified!',
+                    'created_at': notification_client.created_at,
+                })
+            elif action == 'end_contract':
+                user = User.objects.get(pk=employee_id)
+                user.employee.current_user_evaluation = None
+                user.employee.save()    
+
 
 
         return self.render(
@@ -852,7 +859,7 @@ class AssignEmployee(RoutablePageMixin, Page):
                         contact_number__icontains=contact_number, 
                         position__icontains=position
                     )
-                employees = employees.filter(Q(current_user_evaluation__submit_date__isnull=False) | Q(current_user_evaluation=None))
+                employees = employees.filter(Q(current_user_evaluation=None) | Q(current_user_evaluation__performance__gt=0 ))
                 
             else:
                 if sort:
@@ -868,9 +875,9 @@ class AssignEmployee(RoutablePageMixin, Page):
                         position__icontains=position
                     )
                 
-                employees = employees.filter(Q(current_user_evaluation__submit_date__isnull=False) | Q(current_user_evaluation=None))
+                employees = employees.filter(Q(current_user_evaluation=None) | Q(current_user_evaluation__performance__gt=0 ))
         else:
-            employees = Employee.objects.filter(Q(current_user_evaluation__submit_date__isnull=False) | Q(current_user_evaluation=None))
+            employees = Employee.objects.filter( Q(current_user_evaluation=None) | Q(current_user_evaluation__performance__gt=0 ))
 
         
 

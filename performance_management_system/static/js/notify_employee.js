@@ -7,6 +7,7 @@ function notify_employee(employee_id, button){
         type:'POST',
         data:{
             'employee_id': employee_id,
+            'action': 'notify',
             'csrfmiddlewaretoken': csrf_token,
         },
         success: function(data){

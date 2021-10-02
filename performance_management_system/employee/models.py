@@ -431,7 +431,6 @@ class ReportsEmployee(RoutablePageMixin, Page):
                 },
             )
 
-
 class EmployeeIndexPage(BaseAbstractPage):
     max_count = 1
     parent_page_types = ['base.BaseIndexPage']
