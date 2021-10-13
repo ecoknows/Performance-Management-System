@@ -33,6 +33,7 @@ from performance_management_system import CALENDAR, NOTIFICATION_TYPE
 from django.contrib.postgres.fields import ArrayField
 from itertools import chain
 import operator
+from django.utils import timezone
 from functools import reduce
 
 class BaseAbstractPage(RoutablePageMixin, Page):
@@ -341,10 +342,10 @@ class UserEvaluation(ClusterableModel, models.Model):
     )
     
     submit_date = models.DateTimeField(null=True)
-    assigned_date = models.DateTimeField(auto_now_add=True, null=True)
+    assigned_date = models.DateTimeField( default=timezone.now(), null=False)
     searchable_assigned_date = models.CharField(max_length=255, null=True)
     project_assign = models.CharField(max_length=255, null=True)
-    late_and_absence = ArrayField(ArrayField(models.IntegerField()), null=True)
+    late_and_absence = ArrayField(ArrayField(models.IntegerField()), default=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]])
 
     performance = models.DecimalField(
         max_digits=5,
@@ -361,6 +362,8 @@ class UserEvaluation(ClusterableModel, models.Model):
     panels = [
         FieldPanel('employee'),
         FieldPanel('client'),
+        FieldPanel('assigned_date'),
+        FieldPanel('searchable_assigned_date'),
     ]
 
     def __str__(self):

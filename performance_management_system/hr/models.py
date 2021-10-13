@@ -877,7 +877,7 @@ class AssignEmployee(RoutablePageMixin, Page):
                 
                 employees = employees.filter(Q(current_user_evaluation=None) | Q(current_user_evaluation__performance__gt=0 ))
         else:
-            employees = Employee.objects.filter( Q(current_user_evaluation=None) | Q(current_user_evaluation__performance__gt=0 ))
+            employees = Employee.objects.filter( Q(current_user_evaluation=None) )
 
         
 
