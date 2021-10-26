@@ -342,7 +342,7 @@ class UserEvaluation(ClusterableModel, models.Model):
     )
     
     submit_date = models.DateTimeField(null=True)
-    assigned_date = models.DateTimeField( auto_now_add=True, null=True)
+    assigned_date = models.DateTimeField( default=timezone.now(), null=True)
     searchable_assigned_date = models.CharField(max_length=255, null=True)
     project_assign = models.CharField(max_length=255, null=True)
     late_and_absence = ArrayField(ArrayField(models.IntegerField()), default=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]])
@@ -361,6 +361,7 @@ class UserEvaluation(ClusterableModel, models.Model):
     panels = [
         FieldPanel('employee'),
         FieldPanel('client'),
+        FieldPanel('assigned_date'),
     ]
 
     def __str__(self):
