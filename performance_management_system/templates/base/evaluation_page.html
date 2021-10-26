@@ -41,6 +41,11 @@
 {% block content %}
 
 <section  class="container mx-auto " id='evaluation-page'>
+
+	<button class="absolute right-8" id="print-evaluation">
+		<img src="{% static 'img/icons/download.png' %}" style="width: 24px; height: 24px;">
+		Download as PDF
+	</button>
 	
 	<div class="pb-4 pl-8 show-on-print">
 		<h1 class="font-sans text-xl font-bold text-gray">Client</h1>
@@ -268,6 +273,8 @@
 	let failure_text = 'failure'
 </script>
 <script src="{% static 'js/modal.js' %}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+<script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 <script src="{% static 'js/autoPrint.js' %}"></script>
 <script src="{% static 'js/utc_date_format.js' %}"></script>
 {% endblock %}

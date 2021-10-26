@@ -174,7 +174,7 @@ class ClientListPage(RoutablePageMixin,Page):
         position = request.GET.get('position', '')
         status = request.GET.get('status', '')
         sort = request.GET.get('sort', '')
-        timezone = request.GET.get('timezone', '')
+        timezone_str = request.GET.get('timezone', '')
 
         user_evaluations = None
 
@@ -195,16 +195,16 @@ class ClientListPage(RoutablePageMixin,Page):
                     user_evaluations = UserEvaluation.objects.filter( employee__address__icontains=address, employee__contact_number__icontains=contact_number, employee__position__icontains=position, client_id=client_id)
             
             if status == 'for-evaluation':
-                user_evaluations = user_evaluations.filter( submit_date__isnull=True)
+                user_evaluations = user_evaluations.filter( submit_date__isnull=True, submit_date__year=timezone.now().year)
             if status == 'done-evaluating':
-                user_evaluations = user_evaluations.filter( submit_date__isnull=False)
+                user_evaluations = user_evaluations.filter( submit_date__isnull=False, submit_date__year=timezone.now().year)
 
 
         else:
             if sort:
-                user_evaluations = UserEvaluation.objects.filter(client_id=client_id).order_by(sort)
+                user_evaluations = UserEvaluation.objects.filter(client_id=client_id, submit_date__year=timezone.now().year).order_by(sort)
             else:
-                user_evaluations = UserEvaluation.objects.filter(client_id=client_id).order_by('-submit_date','assigned_date')
+                user_evaluations = UserEvaluation.objects.filter(client_id=client_id, submit_date__year=timezone.now().year).order_by('-submit_date','assigned_date')
             
 
         user_evaluations = self.paginate_data(user_evaluations, page)
@@ -233,7 +233,7 @@ class ClientListPage(RoutablePageMixin,Page):
                         'hr/search_employee_specified.html',
                         {
                             'user_evaluations' : user_evaluations,
-                            'timezone': timezone,
+                            'timezone': timezone_str,
                         }
                     ),
                     'pages_indicator': render_to_string(
