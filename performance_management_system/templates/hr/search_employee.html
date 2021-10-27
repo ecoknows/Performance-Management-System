@@ -39,14 +39,26 @@
     >
   </td>
   <td class="flex flex-col items-center justify-center p-0 pt-3 space-y-1 font-sans text-sm text-gray">
-        <button
-        onclick="notify_employee('{{employee.user.pk}}', this)"
-        class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full focus:outline-none "
-        style="background-color: #007bff; padding-left: 10px; padding-right: 10px"
-      >
-        <h1 class="font-sans text-xs">Notify Me</h1>
-        <img src='{% static "img/icons/notifications-white.png"%}' />
-      </button>
+
+      {% if employee.current_user_evaluation.submit_date == None and employee.current_user_evaluation.assigned_date != None  %}
+        <button 
+          onclick="notify_employee('{{employee.user.pk}}', this)"
+          class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full focus:outline-none "
+          style="background-color: #007bff; padding-left: 10px; padding-right: 10px;"
+        >
+          <h1 class="font-sans text-xs">Notify Me</h1>
+          <img src='{% static "img/icons/notifications-white.png"%}' />
+        </button>
+      {% else %}
+          <button 
+          disabled
+          class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full focus:outline-none "
+          style="background-color: #007bff; padding-left: 10px; padding-right: 10px; opacity: 0.5; cursor: not-allowed"
+        >
+          <h1 class="font-sans text-xs">Notify Me</h1>
+          <img src='{% static "img/icons/notifications-white.png"%}' />
+        </button>
+      {% endif %}
 
 
     {% if employee.current_user_evaluation.performance > 0 %}

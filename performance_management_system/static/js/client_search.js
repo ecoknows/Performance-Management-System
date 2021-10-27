@@ -13,6 +13,7 @@ $(function(){
     let sort = $('.fa-sort')
 
 
+
     $.ajax({
         url : url,
         type: 'GET',

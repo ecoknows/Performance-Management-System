@@ -16,7 +16,7 @@ from wagtail.admin.edit_handlers import (
     MultiFieldPanel,
 )
 
-from performance_management_system.base.models import BaseAbstractPage, UserEvaluation, EvaluationCategories, EvaluationPage, Notification, EvaluationRateAssign
+from performance_management_system.base.models import BaseAbstractPage, RulesSettings, UserEvaluation, EvaluationCategories, EvaluationPage, Notification, EvaluationRateAssign
 from performance_management_system.employee.models import Employee
 from performance_management_system.client.models import Client
 from performance_management_system.users.models import User
@@ -100,13 +100,7 @@ class ClientListPage(RoutablePageMixin,Page):
                 user_evaluation= user_evaluation,
                 notification_type='notify-evaluated-specific-client'
             )
-            Notification.objects.create(
-                reciever=user_evaluation.employee.user,
-                message='Rest assured I have notify '+ user_evaluation.client.company + ' to evalaute',
-                hr_admin=request.user.hradmin,
-                user_evaluation= user_evaluation,
-                notification_type='client-has-been-notify'
-            )
+            
             return JsonResponse(data={
                 'message': 'The employee has been successfully notified!',
                 'created_at': notification_client.created_at,
@@ -340,31 +334,102 @@ class EmployeeListPage(RoutablePageMixin,Page):
         
         return data
     
+    def renewal_check(self, request):
+        employees = Employee.objects.all()
+        renewal_count = RulesSettings.objects.first().renewal_count
+        renewal_calendar = RulesSettings.objects.first().renewal_calendar
+        
+
+        for employee in employees:
+            current_evaluation = employee.current_user_evaluation
+
+            if current_evaluation and current_evaluation.submit_date:
+                assigned_date = current_evaluation.assigned_date
+                expiration_date = None
+
+                if renewal_calendar == 'year':
+                    expiration_date = assigned_date.replace(year=assigned_date.year + renewal_count)
+                
+                if renewal_calendar == 'month':
+                    expiration_date = assigned_date.replace(month=assigned_date.month + renewal_count)
+                
+                if renewal_calendar == 'day':
+                    expiration_date = assigned_date.replace(day=assigned_date.month + renewal_count)
+                
+                if renewal_calendar == 'week':
+                    expiration_date = assigned_date.replace(day=assigned_date.month + renewal_count * 7)
+                
+                
+                if expiration_date and expiration_date <= timezone.now():
+                    user_evaluation = UserEvaluation.objects.create(
+                        employee_id=current_evaluation.employee.pk,
+                        client_id=current_evaluation.client.pk,
+                        hr_admin=request.user,
+                        project_assign=current_evaluation.project_assign
+                    )
+
+                    local_time_convert = timezone.localtime(user_evaluation.searchable_assigned_date, pytz.timezone('Asia/Singapore'))
+                    user_evaluation.searchable_assigned_date = local_time_convert.strftime('%b. %e, %Y, %I:%M %p')
+                    user_evaluation.save()
+                    
+                    employee.current_user_evaluation = user_evaluation
+
+                    client = current_evaluation.client
+
+                    Notification.objects.create(
+                        reciever=client.user,
+                        hr_admin=request.user.hradmin,
+                        message='Renewal of evaluation',
+                        user_evaluation=user_evaluation,
+                        notification_type='new-employee-client'
+                    )
+
+                    Notification.objects.create(
+                        reciever=employee.user,
+                        hr_admin=request.user.hradmin,
+                        message='Renewal of evaluation',
+                        user_evaluation=user_evaluation,
+                        notification_type='new-client-employee'
+                    )
+
+                    employee.save()
+        
+
+
     @route(r'^$') 
     def default_route(self, request):
         employee_id = request.POST.get('employee_id', None)
         action = request.POST.get('action', None)
+        
+        self.renewal_check(request)
+
 
         if employee_id:
             if action == 'notify':
-                employee = User.objects.get(pk=employee_id)
+                
+                employee_user = User.objects.get(pk=employee_id)
+
+                user_evaluation = employee_user.employee.current_user_evaluation
 
                 notification_client = Notification.objects.create(
-                    reciever=employee,
-                    message='Dear employee, kindly wait you evaluation, we have notify already your current client',
+                    reciever=user_evaluation.client.user,
+                    message='Please Evaluate '+ str(user_evaluation.employee),
                     hr_admin=request.user.hradmin,
-                    user_evaluation=employee.employee.current_user_evaluation,
-                    notification_type='client-has-been-notify'
+                    user_evaluation= user_evaluation,
+                    notification_type='notify-evaluated-specific-client'
                 )
+                
 
                 return JsonResponse(data={
-                    'message': 'The employee has been successfully notified!',
+                    'message': 'The client has been successfully notified!',
                     'created_at': notification_client.created_at,
                 })
+                
             elif action == 'end_contract':
                 user = User.objects.get(pk=employee_id)
                 user.employee.current_user_evaluation = None
                 user.employee.save()    
+                
 
 
 

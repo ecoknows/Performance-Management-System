@@ -20,7 +20,10 @@
 	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href='evaluated/{{user_evaluation.pk}}'>+63{{user_evaluation.employee.contact_number}}</a></td>
 	
 	<td class="flex flex-col items-center justify-center p-0 pt-3 space-y-1 font-sans text-sm text-gray">
-		<button
+		
+		
+		{% if user_evaluation.submit_date == None and user_evaluation.assigned_date != None  %}
+        <button
 		  onclick="notify_both('{{user_evaluation.pk}}', this)"
 		  class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full focus:outline-none "
 		  style="background-color: #007bff; padding-left: 10px; padding-right: 10px">
@@ -28,6 +31,17 @@
 		  <h1 class="font-sans text-xs">Notify Me</h1>
 		  <img src='{% static "img/icons/notifications-white.png"%}' />
 		</button>
+		{% else %}
+			<button
+			disabled
+			class="flex items-center justify-center py-1 space-x-1 font-sans font-semibold text-white rounded-full focus:outline-none "
+			
+			style="background-color: #007bff; padding-left: 10px; padding-right: 10px; opacity: 0.5; cursor: not-allowed">
+
+			<h1 class="font-sans text-xs">Notify Me</h1>
+			<img src='{% static "img/icons/notifications-white.png"%}' />
+			</button>
+		{% endif %}
 	
 		{% get_latest_notif_date user_evaluation.client.user 'notify-evaluated-specific-client' as notif_date %}
 		{% if notif_date %}

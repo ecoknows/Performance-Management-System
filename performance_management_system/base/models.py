@@ -551,10 +551,26 @@ class RulesSettings(BaseSetting, ClusterableModel):
         max_length=255,
         null=True,
     )
+    
+    renewal_count = models.IntegerField(default=0)
+
+    renewal_calendar = models.CharField(
+        max_length=255,
+        choices=CALENDAR,
+        null=True,
+    )
+    
 
     panels = [
         FieldPanel(
             'limit_message'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('renewal_count'),
+                FieldPanel('renewal_calendar'),
+            ],
+            heading="Renewal Rule",
         ),
         MultiFieldPanel(
             [
