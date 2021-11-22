@@ -59,17 +59,6 @@
           <img src='{% static "img/icons/notifications-white.png"%}' />
         </button>
       {% endif %}
-
-
-    {% if employee.current_user_evaluation.performance > 0 %}
-    <button
-      onclick="end_contract('{{employee.user.pk}}', this)"
-      class="flex items-center justify-center py-1 ml-2 space-x-1 font-sans font-semibold text-white rounded-full focus:outline-none h-7"
-      style="background-color: #c04d4d; padding-left: 10px; padding-right: 10px"
-    >
-      <h1 class="font-sans text-xs" >End Contract</h1>
-    </button>
-    {% endif %}
   
     {% get_latest_notif_date employee.user 'client-has-been-notify' as notif_date %}
     {% if notif_date %}

@@ -42,8 +42,8 @@ class EmployeesInfo(ModelAdmin):
     create_view_class = EmployeeCreateView
     menu_label = 'Employees'
     menu_icon = 'group'
-    list_display = ('employee','employee_id','display_image')
-    search_fields = ('employee',)
+    list_display = ('employee','employee_id','display_image', 'hiring_date')
+    search_fields = ('employee','hiring_date')
     
 modeladmin_register(EmployeesInfo)
 

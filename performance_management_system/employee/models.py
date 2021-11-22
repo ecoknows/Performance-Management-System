@@ -209,6 +209,7 @@ class Employee(models.Model):
     contact_number = models.CharField(max_length=255, null=True)
     birth_day = models.DateField()
     position = models.CharField(max_length=255, null=True)
+    hiring_date = models.DateTimeField(null=True)
 
     current_user_evaluation = models.ForeignKey(
         'base.UserEvaluation',
@@ -229,6 +230,7 @@ class Employee(models.Model):
         FieldPanel('contact_number'),
         FieldPanel('birth_day'),
         FieldPanel('position'),
+        FieldPanel('hiring_date'),
     ]
     
     @property

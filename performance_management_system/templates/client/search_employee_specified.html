@@ -4,6 +4,10 @@
 
 {% for user_evaluation in user_evaluations %}
 <tr class="table-bottom-border hover:bg-gray-100">
+	
+	{% check_status user_evaluation as status %}
+	{% if status == 'for-evaluation' %}
+	
 		
 	<td class="p-0 font-sans font-semibold text-gray">
 		<a class='flex items-center justify-start block w-full px-4 space-x-4' href=" {% pageurl evaluation_page_index %}{{user_evaluation.pk}}" style="min-height: 3rem;">
@@ -15,12 +19,10 @@
 	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href=" {% pageurl evaluation_page_index %}{{user_evaluation.pk}}">{{user_evaluation.employee.position}}</a></td>
 	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href=' {% pageurl evaluation_page_index %}{{user_evaluation.pk}}'>+63{{user_evaluation.employee.contact_number}}</a></td>
 	
-	{% check_status user_evaluation as status %}
-	{% if status == 'for-evaluation' %}
 	<td class="p-0 font-sans text-sm font-semibold text-red">
 	  <a
 		class="flex flex-col justify-center block w-full h-12 px-4"
-		href="{{employee_details_index}}{{user_evaluation.employee.pk}}"
+		href="{% pageurl evaluation_page_index %}{{user_evaluation.pk}}"
 		>
 		<h1>For Evaluation</h1>
 
@@ -35,18 +37,43 @@
 		</a>
 	</td>
 	{% elif status == 'done-evaluating'  %}
+	
+		
+	<td class="p-0 font-sans font-semibold text-gray">
+		<a class='flex items-center justify-start block w-full px-4 space-x-4' href="{% pageurl evaluation_page_index %}{{user_evaluation.pk}}" style="min-height: 3rem;">
+			{% include 'includes/employee_profile.html' with size=30 employee=user_evaluation.employee %}
+			<h1 style='color:#007bff'>{{user_evaluation.employee}}</h1>
+		</a>
+	</td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href=" {% pageurl evaluation_page_index %}{{user_evaluation.pk}}">{{user_evaluation.employee.address}}</a></td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href=" {% pageurl evaluation_page_index %}{{user_evaluation.pk}}">{{user_evaluation.employee.position}}</a></td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' href=' {% pageurl evaluation_page_index %}{{user_evaluation.pk}}'>+63{{user_evaluation.employee.contact_number}}</a></td>
+	
 	<td class="p-0 font-sans text-sm font-semibold text-green">
 	  <a
 		class="flex flex-col justify-center block w-full h-12 px-4"
-		href="{{employee_details_index}}{{user_evaluation.employee.pk}}"
+		href="{% pageurl evaluation_page_index %}{{user_evaluation.pk}}"
 		>Done Evaluating</a
 	  >
 	</td>
 	{% else %}
+	
+		
+	<td class="p-0 font-sans font-semibold text-gray">
+		<a class='flex items-center justify-start block w-full px-4 space-x-4' style="min-height: 3rem; cursor: not-allowed">
+			{% include 'includes/employee_profile.html' with size=30 employee=user_evaluation.employee %}
+			<h1 style='color:#007bff'>{{user_evaluation.employee}}</h1>
+		</a>
+	</td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' style="cursor: not-allowed" >{{user_evaluation.employee.address}}</a></td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' style="cursor: not-allowed" >{{user_evaluation.employee.position}}</a></td>
+	<td class="p-0 font-sans text-sm text-gray"><a class='flex flex-col justify-center block w-full h-12 px-4' style="cursor: not-allowed" >+63{{user_evaluation.employee.contact_number}}</a></td>
+	
+
 	<td class="p-0 font-sans text-sm font-semibold text-gray">
 	  <a
 		class="flex flex-col justify-center block w-full h-12 px-4"
-		href="{{employee_details_index}}{{user_evaluation.employee.pk}}"
+		style="cursor: not-allowed"
 		>No Evaluation</a
 	  >
 	</td>

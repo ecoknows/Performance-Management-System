@@ -5,7 +5,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 
 from performance_management_system import GRADIENT_BG
-from performance_management_system.base.models import CalendarOrderable, EvaluationTask
+from performance_management_system.base.models import CalendarOrderable, EvaluationTask, RulesSettings
 
 register = template.Library()
 
@@ -74,11 +74,11 @@ def for_evaluation_filter(user_evaluation):
 @register.simple_tag
 def check_if_time_exceed(user_evaluation):
     
+    
     if user_evaluation == None:
         return False
         
-    date = user_evaluation.assigned_date
-
+    date = user_evaluation.employee.hiring_date
     
     rules = CalendarOrderable.objects.all()
     for rule in rules:
@@ -102,9 +102,29 @@ def check_status(user_evaluation):
     
     if user_evaluation == None:
         return None
+    
+    date = user_evaluation.employee.hiring_date
+    
+    rules_settings = RulesSettings.objects.first()
+    
+    effective_rule_calendar = rules_settings.effective_rule_calendar
+    effective_rule_count = rules_settings.effective_rule_count
+    
+    if effective_rule_calendar== 'day':
+        ending_date = date + timedelta(days=effective_rule_count)
+    if effective_rule_calendar== 'week':
+        ending_date = date + timedelta(days=effective_rule_count * 7)
+    if effective_rule_calendar== 'month':
+        ending_date = date + timedelta(days=effective_rule_count * 30)
+    if effective_rule_calendar== 'year':
+        ending_date = date + timedelta(days=effective_rule_count * 365)
+    
+    print(ending_date <timezone.now() )
 
     if user_evaluation.submit_date :
         return 'done-evaluating'
+    elif ending_date > timezone.now():
+        return None
     else:
         return 'for-evaluation'
 

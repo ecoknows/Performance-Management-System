@@ -552,6 +552,14 @@ class RulesSettings(BaseSetting, ClusterableModel):
         null=True,
     )
     
+    effective_rule_count = models.IntegerField(default=0)
+
+    effective_rule_calendar = models.CharField(
+        max_length=255,
+        choices=CALENDAR,
+        null=True,
+    )
+    
     renewal_count = models.IntegerField(default=0)
 
     renewal_calendar = models.CharField(
@@ -564,6 +572,13 @@ class RulesSettings(BaseSetting, ClusterableModel):
     panels = [
         FieldPanel(
             'limit_message'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('effective_rule_count'),
+                FieldPanel('effective_rule_calendar'),
+            ],
+            heading="Evaluation Rule Effective Date",
         ),
         MultiFieldPanel(
             [
