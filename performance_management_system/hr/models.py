@@ -1208,11 +1208,10 @@ class ReportsHR(RoutablePageMixin, Page):
         
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="report_histories_backup.csv"'
+        field_names = ['employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin' ];
 
-        writer = csv.writer(response, delimiter='^')
-        writer.writerow(['employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin' ])
-        
-        # reports = UserEvaluation.objects.filter().values_list('employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin')
+        writer = csv.writer(response)
+        writer.writerow(field_names)
         
         user_evaluations = None
         
