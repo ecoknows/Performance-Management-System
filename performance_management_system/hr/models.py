@@ -998,9 +998,6 @@ class ReportsHR(RoutablePageMixin, Page):
     max_count = 1
     parent_page_types = ['HRIndexPage']
     
-    
-
-
     def paginate_data(self, data, current_page):
         paginator = Paginator(data, 7)
 
@@ -1199,16 +1196,45 @@ class ReportsHR(RoutablePageMixin, Page):
 
     @route(r'^save/$')
     def save_report(self,request):
+        
+        employee = request.GET.get('employee', '')
+        client = request.GET.get('client', '')
+        project_assign = request.GET.get('project_assign', '')
+        performance = request.GET.get('performance', '')
+        date = request.GET.get('date', '')
+        
+        
+        
+        
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="report_histories_backup.csv"'
 
         writer = csv.writer(response, delimiter='^')
         writer.writerow(['employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin' ])
         
-        reports = UserEvaluation.objects.all().values_list('employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin')
+        # reports = UserEvaluation.objects.filter().values_list('employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin')
         
-        for report in reports:
-            writer.writerow(report)
+        user_evaluations = None
+        
+        if employee or client or project_assign or date or performance:
+
+            if employee:
+                employee_name = employee.split()
+                qset1 =  reduce(operator.__or__, [Q(employee__first_name__icontains=query) | Q(employee__last_name__icontains=query) for query in employee_name])
+                
+                user_evaluations = UserEvaluation.objects.filter(qset1).distinct()
+
+                user_evaluations = user_evaluations.filter(client__company__icontains=client, project_assign__icontains=project_assign, performance__icontains=performance, searchable_assigned_date__icontains=date)
+            else:
+                user_evaluations = UserEvaluation.objects.filter(client__company__icontains=client, project_assign__icontains=project_assign, performance__icontains=performance, searchable_assigned_date__icontains=date)
+            
+        else:
+            user_evaluations = UserEvaluation.objects.all().order_by('-submit_date','assigned_date')
+            
+        user_evaluations = user_evaluations.values_list('employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin')
+        
+        for user_evaluation in user_evaluations:
+            writer.writerow(user_evaluation)
             
         return response
     

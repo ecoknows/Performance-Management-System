@@ -93,9 +93,9 @@
       </h1>
       
       <div class='flex-1 items-end justify-end flex space-x-2'>
-        <a class="h-10 flex items-center px-10" style="background-color: #007bff; " href="save">
+        <button class="h-10 flex items-center px-10" style="background-color: #007bff; " onclick="save_report();">
           <h1 style='color: white; font-size: 1.1rem;'> Save </h1>
-        </a>
+        </button>
 
         
         <form action="retrieve/" id='file-form' method="POST" enctype="multipart/form-data">
@@ -107,11 +107,17 @@
         </form>
             
       <script>
+        let csrf_token = '{{csrf_token}}'
+        
         $("#fileid").change(function(){
           console.log('gasdga');
           $("#file-form").submit()
         });
       </script>
+      
+      <script src="{% static 'js/save_reports.js' %}"></script>
+
+
       </div>
 
     </div>
