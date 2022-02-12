@@ -13,6 +13,7 @@ django-cogwheels==0.3
 django-filter==2.4.0
 django-livereload-server==0.3.2
 django-modelcluster==5.1
+django-queryset-csv==1.1.0
 django-taggit==1.3.0
 django-toolbelt==0.0.1
 django-treebeard==4.5.1
