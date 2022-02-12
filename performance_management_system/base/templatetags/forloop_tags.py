@@ -118,8 +118,6 @@ def check_status(user_evaluation):
         ending_date = date + timedelta(days=effective_rule_count * 30)
     if effective_rule_calendar== 'year':
         ending_date = date + timedelta(days=effective_rule_count * 365)
-    
-    print(ending_date <timezone.now() )
 
     if user_evaluation.submit_date :
         return 'done-evaluating'

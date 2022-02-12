@@ -1,7 +1,7 @@
 from django.db import models
 from django.http import JsonResponse
 from django.template.response import TemplateResponse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
@@ -24,6 +24,11 @@ from performance_management_system.users.models import User
 import operator
 from functools import reduce
 import pytz
+from djqscsv.djqscsv import render_to_csv_response
+import csv, io
+from datetime import datetime
+
+import json
 
 class ClientListPage(RoutablePageMixin,Page):
     max_count = 1
@@ -992,6 +997,9 @@ class AssignEmployee(RoutablePageMixin, Page):
 class ReportsHR(RoutablePageMixin, Page):
     max_count = 1
     parent_page_types = ['HRIndexPage']
+    
+    
+
 
     def paginate_data(self, data, current_page):
         paginator = Paginator(data, 7)
@@ -1188,6 +1196,68 @@ class ReportsHR(RoutablePageMixin, Page):
                     'current_number': user_evaluations.number,
                 },
             )
+
+    @route(r'^save/$')
+    def save_report(self,request):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="report_histories_backup.csv"'
+
+        writer = csv.writer(response, delimiter='^')
+        writer.writerow(['employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin' ])
+        
+        reports = UserEvaluation.objects.all().values_list('employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin')
+        
+        for report in reports:
+            writer.writerow(report)
+            
+        return response
+    
+    @route(r'^retrieve/$')
+    def retrieve_report(self,request):
+        
+        csv_file =  request.FILES['file']
+        
+        if csv_file:
+            csv_file = request.FILES['file']
+            
+            data_set = csv_file.read().decode('UTF-8')
+            
+            io_string = io.StringIO(data_set)
+            
+            next(io_string)
+            
+            for column in csv.reader(io_string, delimiter='^', quotechar="|"):
+                
+                
+                if column[2]:
+                    _, created = UserEvaluation.objects.update_or_create(
+                        employee_id=column[0],
+                        client_id=column[1],
+                        submit_date=datetime.strptime(column[2], '%Y-%m-%d %H:%M:%S.%f%z'),
+                        assigned_date=datetime.strptime(column[3], '%Y-%m-%d %H:%M:%S.%f%z'),
+                        searchable_assigned_date=column[4],
+                        project_assign=column[5],
+                        late_and_absence=json.loads(column[6]), 
+                        performance=column[7],
+                        hr_admin_id=column[8],
+                    )
+                    
+                else:
+                    _, created = UserEvaluation.objects.update_or_create(
+                        employee_id=column[0],
+                        client_id=column[1],
+                        assigned_date=datetime.strptime(column[3], '%Y-%m-%d %H:%M:%S.%f%z'),
+                        searchable_assigned_date=column[4],
+                        project_assign=column[5],
+                        late_and_absence=json.loads(column[6]), 
+                        performance=column[7],
+                        hr_admin_id=column[8],
+                    )
+                    
+                    
+            
+        return HttpResponseRedirect('../')
+        
 
 class HrAdmin(models.Model):
     user = models.OneToOneField(

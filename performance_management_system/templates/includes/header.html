@@ -91,6 +91,29 @@
       <h1 class="font-sans text-xl font-bold" style="color: #007bff">
         {{title}}
       </h1>
+      
+      <div class='flex-1 items-end justify-end flex space-x-2'>
+        <a class="h-10 flex items-center px-10" style="background-color: #007bff; " href="save">
+          <h1 style='color: white; font-size: 1.1rem;'> Save </h1>
+        </a>
+
+        
+        <form action="retrieve/" id='file-form' method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <label style="background-color: #007bff; "class="h-10 flex items-center px-10  ">
+            <input type="file" id="fileid" name="file" style="display: none">
+            <h1 style='color: white; font-size: 1.1rem;'> Retrieve </h1>
+          </label>
+        </form>
+            
+      <script>
+        $("#fileid").change(function(){
+          console.log('gasdga');
+          $("#file-form").submit()
+        });
+      </script>
+      </div>
+
     </div>
     {% endif %}
   </div>

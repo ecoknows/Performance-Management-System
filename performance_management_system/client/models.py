@@ -15,7 +15,7 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 
 from performance_management_system import IntegerResource, StringResource
 from performance_management_system.users.models import User
-from django.http import JsonResponse
+from django.http import HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.template.loader import render_to_string
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
@@ -624,3 +624,11 @@ class ClientIndexPage(BaseAbstractPage):
                     'current_number': user_evaluations.number,
                 },
             )
+        
+    @route(r'^(\d+)/resign/$')
+    def resign_employee(self,request, id):
+        from performance_management_system.base.models import UserEvaluation
+        
+        user_eval = UserEvaluation.objects.get(id=id)
+        user_eval.delete()
+        return HttpResponseRedirect('../../')
