@@ -28,6 +28,9 @@ from djqscsv.djqscsv import render_to_csv_response
 import csv, io
 from datetime import datetime
 
+from django.core import serializers
+
+
 import json
 
 class ClientListPage(RoutablePageMixin,Page):
@@ -1206,13 +1209,6 @@ class ReportsHR(RoutablePageMixin, Page):
         
         
         
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="report_histories_backup.csv"'
-        field_names = ['employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin' ];
-
-        writer = csv.writer(response, delimiter='^')
-        writer.writerow(field_names)
-        
         user_evaluations = None
         
         if employee or client or project_assign or date or performance:
@@ -1230,54 +1226,75 @@ class ReportsHR(RoutablePageMixin, Page):
         else:
             user_evaluations = UserEvaluation.objects.all().order_by('-submit_date','assigned_date')
             
-        user_evaluations = user_evaluations.values_list('employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin')
+        # user_evaluations = user_evaluations.values_list('employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin')
         
-        for user_evaluation in user_evaluations:
-            writer.writerow(user_evaluation)
+        # response = HttpResponse(content_type='application/json')
+        # response['Content-Disposition'] = 'attachment; filename="report_histories_backup.csv"'
+        # field_names = ['employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin' ];
+
+        # writer = csv.writer(response, delimiter='^')
+        # writer.writerow(field_names)
+        
+        # for user_evaluation in user_evaluations:
+        #     writer.writerow(user_evaluation)
+        
+
+        serialized_queryset = serializers.serialize('json', user_evaluations)
+        
+        response = HttpResponse(serialized_queryset, content_type='application/octet-stream')
+        response['Content-Disposition'] = 'attachment; filename=export.json'
+
             
         return response
     
     @route(r'^retrieve/$')
     def retrieve_report(self,request):
         
-        csv_file =  request.FILES['file']
         
-        if csv_file:
-            csv_file = request.FILES['file']
+        json =  request.FILES['file']
+        
+        if json:
+            for deserialized_object in serializers.deserialize("json", json):
+                deserialized_object.save()
+        
+        # csv_file =  request.FILES['file']
+        
+        # if csv_file:
+        #     csv_file = request.FILES['file']
             
-            data_set = csv_file.read().decode('UTF-8')
+        #     data_set = csv_file.read().decode('UTF-8')
             
-            io_string = io.StringIO(data_set)
+        #     io_string = io.StringIO(data_set)
             
-            next(io_string)
+        #     next(io_string)
             
-            for column in csv.reader(io_string, delimiter='^', quotechar="|"):
+        #     for column in csv.reader(io_string, delimiter='^', quotechar="|"):
                 
-                print(column[3])
-                if column[2]:
-                    _, created = UserEvaluation.objects.update_or_create(
-                        employee_id=column[0],
-                        client_id=column[1],
-                        submit_date=datetime.strptime(column[2], '%Y-%m-%d %H:%M:%S.%f%z'),
-                        assigned_date=datetime.strptime(column[3], '%Y-%m-%d %H:%M:%S.%f%z'),
-                        searchable_assigned_date=column[4],
-                        project_assign=column[5],
-                        late_and_absence=json.loads(column[6]), 
-                        performance=column[7],
-                        hr_admin_id=column[8],
-                    )
+        #         print(column[3])
+        #         if column[2]:
+        #             _, created = UserEvaluation.objects.update_or_create(
+        #                 employee_id=column[0],
+        #                 client_id=column[1],
+        #                 submit_date=datetime.strptime(column[2], '%Y-%m-%d %H:%M:%S.%f%z'),
+        #                 assigned_date=datetime.strptime(column[3], '%Y-%m-%d %H:%M:%S.%f%z'),
+        #                 searchable_assigned_date=column[4],
+        #                 project_assign=column[5],
+        #                 late_and_absence=json.loads(column[6]), 
+        #                 performance=column[7],
+        #                 hr_admin_id=column[8],
+        #             )
                     
-                else:
-                    _, created = UserEvaluation.objects.update_or_create(
-                        employee_id=column[0],
-                        client_id=column[1],
-                        assigned_date=datetime.strptime(column[3], '%Y-%m-%d %H:%M:%S.%f%z'),
-                        searchable_assigned_date=column[4],
-                        project_assign=column[5],
-                        late_and_absence=json.loads(column[6]), 
-                        performance=column[7],
-                        hr_admin_id=column[8],
-                    )
+        #         else:
+        #             _, created = UserEvaluation.objects.update_or_create(
+        #                 employee_id=column[0],
+        #                 client_id=column[1],
+        #                 assigned_date=datetime.strptime(column[3], '%Y-%m-%d %H:%M:%S.%f%z'),
+        #                 searchable_assigned_date=column[4],
+        #                 project_assign=column[5],
+        #                 late_and_absence=json.loads(column[6]), 
+        #                 performance=column[7],
+        #                 hr_admin_id=column[8],
+        #             )
                     
                     
             

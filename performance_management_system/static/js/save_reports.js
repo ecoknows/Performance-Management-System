@@ -15,8 +15,6 @@ function save_report(){
         'date': date.val(),
     }
     
-
-    
     $.ajax({
         url: url,
         type:'GET',
@@ -24,6 +22,7 @@ function save_report(){
             ...elements_value,
         },
         success: function(data){
+
             var filename = Date.now().toString();
             var blob = new Blob([data], { type: "application/octetstream" });
 
@@ -35,12 +34,13 @@ function save_report(){
                 var url = window.URL || window.webkitURL;
                 link = url.createObjectURL(blob);
                 var a = $("<a />");
-                a.attr("download", filename +'.csv');
+                a.attr("download", filename +'.json');
                 a.attr("href", link);
                 $("body").append(a);
                 a[0].click();
                 $("body").remove(a);
             }
+            
         }
     })
     
