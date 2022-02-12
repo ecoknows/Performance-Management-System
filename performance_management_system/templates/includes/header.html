@@ -85,7 +85,7 @@
         {{title}}
       </h1>
     </div>
-    {% elif title == 'Reports' %}
+    {% elif title == 'Reports' and request.user.is_hr  %}
     <div class="flex items-end p-4 space-x-2">
       <img src="{% static 'img/icons/reports-blue.png' %}" />
       <h1 class="font-sans text-xl font-bold" style="color: #007bff">
