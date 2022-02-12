@@ -1210,7 +1210,7 @@ class ReportsHR(RoutablePageMixin, Page):
         response['Content-Disposition'] = 'attachment; filename="report_histories_backup.csv"'
         field_names = ['employee','client', 'submit_date', 'assigned_date', 'searchable_assigned_date','project_assign','late_and_absence','performance','hr_admin' ];
 
-        writer = csv.writer(response)
+        writer = csv.writer(response, delimiter='^')
         writer.writerow(field_names)
         
         user_evaluations = None
@@ -1253,7 +1253,7 @@ class ReportsHR(RoutablePageMixin, Page):
             
             for column in csv.reader(io_string, delimiter='^', quotechar="|"):
                 
-                
+                print(column[3])
                 if column[2]:
                     _, created = UserEvaluation.objects.update_or_create(
                         employee_id=column[0],
